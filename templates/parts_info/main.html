@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yedek Parça Bilgi Sistemi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cermak-primary: #dc3545;
+            --cermak-primary-dark: #c82333;
+            --cermak-secondary: #6c757d;
+            --cermak-success: #28a745;
+            --cermak-warning: #ffc107;
+            --cermak-info: #17a2b8;
+            --gradient-primary: linear-gradient(135deg, #dc3545 0%, #c82333 50%, #bd2130 100%);
+            --gradient-bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            --shadow-soft: 0 2px 20px rgba(0,0,0,0.08);
+            --shadow-medium: 0 4px 30px rgba(0,0,0,0.12);
+            --shadow-strong: 0 8px 40px rgba(0,0,0,0.16);
+            --border-radius: 20px;
+            --border-radius-lg: 25px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gradient-bg);
+            min-height: 100vh;
+            color: #2d3748;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        .app-header {
+            background: var(--gradient-primary);
+            padding: 1.25rem 0;
+            box-shadow: var(--shadow-medium);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            font-size: 2.25rem;
+            margin-right: 1rem;
+            background: rgba(255,255,255,0.15);
+            padding: 0.65rem;
+            border-radius: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            border: none;
+            padding: 0.65rem 1.25rem;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .search-section {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #dc3545;
+            margin-bottom: 2rem;
+        }
+
+        .search-section::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .search-section::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .search-icon {
+            background: rgba(255,255,255,0.2);
+            padding: 1rem;
+            border-radius: 16px;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .section-title p {
+            margin: 0.5rem 0 0 0;
+            font-size: 0.95rem;
+            opacity: 0.95;
+        }
+
+        .search-input-area {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-label i {
+            font-size: 1.5rem;
+            color: #dc3545;
+        }
+
+        .input-label label {
+            margin: 0;
+            font-weight: 600;
+            color: #1a202c;
+            font-size: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #1a202c;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+            background-color: white;
+        }
+
+        .search-input::placeholder {
+            color: #adb5bd;
+        }
+
+        .search-hint {
+            display: block;
+            margin-top: 0.75rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .btn-search {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .parts-table {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead {
+            background: #f8f9fa;
+        }
+
+        .table thead th {
+            border: none;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .table tbody td {
+            padding: 1rem 1.5rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .part-photo {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .no-photo {
+            width: 60px;
+            height: 60px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+        }
+
+        .stock-badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .stock-ok {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .stock-low {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .stock-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .price-tag {
+            font-weight: 600;
+            color: var(--cermak-primary);
+        }
+
+        .price-secondary {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .exchange-rate-info {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid var(--cermak-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-color: var(--cermak-primary);
+            border-right-color: transparent;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+        }
+
+        .empty-state i {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+            color: var(--cermak-primary);
+        }
+
+        /* Admin Panel Modal */
+        .modal-header {
+            background: var(--gradient-primary);
+            color: white;
+            border-bottom: none;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .upload-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            background: #f8fafc;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--cermak-primary);
+            background: #fff;
+        }
+
+        .upload-zone.drag-over {
+            border-color: var(--cermak-primary);
+            background: #fef2f2;
+        }
+
+        /* Parts List View */
+        .parts-list {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .parts-list-header {
+            background: var(--gradient-primary);
+            padding: 1rem 1.5rem;
+            border-bottom: 3px solid var(--cermak-primary-dark);
+            display: grid;
+            grid-template-columns: 1.2fr 2fr 50px 1fr 1.2fr 1.2fr 1fr 0.8fr;
+            gap: 1rem;
+            font-weight: 700;
+            color: white;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .parts-list-item {
+            display: grid;
+            grid-template-columns: 1.2fr 2fr 50px 1fr 1.2fr 1.2fr 1fr 0.8fr;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            align-items: center;
+            transition: var(--transition);
+            cursor: pointer;
+            background: white;
+        }
+
+        .parts-list-item:hover {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+            border-color: var(--cermak-primary);
+            box-shadow: 0 2px 8px rgba(220,53,69,0.15);
+        }
+
+        .parts-list-item:last-child {
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .item-code {
+            font-weight: 700;
+            color: var(--cermak-primary);
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #1a202c;
+            font-size: 1rem;
+        }
+
+        .item-supplier {
+            color: #4a5568;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .item-machines {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .machine-badge {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .machine-all {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .item-location {
+            color: #64748b;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .item-location i {
+            color: var(--cermak-primary);
+        }
+
+        .item-prices {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .item-price-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .item-price-label {
+            color: #64748b;
+            font-size: 0.75rem;
+            min-width: 50px;
+        }
+
+        .item-price-value {
+            font-weight: 600;
+            color: var(--cermak-primary);
+        }
+
+        .item-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .item-stock {
+            font-weight: 600;
+            font-size: 0.65rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .item-stock.stock-zero {
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+            color: #991b1b;
+            border: 1px solid #dc2626;
+        }
+
+        .item-stock.stock-available {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #1a202c;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .replacement-warning-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.65rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .item-price {
+            color: #0891b2;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .item-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-replacement {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .replacement-code {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 0.25rem 0.65rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .replacement-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .build-out-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 0.35rem 0.65rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        @media (max-width: 1200px) {
+            .parts-list-header,
+            .parts-list-item {
+                grid-template-columns: 1fr 2fr 120px;
+                gap: 1rem;
+            }
+            
+            .item-supplier,
+            .item-machines {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .parts-list-header {
+                display: none;
+            }
+            
+            .parts-list-item {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="app-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <i class="bi bi-box-seam logo-icon"></i>
+                <span>Yedek Parça Sistemi</span>
+            </div>
+            <div class="nav-links">
+                <button class="nav-btn" onclick="showAdminPanel()">
+                    <i class="bi bi-shield-lock"></i>
+                    Admin Panel
+                </button>
+                <a href="/" class="nav-btn">
+                    <i class="bi bi-house"></i>
+                    Ana Sayfa
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <!-- Arama Bölümü -->
+        <div class="search-section">
+            <div class="section-title">
+                <div class="search-icon"><i class="bi bi-search"></i></div>
+                <div>
+                    <h2>Yedek Parça Bilgi Sistemi</h2>
+                    <p>Parça kodunu tarayıcı ile okuyun veya el ile yazın</p>
+                </div>
+            </div>
+            <div class="search-input-area">
+                <div class="input-label">
+                    <i class="bi bi-barcode"></i>
+                    <label>Parça Kodunu Tarayın veya Yazın</label>
+                </div>
+                <input type="text" 
+                       class="search-input" 
+                       id="searchInput" 
+                       placeholder="Parça kodu, parça adı, tedarikçi veya açıklama ile arayın..." 
+                       autofocus>
+                <small class="search-hint">
+                    <i class="bi bi-info-circle"></i> Enter tuşuna basın veya tarayıcı ile kod okuyun - otomatik aranacaktır
+                </small>
+            </div>
+        </div>
+
+        <!-- Yükleniyor -->
+        <div class="loading" id="loading">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Yükleniyor...</span>
+            </div>
+            <p class="mt-3">Veriler yükleniyor...</p>
+        </div>
+
+        <!-- Parçalar List -->
+        <div id="partsList" style="display: none;">
+            <div class="parts-list">
+                <div class="parts-list-header">
+                    <div>Parça Kodu</div>
+                    <div>Parça Adı</div>
+                    <div>Stok</div>
+                    <div>Tedarikçi</div>
+                    <div>Tanım</div>
+                    <div>Satış (TL)</div>
+                    <div>Değişen Kod</div>
+                    <div>BUILD OUT</div>
+                </div>
+                <div id="partsListBody"></div>
+            </div>
+        </div>
+
+        <!-- Boş Durum -->
+        <div class="empty-state" id="emptyState">
+            <i class="bi bi-inbox"></i>
+            <p>Henüz parça bulunmuyor. Admin panelden Excel ile parça yükleyin.</p>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal fade" id="adminModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-shield-lock me-2"></i>
+                        Admin Panel - Parça Yönetimi
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Şifre Girişi -->
+                    <div id="passwordSection">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Admin Şifresi</label>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="adminPassword" 
+                                   placeholder="Şifre giriniz">
+                        </div>
+                        <button class="btn btn-danger w-100" onclick="verifyPassword()">
+                            <i class="bi bi-unlock me-2"></i>Giriş Yap
+                        </button>
+                    </div>
+
+                    <!-- Excel Yükleme (Şifre doğrulandıktan sonra) -->
+                    <div id="adminContent" style="display: none;">
+                        <!-- Kur Bilgisi ve Güncelleme -->
+                        <div class="exchange-rate-info mb-4">
+                            <h6 class="mb-3">
+                                <i class="bi bi-currency-exchange me-2"></i>
+                                Döviz Kuru Yönetimi
+                            </h6>
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <p class="mb-1">
+                                        <strong>Güncel EUR/TRY Kuru:</strong> 
+                                        <span id="adminExchangeRate" class="text-danger fw-bold">Yükleniyor...</span>
+                                    </p>
+                                    <p class="mb-1 text-muted small">
+                                        <i class="bi bi-clock-history me-1"></i>
+                                        Son Güncelleme: <span id="lastUpdateTime">-</span>
+                                    </p>
+                                    <p class="mb-0">
+                                        <small><strong>Kaynak:</strong> 
+                                            <span id="exchangeRateSource" class="badge bg-info">Yükleniyor...</span>
+                                        </small>
+                                    </p>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="manualUpdateRate()">
+                                        <i class="bi bi-arrow-clockwise me-1"></i>
+                                        Kuru Güncelle (Yapıkredi)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h6 class="mb-3">
+                            <i class="bi bi-file-earmark-excel me-2"></i>
+                            Parça Bilgileri Excel Yükle
+                        </h6>
+                        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('excelFile').click()">
+                            <i class="bi bi-cloud-upload" style="font-size: 3rem; color: #94a3b8;"></i>
+                            <p class="mt-3 mb-1"><strong>Excel dosyasını buraya sürükleyin veya tıklayın</strong></p>
+                            <p class="text-muted small">
+                                Beklenen sütunlar: Parça Kodu, Parça Adı, Stok, Tedarikçi, Geliş (Euro), Tanım, Satış Fiyatı (EUR)
+                            </p>
+                            <input type="file" 
+                                   id="excelFile" 
+                                   accept=".xlsx,.xls" 
+                                   style="display: none;" 
+                                   onchange="uploadExcel()">
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <button class="btn btn-outline-success w-100" onclick="syncPhotos()">
+                            <i class="bi bi-image me-2"></i>Fotoğrafları Admin Sistemden Eşitle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentExchangeRate = 35.0;
+        let lastRateUpdate = null;
+        let lastRateSource = 'Yükleniyor...';
+        const ADMIN_PASSWORD = '@R9t$L7e!xP2w';
+        let adminModal = null;
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            adminModal = new bootstrap.Modal(document.getElementById('adminModal'));
+            fetchExchangeRate();
+            // Sayfa yüklendiğinde otomatik liste yükleme kaldırıldı
+
+            // Enter tuşu ile arama
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchParts();
+                }
+            });
+
+            // Admin şifre alanında Enter
+            document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    verifyPassword();
+                }
+            });
+
+            // Drag and drop
+            const uploadZone = document.getElementById('uploadZone');
+            
+            uploadZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('drag-over');
+            });
+
+            uploadZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+            });
+
+            uploadZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    document.getElementById('excelFile').files = files;
+                    uploadExcel();
+                }
+            });
+        });
+
+        function showAdminPanel() {
+            // Modal her açıldığında şifreyi sıfırla
+            document.getElementById('passwordSection').style.display = 'block';
+            document.getElementById('adminContent').style.display = 'none';
+            document.getElementById('adminPassword').value = '';
+            adminModal.show();
+        }
+
+        function verifyPassword() {
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('passwordSection').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                // Admin paneli açıldığında kur bilgisini güncelle
+                updateAdminRateDisplay();
+            } else {
+                alert('Hatalı şifre!');
+                document.getElementById('adminPassword').value = '';
+            }
+        }
+
+        function updateAdminRateDisplay() {
+            document.getElementById('adminExchangeRate').textContent = currentExchangeRate.toFixed(4);
+            if (lastRateUpdate) {
+                const updateDate = new Date(lastRateUpdate);
+                document.getElementById('lastUpdateTime').textContent = updateDate.toLocaleString('tr-TR');
+            }
+            // Kaynak bilgisini güncelle
+            if (lastRateSource) {
+                document.getElementById('exchangeRateSource').textContent = lastRateSource;
+                if (lastRateSource.includes('✅')) {
+                    document.getElementById('exchangeRateSource').className = 'badge bg-success';
+                } else if (lastRateSource.includes('❌')) {
+                    document.getElementById('exchangeRateSource').className = 'badge bg-danger';
+                } else {
+                    document.getElementById('exchangeRateSource').className = 'badge bg-warning';
+                }
+            }
+        }
+
+        function manualUpdateRate() {
+            const btn = event.target.closest('button');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Güncelleniyor...';
+            
+            fetch('/api/parts_info/get_exchange_rate?refresh=true')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.rate) {
+                        currentExchangeRate = data.rate;
+                        lastRateUpdate = new Date().toISOString();
+                        lastRateSource = data.source || 'Yapıkredi API';
+                        updateAdminRateDisplay();
+                        alert('✅ Kur başarıyla güncellendi: ' + currentExchangeRate.toFixed(4) + ' TRY/EUR\nKaynak: ' + data.source);
+                    } else {
+                        lastRateSource = data.source || 'Hata';
+                        updateAdminRateDisplay();
+                        alert('❌ Kur güncellenemedi. Lütfen tekrar deneyin.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Kur güncelleme hatası:', error);
+                    lastRateSource = '❌ Bağlantı Hatası';
+                    updateAdminRateDisplay();
+                    alert('❌ Kur güncellenirken bir hata oluştu.');
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                });
+        }
+
+        function fetchExchangeRate() {
+            fetch('/api/parts_info/get_exchange_rate')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.rate) {
+                        currentExchangeRate = data.rate;
+                        lastRateUpdate = new Date().toISOString();
+                        lastRateSource = data.source || 'Yapıkredi API';
+                    } else {
+                        currentExchangeRate = 35.0;
+                        lastRateSource = data.source || 'Yükleme Hatası';
+                    }
+                })
+                .catch(error => {
+                    console.error('Kur bilgisi alınamadı:', error);
+                    currentExchangeRate = 35.0;
+                    lastRateSource = '❌ Bağlantı Hatası';
+                });
+        }
+
+        function searchParts() {
+            const query = document.getElementById('searchInput').value.trim();
+            
+            if (!query) {
+                alert('Lütfen arama terimi girin');
+                return;
+            }
+
+            showLoading(true);
+
+            fetch(`/api/parts_info/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayParts(data);
+                    showLoading(false);
+                })
+                .catch(error => {
+                    console.error('Arama hatası:', error);
+                    alert('Arama sırasında bir hata oluştu');
+                    showLoading(false);
+                });
+        }
+
+        function loadAllParts() {
+            showLoading(true);
+
+            fetch('/api/parts_info/get_all')
+                .then(response => response.json())
+                .then(data => {
+                    displayParts(data);
+                    showLoading(false);
+                })
+                .catch(error => {
+                    console.error('Yükleme hatası:', error);
+                    alert('Veriler yüklenirken bir hata oluştu');
+                    showLoading(false);
+                });
+        }
+
+        function displayParts(parts) {
+            const listContainer = document.getElementById('partsList');
+            const listBody = document.getElementById('partsListBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            listBody.innerHTML = '';
+
+            if (parts.length === 0) {
+                listContainer.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            listContainer.style.display = 'block';
+
+            parts.forEach(part => {
+                // Stok rengi: 0 = kırmızı, 0'dan fazla = yeşil
+                let stockColorClass = part.stock <= 0 ? 'stock-zero' : 'stock-available';
+
+                // Parça adı - Eğer replacement_code varsa icon göster
+                let partNameDisplay = part.part_name;
+                if (part.replacement_code) {
+                    partNameDisplay = `${part.part_name}<span class="replacement-warning-icon">⚠️</span>`;
+                }
+
+                // Replacement code badge
+                let replacementHtml = '-';
+                if (part.replacement_code) {
+                    replacementHtml = `<span class="replacement-code">${part.replacement_code}</span>`;
+                }
+
+                // Build out badge
+                let buildOutHtml = '<span style="color: #9ca3af; font-size: 0.875rem;">-</span>';
+                if (part.build_out) {
+                    buildOutHtml = '<span class="build-out-badge">🔴 BUILD OUT</span>';
+                }
+
+                // Liste öğesi oluştur
+                const item = document.createElement('div');
+                item.className = 'parts-list-item';
+                item.onclick = () => window.location.href = `/parts_info/detail/${encodeURIComponent(part.part_code)}`;
+                
+                item.innerHTML = `
+                    <div class="item-code">${part.part_code}</div>
+                    <div class="item-name">${partNameDisplay}</div>
+                    <div class="item-stock ${stockColorClass}">${part.stock || 0}</div>
+                    <div class="item-supplier">${part.supplier || '-'}</div>
+                    <div class="item-description" title="${part.description || ''}">${part.description ? part.description.substring(0, 20) + (part.description.length > 20 ? '...' : '') : '-'}</div>
+                    <div class="item-price">${part.sale_price_try ? part.sale_price_try.toFixed(2) + ' TL' : '-'}</div>
+                    <div class="item-replacement">${replacementHtml}</div>
+                    <div>${buildOutHtml}</div>
+                `;
+
+                listBody.appendChild(item);
+            });
+        }
+
+        function uploadExcel() {
+            const fileInput = document.getElementById('excelFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+                alert('Lütfen Excel dosyası seçin (.xlsx veya .xls)');
+                return;
+            }
+
+            showLoading(true);
+            adminModal.hide();
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/api/parts_info/upload_excel', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Hata: ' + data.error);
+                } else {
+                    alert(`Başarılı!\n\nYeni kayıt: ${data.inserted}\nGüncellenen: ${data.updated}\nToplam: ${data.total}`);
+                    loadAllParts();
+                }
+                fileInput.value = '';
+                showLoading(false);
+            })
+            .catch(error => {
+                console.error('Yükleme hatası:', error);
+                alert('Excel yüklenirken bir hata oluştu');
+                fileInput.value = '';
+                showLoading(false);
+            });
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            if (show) {
+                loading.classList.add('show');
+            } else {
+                loading.classList.remove('show');
+            }
+        }
+
+        function syncPhotos() {
+            if (!confirm('Admin sistemindeki fotoğraflar parts_info sistemine eşitlenecek. Devam edilsin mi?')) {
+                return;
+            }
+
+            showLoading(true);
+            adminModal.hide();
+
+            fetch('/api/parts_info/sync_photos', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Hata: ' + data.error);
+                } else {
+                    alert(data.message);
+                    loadAllParts();
+                }
+                showLoading(false);
+            })
+            .catch(error => {
+                console.error('Eşitleme hatası:', error);
+                alert('Fotoğraf eşitleme sırasında bir hata oluştu');
+                showLoading(false);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sadece Stok Güncelleme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.2);
+        }
+
+        .upload-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            margin-top: 2rem;
+        }
+
+        .upload-zone {
+            border: 3px dashed #cbd5e0;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .upload-zone:hover {
+            border-color: #6366f1;
+            background: #f0f4ff;
+        }
+
+        .upload-zone.dragover {
+            border-color: #6366f1;
+            background: #e0e7ff;
+            transform: scale(1.02);
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .format-info {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .alert-warning-custom {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1><i class="bi bi-database-fill-gear"></i> Sadece Stok Güncelleme</h1>
+            <p style="opacity: 0.9; margin: 0.5rem 0 0 0;">Kayıtlı parçaların stoklarını toplu güncelleme</p>
+        </div>
+    </div>
+
+    <div class="container" style="padding: 2rem 1rem;">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="upload-card">
+                    <h3><i class="bi bi-cloud-upload"></i> Basit Excel Yükle (2 Sütun)</h3>
+                    
+                    <div class="alert-warning-custom">
+                        <i class="bi bi-info-circle"></i> <strong>Bu sayfa sadece stok güncelleme içindir.</strong><br>
+                        Yeni parça eklemek veya kritik stok/tedarikçi bilgilerini güncellemek için 
+                        <a href="/order_system/upload_stock">Ana Excel Yükleme</a> sayfasını kullanın.
+                    </div>
+                    
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="bi bi-file-earmark-arrow-up" style="font-size: 4rem; color: #6366f1; margin-bottom: 1rem;"></i>
+                        <h5>Dosyayı buraya sürükleyin veya tıklayın</h5>
+                        <p style="color: #6b7280; margin-top: 0.5rem;">Excel (.xlsx, .xls) dosyası</p>
+                        <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+                        <button class="btn-upload mt-3" onclick="document.getElementById('fileInput').click()">
+                            <i class="bi bi-folder2-open"></i> Dosya Seç
+                        </button>
+                    </div>
+
+                    <div class="format-info">
+                        <h6><i class="bi bi-info-circle"></i> Excel Formatı (Sadece 2 Sütun)</h6>
+                        <table class="table table-sm table-bordered mt-2" style="background: white;">
+                            <thead>
+                                <tr class="table-primary">
+                                    <th>Parça Kodu</th>
+                                    <th>Stok</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>129657-51590</td>
+                                    <td>25</td>
+                                </tr>
+                                <tr>
+                                    <td>Y129150-49811</td>
+                                    <td>150</td>
+                                </tr>
+                                <tr>
+                                    <td>ABC-12345</td>
+                                    <td>0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success"></i> İlk satır başlık: Parça Kodu | Stok<br>
+                            <i class="bi bi-check-circle text-success"></i> Sadece sistemde kayıtlı parçaların stokları güncellenir<br>
+                            <i class="bi bi-exclamation-triangle text-warning"></i> Kayıtlı olmayan parçalar hata listesine eklenir
+                        </small>
+                    </div>
+
+                    <div id="resultCard" class="result-card" style="display: none;">
+                        <h5 id="resultTitle"></h5>
+                        <div id="resultContent"></div>
+                    </div>
+
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <button class="btn btn-secondary" onclick="window.location.href='/order_system/'">
+                            <i class="bi bi-arrow-left"></i> Geri Dön
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+
+        // Drag & Drop
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                uploadFile();
+            }
+        });
+
+        fileInput.addEventListener('change', uploadFile);
+
+        async function uploadFile() {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const resultCard = document.getElementById('resultCard');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultContent = document.getElementById('resultContent');
+
+            resultCard.style.display = 'block';
+            resultTitle.innerHTML = '<i class="bi bi-hourglass-split"></i> İşleniyor...';
+            resultContent.innerHTML = '<div class="spinner-border text-primary" role="status"></div>';
+
+            try {
+                const response = await fetch('/order_system/api/update_stock_only', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultTitle.innerHTML = '<i class="bi bi-check-circle text-success"></i> Stok Güncelleme Tamamlandı!';
+                    resultContent.innerHTML = `
+                        <div class="alert alert-success">
+                            <h6>Özet:</h6>
+                            <ul class="mb-0">
+                                <li><strong>${data.updated_count}</strong> parça stoğu güncellendi</li>
+                                ${data.error_count > 0 ? `<li class="text-danger"><strong>${data.error_count}</strong> hata</li>` : ''}
+                            </ul>
+                        </div>
+                        ${data.errors && data.errors.length > 0 ? `
+                        <div class="alert alert-warning mt-2">
+                            <h6>Hatalar:</h6>
+                            <ul class="mb-0" style="max-height: 200px; overflow-y: auto;">
+                                ${data.errors.map(err => `<li><small>${err}</small></li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+                        <div class="mt-3">
+                            <button class="btn btn-primary me-2" onclick="window.location.href='/order_system/'">
+                                <i class="bi bi-house"></i> Ana Menü
+                            </button>
+                            <button class="btn btn-secondary" onclick="window.location.href='/'" style="background: #6c757d; border-color: #6c757d;">
+                                <i class="bi bi-grid-3x3-gap"></i> Portala Dön
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    resultTitle.innerHTML = '<i class="bi bi-x-circle text-danger"></i> Hata!';
+                    resultContent.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                }
+            } catch (error) {
+                resultTitle.innerHTML = '<i class="bi bi-x-circle text-danger"></i> Bağlantı Hatası!';
+                resultContent.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

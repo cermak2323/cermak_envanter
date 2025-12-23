@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Takeuchi Parça Sipariş Modülü</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cermak-primary: #dc3545;
+            --cermak-primary-dark: #c82333;
+            --cermak-bg: #f8f9fa;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --shadow-soft: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-medium: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-strong: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        body {
+            background: var(--cermak-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--cermak-primary) 0%, var(--cermak-primary-dark) 100%);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white !important;
+            margin-right: auto;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        /* Header Card */
+        .header-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-medium);
+            overflow: hidden;
+            max-width: 600px;
+            width: 100%;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--cermak-primary) 0%, var(--cermak-primary-dark) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.95;
+            font-weight: 400;
+            font-size: 0.95rem;
+        }
+
+        /* Content */
+        .content {
+            padding: 2.5rem 2rem;
+        }
+
+        /* Menu Cards */
+        .card {
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(220, 53, 69, 0.2) !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 2rem 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .content {
+                padding: 1.5rem;
+            }
+
+            .btn-menu {
+                padding: 1rem;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid" style="padding: 0 1.5rem;">
+            <a class="navbar-brand" href="/takeuchi">
+                <i class="bi bi-wrench-adjustable"></i> TAKEUCHI PARÇA SİSTEMİ
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/takeuchi"><i class="bi bi-house"></i> Ana Menü</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/takeuchi/add"><i class="bi bi-plus-circle"></i> Parça Ekle</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/takeuchi/check"><i class="bi bi-check-circle"></i> Parça Kontrol</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/takeuchi/admin"><i class="bi bi-gear"></i> Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Çıkış</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="header-card">
+            <!-- Header -->
+            <div class="header">
+                <h1><i class="bi bi-wrench-adjustable"></i> Takeuchi Sipariş Modülü</h1>
+                <p>Parçaları yönetin ve siparişlerinizi takip edin</p>
+            </div>
+
+            <!-- Content -->
+            <div class="content">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="/takeuchi/add" class="card text-decoration-none h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 4px solid #dc3545; transition: all 0.3s ease; display: flex; flex-direction: column;">
+                            <div class="card-body text-center py-5">
+                                <i class="bi bi-plus-circle" style="font-size: 3rem; color: #dc3545; margin-bottom: 1rem; display: block;"></i>
+                                <h5 class="card-title" style="color: #212529; font-weight: 700;">Yeni Parça Ekle</h5>
+                                <p class="card-text" style="color: #6c757d; font-size: 0.9rem;">Siparişinize yeni Takeuchi parçası ekleyin</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6">
+                        <a href="/takeuchi/check" class="card text-decoration-none h-100" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 4px solid #28a745; transition: all 0.3s ease; display: flex; flex-direction: column;">
+                            <div class="card-body text-center py-5">
+                                <i class="bi bi-check-circle" style="font-size: 3rem; color: #28a745; margin-bottom: 1rem; display: block;"></i>
+                                <h5 class="card-title" style="color: #212529; font-weight: 700;">Parça Kontrol Et</h5>
+                                <p class="card-text" style="color: #6c757d; font-size: 0.9rem;">Parçaları ara ve teslim durumunu kontrol edin</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

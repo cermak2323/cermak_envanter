@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Takeuchi - Parça Kontrol</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cermak-primary: #dc3545;
+            --cermak-primary-dark: #c82333;
+            --cermak-bg: #f8f9fa;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --shadow-soft: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-medium: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-strong: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        body {
+            background: var(--cermak-bg);
+            color: var(--text-primary);
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--cermak-primary) 0%, var(--cermak-primary-dark) 100%);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white !important;
+            margin-right: auto;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+        
+        /* Main Content */
+        .main-container {
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--cermak-primary) 0%, var(--cermak-primary-dark) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-header p {
+            opacity: 0.95;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+        
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            border-top: 3px solid var(--cermak-primary);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .card-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Search */
+        .search-box {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+        }
+
+        .form-control:focus {
+            border-color: var(--cermak-primary);
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.1);
+        }
+        
+        /* Tables */
+        .table {
+            font-size: 0.95rem;
+        }
+
+        .table thead {
+            background: var(--cermak-bg);
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .table thead th {
+            font-weight: 700;
+            color: var(--text-primary);
+            border: none;
+            padding: 1rem;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        /* Badges */
+        .badge {
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .badge-success {
+            background: rgba(40, 167, 69, 0.2);
+            color: #155724;
+        }
+
+        .badge-danger {
+            background: rgba(220, 53, 69, 0.2);
+            color: #721c24;
+        }
+
+        /* Messages */
+        .alert {
+            border: none;
+            border-radius: 10px;
+            border-left: 4px solid;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #155724;
+            border-color: #28a745;
+        }
+
+        .alert-info {
+            background: rgba(17, 103, 177, 0.1);
+            color: #004085;
+            border-color: #1167b1;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--cermak-primary);
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: var(--cermak-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-sm {
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .page-header {
+                padding: 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card-title {
+                font-size: 1rem;
+            }
+
+            .table {
+                font-size: 0.85rem;
+            }
+
+            .table thead th,
+            .table tbody td {
+                padding: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid" style="padding: 0 1.5rem;">
+            <a class="navbar-brand" href="/takeuchi">
+                <i class="bi bi-wrench-adjustable"></i> TAKEUCHI PARÇA YÖNETİMİ
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/takeuchi"><i class="bi bi-house"></i> Ana Menü</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/takeuchi/add"><i class="bi bi-plus-circle"></i> Parça Ekle</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/takeuchi/check"><i class="bi bi-check-circle"></i> Parça Kontrol</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/takeuchi/admin"><i class="bi bi-gear"></i> Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Çıkış</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1><i class="bi bi-search"></i> Parça Kontrol</h1>
+            <p>Takeuchi parçalarını arayın ve teslim durumunu kontrol edin</p>
+        </div>
+
+        <!-- Messages -->
+        <div id="successMessage" class="alert alert-success d-none" role="alert">
+            <i class="bi bi-check-circle"></i> <span id="successText"></span>
+        </div>
+        <div id="infoMessage" class="alert alert-info d-none" role="alert">
+            <i class="bi bi-info-circle"></i> <span id="infoText"></span>
+        </div>
+
+        <!-- Search Card -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-search"></i> Parça Ara</h5>
+
+                <div class="search-box">
+                    <input type="text" class="form-control" id="searchInput" 
+                           placeholder="Parça kodu veya adı ile arayın..." 
+                           onkeyup="filterParts()">
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover" id="partsTable">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-hash"></i> Parça Kodu</th>
+                                <th>Parça Adı</th>
+                                <th>Build Out</th>
+                                <th>Değişen Kod</th>
+                                <th>Fiyat</th>
+                                <th>Durum</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="partsTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center py-4" style="color: var(--text-secondary);">
+                                    <i class="bi bi-hourglass-split" style="font-size: 2rem; opacity: 0.5;"></i>
+                                    <p class="mt-2">Parçalar yükleniyor...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Temp Orders Card -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-list-check"></i> Geçici Sipariş Öğeleri</h5>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Parça Kodu</th>
+                                <th>Parça Adı</th>
+                                <th>Adet</th>
+                                <th>Tarih</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tempOrdersBody">
+                            <tr>
+                                <td colspan="5" class="text-center py-4" style="color: var(--text-secondary);">
+                                    <i class="bi bi-inbox" style="font-size: 2rem; opacity: 0.5;"></i>
+                                    <p class="mt-2">Henüz sipariş öğesi yok</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" onclick="submitTempOrder()">
+                        <i class="bi bi-check-lg"></i> Siparişi Gönder
+                    </button>
+                    <a href="/takeuchi" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let allParts = [];
+
+        // Sayfa yüklendiğinde
+        window.addEventListener('load', function() {
+            loadParts();
+            loadTempOrders();
+        });
+
+        function loadParts() {
+            fetch('/api/takeuchi/admin/parts-list')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.parts) {
+                        allParts = data.parts;
+                        displayParts(allParts);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading parts:', error);
+                });
+        }
+
+        function displayParts(parts) {
+            const tbody = document.getElementById('partsTableBody');
+            
+            if (parts.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-4" style="color: var(--text-secondary);">
+                            <i class="bi bi-inbox" style="font-size: 2rem; opacity: 0.5;"></i>
+                            <p class="mt-2">Parça bulunamadı</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = parts.map(part => `
+                <tr>
+                    <td><strong>${part.part_code}</strong></td>
+                    <td>${part.part_name}</td>
+                    <td>${part.build_out || '-'}</td>
+                    <td>${part.alternative_code || '-'}</td>
+                    <td style="color: #28a745; font-weight: 600;">${part.cost_price ? part.cost_price.toFixed(2) + ' ₺' : '-'}</td>
+                    <td><span class="badge badge-success"><i class="bi bi-check-circle"></i> Stokta</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="addPartToOrder(${part.id}, '${part.part_code}', '${part.part_name}')">
+                            <i class="bi bi-cart-plus"></i> Ekle
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterParts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allParts.filter(part => 
+                part.part_code.toLowerCase().includes(query) || 
+                part.part_name.toLowerCase().includes(query)
+            );
+            displayParts(filtered);
+        }
+
+        function addPartToOrder(partId, partCode, partName) {
+            const quantity = prompt(`Kaç adet "${partCode} - ${partName}" eklemek istiyorsunuz?`, '1');
+            if (quantity === null) return;
+
+            fetch('/api/takeuchi/add-to-temp-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    part_id: partId,
+                    part_code: partCode,
+                    part_name: partName,
+                    quantity: parseInt(quantity)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccess(`✅ ${partCode} siparişe eklendi!`);
+                    loadTempOrders();
+                } else {
+                    alert('Hata: ' + (data.error || 'Bilinmeyen hata'));
+                }
+            })
+            .catch(error => {
+                alert('Hata: ' + error.message);
+            });
+        }
+
+        function loadTempOrders() {
+            // TODO: Geçici siparişi yükle
+            // Şimdilik placeholder
+        }
+
+        function submitTempOrder() {
+            if (!confirm('Siparişi göndermek istediğinize emin misiniz?')) return;
+
+            fetch('/api/takeuchi/submit-temp-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccess('✅ Sipariş başarıyla gönderildi!');
+                    setTimeout(() => {
+                        window.location.href = '/takeuchi';
+                    }, 2000);
+                } else {
+                    alert('Hata: ' + (data.error || 'Bilinmeyen hata'));
+                }
+            })
+            .catch(error => {
+                alert('Hata: ' + error.message);
+            });
+        }
+
+        function showSuccess(message) {
+            const elem = document.getElementById('successMessage');
+            const text = document.getElementById('successText');
+            text.textContent = message;
+            elem.classList.remove('d-none');
+            setTimeout(() => { elem.classList.add('d-none'); }, 4000);
+        }
+    </script>
+</body>
+</html>

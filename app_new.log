@@ -1,0 +1,44 @@
+[DB] Þirket içi MySQL kullanýlacak (192.168.0.57)
+[DB] Lokal SQLite: C:\Users\rsade\Desktop\Yeni klasör\EnvanterQR\EnvanterQR\instance\envanter_local.db
+[CONFIG] Ortam: development
+[FLASK] Static folder: \\DCSRV\tahsinortak\CermakDepo\CermakEnvanter\static
+[API] Blueprint yüklenemedi: No module named 'update_checker'
+
+[MYSQL] MYSQL SISTEM
+[DB] Database: MySQL (192.168.0.57:3306)
+[STORAGE] Storage: Shared Folder (\\DCSRV\tahsinortak\CermakDepo\CermakEnvanter\static)
+[DATA] Data: MySQL veritabaninda
+
+============================================================
+ MYSQL MODU
+============================================================
+ Tüm veriler MySQL veritabanýnda
+ QR kodlar shared folder'da (\\DCSRV\...\qr_codes)
+ Excel/Raporlar shared folder'da (\\DCSRV\...\reports)
+============================================================
+
+[MYSQL] MySQL Sunucu: mysql+pymysql://flaskuser:FlaskSifre123!@192.168.0.57:3306/flaskdb
+DEBUG: ADMIN_COUNT_PASSWORD = '@R9t$L7e!xP2w'
+
+======================================================================
+[INIT] INITIALIZING MYSQL TABLES
+======================================================================
+2025-12-16 11:10:44,335 INFO sqlalchemy.engine.Engine SELECT DATABASE()
+2025-12-16 11:10:44,335 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-12-16 11:10:44,335 INFO sqlalchemy.engine.Engine SELECT @@sql_mode
+2025-12-16 11:10:44,335 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-12-16 11:10:44,335 INFO sqlalchemy.engine.Engine SELECT @@lower_case_table_names
+2025-12-16 11:10:44,335 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-12-16 11:10:44,345 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-16 11:10:44,345 INFO sqlalchemy.engine.Engine SHOW FULL TABLES FROM `flaskdb`
+2025-12-16 11:10:44,345 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-12-16 11:10:44,345 INFO sqlalchemy.engine.Engine ROLLBACK
+Existing tables: ['count_passwords', 'count_sessions', 'delivery_history', 'envanter_users', 'order_history_log', 'order_list', 'order_system_stock', 'part_codes', 'parts_info', 'protected_parts', 'qr_codes', 'scanned_qr']
+ All PostgreSQL tables already exist
+ finished_by column already exists
+ total_expected column already exists
+ total_scanned column already exists
+ report_file_path column already exists
+ scanned_qr table verified - duplicate detection will work
+ Database initialization error: 'charmap' codec can't encode characters in position 1-2: character maps to <undefined>
+ Failed to initialize database: 'charmap' codec can't encode character '\u2717' in position 0: character maps to <undefined>

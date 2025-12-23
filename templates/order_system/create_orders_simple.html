@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Oluştur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: #f5f5f5;
+            padding-top: 1rem;
+        }
+        .header {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .section-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-upload {
+            background: #dc2626;
+            color: white;
+            border: none;
+        }
+        .btn-upload:hover {
+            background: #b91c1c;
+            color: white;
+        }
+        .table-container {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .table thead {
+            position: sticky;
+            top: 0;
+            background: #dc2626;
+            color: white;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .status-critical {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .status-protected {
+            background: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <h2><i class="bi bi-cart-plus"></i> Sipariş Oluştur</h2>
+            <p>Excel yükleyerek kritik stok altı parçaları göreceğiz. İstediğiniz parçaları seçip sipariş oluşturabilirsiz.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 1. BAŞLAT -->
+        <div class="section-card">
+            <h4><i class="bi bi-play-circle"></i> Adım 1: Kritik Stok Verisini Yükle</h4>
+            <p class="text-muted">Sistem veritabanından kritik stok altında olan parçaları otomatik olarak gösterecektir.</p>
+            
+            <button class="btn btn-upload" id="loadBtn" onclick="loadCriticalParts()">
+                <i class="bi bi-lightning-charge"></i> Verileri Yükle
+            </button>
+            <span id="loadStatus" class="ms-2"></span>
+        </div>
+
+        <!-- 2. KRİTİK STOK ALTINDAKI PARÇALAR -->
+        <div class="section-card">
+            <h4><i class="bi bi-exclamation-triangle"></i> Adım 2: Kritik Stok Parçaları</h4>
+            <p class="text-muted">Aşağıda kritik stok altında olan parçalar gösterilmektedir. Seçmek istediğiniz parçaları işaretleyin.</p>
+            
+            <div id="loadingDiv" style="display:none;">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
+                </div>
+                Veriler yükleniyor...
+            </div>
+
+            <div id="noPartsDiv" style="display:none;" class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Henüz veri yüklenmedi. Lütfen Excel dosyası yükleyin.
+            </div>
+
+            <div id="partsDiv" style="display:none;">
+                <div class="table-container">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">
+                                    <input type="checkbox" id="selectAllCB" onchange="toggleSelectAll()">
+                                </th>
+                                <th>Parça Kodu</th>
+                                <th>Parça Adı</th>
+                                <th>Tedarikçi</th>
+                                <th>Mevcut</th>
+                                <th>Kritik</th>
+                                <th>Beklenen</th>
+                                <th>Sipariş Miktarı</th>
+                                <th>Birim Fiyat (€)</th>
+                                <th>Toplam (€)</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody id="partsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. MEVCUT LİSTELERE EKLE veya YENİ LİSTE OLUŞTUR -->
+        <div class="section-card">
+            <h4><i class="bi bi-list-check"></i> Adım 3: Sipariş Listesi Seç veya Oluştur</h4>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Mevcut Listelerden Seç:</label>
+                    <select class="form-select" id="existingListSelect">
+                        <option value="">-- Yeni Liste Oluştur --</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">veya Yeni Liste Adı:</label>
+                    <input type="text" class="form-control" id="newListName" placeholder="Örn: CER2025001">
+                </div>
+            </div>
+
+            <div id="selectedSummary" style="display:none;" class="alert alert-success">
+                <strong id="summaryText"></strong>
+            </div>
+
+            <button class="btn btn-success" id="createBtn" onclick="createOrders()" style="display:none;">
+                <i class="bi bi-check-circle"></i> Siparişleri Oluştur
+            </button>
+        </div>
+
+        <!-- Debug Bilgisi -->
+        <div class="section-card" style="background: #f9fafb; border-left: 4px solid #dc2626;">
+            <h6><i class="bi bi-bug"></i> Debug Bilgisi</h6>
+            <small id="debugInfo" style="font-family: monospace; color: #666;">Sistem hazırlanıyor...</small>
+        </div>
+    </div>
+
+    <script>
+        let criticalParts = [];
+        let selectedParts = new Set();
+        let existingLists = {};
+
+        // Başlangıç
+        window.onload = function() {
+            updateDebug('Sistem hazırlandı. "Verileri Yükle" tuşuna bas.');
+        };
+
+        // Kritik stok parçalarını yükle
+        async function loadCriticalParts() {
+            updateDebug('Kritik parçalar yükleniyor...');
+            document.getElementById('loadingDiv').style.display = 'block';
+            document.getElementById('partsDiv').style.display = 'none';
+            document.getElementById('noPartsDiv').style.display = 'none';
+
+            try {
+                const response = await fetch('/order_system/api/check_critical_stock');
+                const data = await response.json();
+
+                if (data.success && data.critical_parts.length > 0) {
+                    criticalParts = data.critical_parts;
+                    selectedParts.clear();
+                    displayCriticalParts();
+                    loadExistingLists();
+                    updateDebug(`✅ ${data.critical_parts.length} parça yüklendi`);
+                } else {
+                    document.getElementById('noPartsDiv').style.display = 'block';
+                    updateDebug('⚠️ Kritik stok parçası bulunamadı');
+                }
+            } catch (error) {
+                updateDebug('❌ Hata: ' + error.message);
+                alert('Hata: ' + error.message);
+            } finally {
+                document.getElementById('loadingDiv').style.display = 'none';
+            }
+        }
+
+        // Kritik parçaları göster
+        function displayCriticalParts() {
+            const tbody = document.getElementById('partsTableBody');
+            tbody.innerHTML = '';
+
+            criticalParts.forEach(part => {
+                const isProtected = part.is_protected;
+                const qty = part.needed_quantity || 0;
+                const price = parseFloat(part.unit_price) || 0;
+                const total = qty * price;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <input type="checkbox" class="part-cb" data-code="${part.part_code}" 
+                               ${isProtected ? 'disabled' : ''} onchange="updateSelection()">
+                    </td>
+                    <td><strong>${part.part_code}</strong></td>
+                    <td>${part.part_name || '-'}</td>
+                    <td>${part.supplier || '-'}</td>
+                    <td>${part.stock_quantity || 0}</td>
+                    <td>${part.critical_stock_level || 0}</td>
+                    <td>${part.expected_stock || '-'}</td>
+                    <td><strong>${qty}</strong></td>
+                    <td>${price.toFixed(2)}</td>
+                    <td>${total.toFixed(2)}</td>
+                    <td>
+                        <span class="status-badge ${isProtected ? 'status-protected' : 'status-critical'}">
+                            ${isProtected ? 'Siparişte' : 'Kritik'}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('partsDiv').style.display = 'block';
+        }
+
+        // Tüm seç/seçme
+        function toggleSelectAll() {
+            const isChecked = document.getElementById('selectAllCB').checked;
+            document.querySelectorAll('.part-cb:not(:disabled)').forEach(cb => {
+                cb.checked = isChecked;
+            });
+            updateSelection();
+        }
+
+        // Seçim güncelle
+        function updateSelection() {
+            selectedParts.clear();
+            document.querySelectorAll('.part-cb:checked').forEach(cb => {
+                selectedParts.add(cb.dataset.code);
+            });
+
+            const selected = selectedParts.size;
+            if (selected > 0) {
+                document.getElementById('selectedSummary').style.display = 'block';
+                document.getElementById('summaryText').textContent = `✅ ${selected} parça seçildi`;
+                document.getElementById('createBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('selectedSummary').style.display = 'none';
+                document.getElementById('createBtn').style.display = 'none';
+            }
+        }
+
+        // Mevcut listeleri yükle
+        async function loadExistingLists() {
+            try {
+                const response = await fetch('/order_system/api/get_order_lists');
+                const data = await response.json();
+
+                const select = document.getElementById('existingListSelect');
+                select.innerHTML = '<option value="">-- Yeni Liste Oluştur --</option>';
+
+                if (data.success && data.order_lists) {
+                    Object.keys(data.order_lists).forEach(supplier => {
+                        Object.keys(data.order_lists[supplier]).forEach(listName => {
+                            const option = document.createElement('option');
+                            option.value = listName;
+                            option.textContent = `${supplier} - ${listName}`;
+                            select.appendChild(option);
+                        });
+                    });
+                }
+            } catch (error) {
+                console.error('Listeler yüklenemedi:', error);
+            }
+        }
+
+        // Siparişleri oluştur
+        async function createOrders() {
+            if (selectedParts.size === 0) {
+                alert('Lütfen en az bir parça seçin');
+                return;
+            }
+
+            const listName = document.getElementById('existingListSelect').value || 
+                            document.getElementById('newListName').value;
+
+            if (!listName) {
+                alert('Lütfen bir liste adı seçin veya yeni bir ad girin');
+                return;
+            }
+
+            const selectedCodes = Array.from(selectedParts);
+            const items = criticalParts.filter(p => selectedCodes.includes(p.part_code))
+                                      .map(p => ({
+                                          part_code: p.part_code,
+                                          part_name: p.part_name,
+                                          supplier: p.supplier,
+                                          quantity: p.needed_quantity || 0,
+                                          unit_price: p.unit_price || 0,
+                                          total_price: (p.needed_quantity || 0) * (p.unit_price || 0)
+                                      }));
+
+            document.getElementById('createBtn').disabled = true;
+            document.getElementById('createBtn').textContent = '⏳ Oluşturuluyor...';
+
+            try {
+                const response = await fetch('/order_system/api/add_manual_orders', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        list_name: listName,
+                        items: items
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Başarılı!\n${data.orders_created} parça sipariş listesine eklendi`);
+                    window.location.href = '/order_system/track_orders';
+                } else {
+                    alert('❌ Hata: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Bağlantı hatası: ' + error.message);
+            } finally {
+                document.getElementById('createBtn').disabled = false;
+                document.getElementById('createBtn').textContent = '✅ Siparişleri Oluştur';
+            }
+        }
+
+        // Debug bilgisi
+        function updateDebug(msg) {
+            document.getElementById('debugInfo').textContent = new Date().toLocaleTimeString() + ' - ' + msg;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Takip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #dc2626;
+            --primary-dark: #991b1b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.2);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header-icon {
+            font-size: 2rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.75rem;
+            border-radius: 16px;
+            display: inline-block;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-4px);
+            color: white;
+        }
+
+        .user-info {
+            margin: 0.25rem 0 0 0;
+            opacity: 0.95;
+            font-size: 0.85rem;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .search-btn {
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .search-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-red);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .order-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.15);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .order-code {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-red);
+        }
+
+        .order-name {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-arrived {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-partial {
+            background: #fce7f3;
+            color: #831843;
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            color: #64748b;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            color: #1e293b;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .action-btn {
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #64748b;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Modal */
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+        }
+
+        .modal-title {
+            font-weight: 700;
+        }
+
+        .form-group label {
+            color: var(--primary-red);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border-color: #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="header-icon">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <div>
+                        <h1>Sipariş Takip</h1>
+                        <p class="user-info">
+                            <i class="bi bi-person-circle"></i> {{ username }}
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <a href="/order_system/" class="back-btn">
+                        <i class="bi bi-arrow-left"></i> Ana Menü
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="padding: 2rem 1rem;">
+        <!-- Arama Kutusu -->
+        <div class="search-box">
+            <h5 style="margin-bottom: 1rem; color: var(--primary-red);"><i class="bi bi-search"></i> Parça Kodundan Arama</h5>
+            <div class="row g-2">
+                <div class="col-md-8">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Parça kodunu gir... (Örn: 129657-51590)">
+                </div>
+                <div class="col-md-4">
+                    <button class="search-btn w-100" onclick="searchOrders()">
+                        <i class="bi bi-search"></i> Ara
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sonuçlar -->
+        <div id="resultsContainer">
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-inbox"></i>
+                </div>
+                <h4>Arama Yapın</h4>
+                <p>Parça kodunu girerek siparişleri arayın</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sipariş Detay Modal -->
+    <div class="modal fade" id="orderModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-info-circle"></i> Sipariş Detayı</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    <button type="button" class="btn btn-primary" id="updateBtn" onclick="saveOrderUpdate()">
+                        <i class="bi bi-save"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentOrderId = null;
+
+        async function searchOrders() {
+            const partCode = document.getElementById('searchInput').value.trim();
+            if (!partCode) {
+                alert('Lütfen parça kodu girin');
+                return;
+            }
+
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = '<div style="text-align: center; padding: 2rem;"><div class="spinner-border text-danger"></div><p class="mt-2">Aranıyor...</p></div>';
+
+            try {
+                const response = await fetch(`/order_system/api/search_orders?part_code=${encodeURIComponent(partCode)}`);
+                const data = await response.json();
+
+                if (data.success && data.orders.length > 0) {
+                    displayOrders(data.orders);
+                } else {
+                    resultsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="bi bi-search"></i>
+                            </div>
+                            <h4>Sonuç Bulunamadı</h4>
+                            <p>"${partCode}" parça kodu için sipariş bulunamadı</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsContainer.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> ${error.message}</div>`;
+            }
+        }
+
+        function displayOrders(orders) {
+            const container = document.getElementById('resultsContainer');
+            
+            container.innerHTML = orders.map(order => `
+                <div class="order-card" onclick="openOrderDetail(${order.id}, '${order.part_code}', '${order.status}', ${order.ordered_quantity}, ${order.arrived_quantity || 0})">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-code"><i class="bi bi-box-seam"></i> ${order.part_code}</div>
+                            <div class="order-name">${order.part_name}</div>
+                        </div>
+                        <span class="status-badge ${getStatusClass(order.status)}">${order.status}</span>
+                    </div>
+
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Sipariş Miktarı</div>
+                            <div class="detail-value">${order.ordered_quantity}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Gelen Miktar</div>
+                            <div class="detail-value" style="color: #10b981;">${order.arrived_quantity || 0}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Tedarikçi</div>
+                            <div class="detail-value">${order.supplier}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Birim Fiyat</div>
+                            <div class="detail-value">${order.unit_price ? order.unit_price.toFixed(2) + ' €' : '-'}</div>
+                        </div>
+                    </div>
+
+                    <button class="action-btn" onclick="event.stopPropagation(); openOrderDetail(${order.id}, '${order.part_code}', '${order.status}', ${order.ordered_quantity}, ${order.arrived_quantity || 0})">
+                        <i class="bi bi-pencil"></i> Detay & Güncelle
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function getStatusClass(status) {
+            const statusMap = {
+                'Beklemede': 'status-pending',
+                'Geldi': 'status-arrived',
+                'Kısmi': 'status-partial'
+            };
+            return statusMap[status] || 'status-pending';
+        }
+
+        function openOrderDetail(orderId, partCode, status, ordered, arrived) {
+            currentOrderId = orderId;
+
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <div class="form-group">
+                    <label>Parça Kodu</label>
+                    <input type="text" class="form-control" value="${partCode}" readonly>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Sipariş Durumu</label>
+                            <select id="orderStatus" class="form-control">
+                                <option value="Beklemede" ${status === 'Beklemede' ? 'selected' : ''}>Beklemede</option>
+                                <option value="Kısmi" ${status === 'Kısmi' ? 'selected' : ''}>Kısmi Geldi</option>
+                                <option value="Geldi" ${status === 'Geldi' ? 'selected' : ''}>Geldi</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Gelen Miktar</label>
+                            <input type="number" id="arrivedQty" class="form-control" value="${arrived}" min="0" max="${ordered}">
+                            <small class="text-muted">Sipariş edilen: ${ordered}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Notlar</label>
+                    <textarea id="orderNotes" class="form-control" rows="3" placeholder="Yapılan işlemler hakkında not girin..."></textarea>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle"></i> Bu formu doldurduktan sonra <strong>Kaydet</strong> butonuna tıklayınız
+                </div>
+            `;
+
+            const modal = new bootstrap.Modal(document.getElementById('orderModal'));
+            modal.show();
+        }
+
+        async function saveOrderUpdate() {
+            const status = document.getElementById('orderStatus').value;
+            const arrivedQty = parseInt(document.getElementById('arrivedQty').value) || 0;
+            const notes = document.getElementById('orderNotes').value;
+
+            try {
+                const response = await fetch('/order_system/api/update_order_status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        order_id: currentOrderId,
+                        status: status,
+                        arrived_quantity: arrivedQty,
+                        notes: notes
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Sipariş başarıyla güncellendi!');
+                    bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
+                    
+                    // Aramaları yenile
+                    const searchInput = document.getElementById('searchInput').value;
+                    if (searchInput) {
+                        searchOrders();
+                    }
+                } else {
+                    alert('❌ Hata: ' + data.error);
+                }
+            } catch (error) {
+                alert('Bağlantı hatası: ' + error.message);
+            }
+        }
+
+        // Enter tuşu ile arama
+        document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchOrders();
+        });
+    </script>
+</body>
+</html>

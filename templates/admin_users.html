@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kullanıcı Yönetimi - Cermak Envanter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cermak-primary: #dc3545;
+            --cermak-primary-dark: #c82333;
+            --gradient-primary: linear-gradient(135deg, #dc3545 0%, #c82333 50%, #bd2130 100%);
+            --gradient-bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            --shadow-soft: 0 2px 20px rgba(0,0,0,0.08);
+            --shadow-medium: 0 4px 30px rgba(0,0,0,0.12);
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gradient-bg);
+            min-height: 100vh;
+            color: #2d3748;
+        }
+
+        .app-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #718096;
+            margin-bottom: 2rem;
+        }
+
+        .action-bar {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-primary-custom {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-custom:hover {
+            background: var(--cermak-primary-dark);
+            transform: translateY(-1px);
+            color: white;
+        }
+
+        .users-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .user-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+
+        .user-card:hover {
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-2px);
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-username {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-role {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .role-admin {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .role-user {
+            background: #bee3f8;
+            color: #2b6cb0;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm-custom {
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-edit {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-edit:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-delete {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .btn-delete:hover {
+            background: #feb2b2;
+        }
+
+        .user-date {
+            color: #a0aec0;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .modal-content {
+            border-radius: var(--border-radius);
+            border: none;
+        }
+
+        .modal-header {
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            border-bottom: none;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            padding: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--cermak-primary);
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.1);
+        }
+
+        .form-select {
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            padding: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .main-container {
+                padding: 0 1rem;
+            }
+            
+            .action-bar {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .user-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .user-actions {
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <i class="bi bi-people logo-icon"></i>
+                <div>
+                    <div style="font-size: 1.5rem; font-weight: 700;">Kullanıcı Yönetimi</div>
+                    <small style="opacity: 0.8;">Sistem Kullanıcıları</small>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="/admin" class="header-btn">
+                    <i class="bi bi-arrow-left"></i> Admin Panel
+                </a>
+                <a href="/inventory" class="header-btn">
+                    <i class="bi bi-house"></i> Ana Sayfa
+                </a>
+                <a href="/" class="header-btn" style="background: #6c757d;">
+                    <i class="bi bi-grid-3x3-gap"></i> Portala Dön
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <h1 class="page-title">Kullanıcı Yönetimi</h1>
+        <p class="page-subtitle">Sistem kullanıcılarını yönetin, yeni kullanıcı ekleyin ve yetkileri düzenleyin.</p>
+
+        <div class="action-bar">
+            <div>
+                <span id="userCount">{{ users|length }} kullanıcı</span> kayıtlı
+            </div>
+            <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                <i class="bi bi-person-plus"></i> Yeni Kullanıcı Ekle
+            </button>
+        </div>
+
+        <div class="users-grid" id="usersContainer">
+            {% for user in users %}
+            <div class="user-card" data-user-id="{{ user.id }}">
+                <div class="user-header">
+                    <div class="user-info">
+                        <div class="user-name">{{ user.full_name }}</div>
+                        <div class="user-username">@{{ user.username }}</div>
+                        <span class="user-role role-{{ user.role }}">
+                            {% if user.role == 'admin' %}
+                                <i class="bi bi-shield-check me-1"></i>Yönetici
+                            {% else %}
+                                <i class="bi bi-person me-1"></i>Kullanıcı
+                            {% endif %}
+                        </span>
+                        <div class="user-date">
+                            <i class="bi bi-calendar me-1"></i>Oluşturulma: {{ user.created_at }}
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <button class="btn-sm-custom btn-edit" onclick="editUser({{ user.id }}, '{{ user.username }}', '{{ user.full_name }}', '{{ user.role }}')">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        {% if user.id != 1 %}
+                        <button class="btn-sm-custom btn-delete" onclick="deleteUser({{ user.id }}, '{{ user.full_name }}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Kullanıcı Ekleme Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-person-plus me-2"></i>Yeni Kullanıcı Ekle
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm">
+                        <div class="mb-3">
+                            <label class="form-label">Ad Soyad</label>
+                            <input type="text" class="form-control" name="full_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kullanıcı Adı</label>
+                            <input type="text" class="form-control" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Şifre</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rol</label>
+                            <select class="form-select" name="role" id="addRole" required onchange="togglePermissions('add')">
+                                <option value="user">Kullanıcı</option>
+                                <option value="admin">Yönetici</option>
+                            </select>
+                        </div>
+                        
+                        <div id="addPermissionsSection">
+                            <hr>
+                            <h6 class="mb-3"><i class="bi bi-key me-2"></i>Portal Erişim İzinleri</h6>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="can_access_inventory" id="addCanAccessInventory" checked>
+                                <label class="form-check-label" for="addCanAccessInventory">
+                                    <i class="bi bi-box me-1"></i>Envanter Sistemine Erişim
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="can_access_order_system" id="addCanAccessOrder">
+                                <label class="form-check-label" for="addCanAccessOrder">
+                                    <i class="bi bi-cart me-1"></i>Sipariş Sistemine Erişim
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="can_access_parts_info" id="addCanAccessParts">
+                                <label class="form-check-label" for="addCanAccessParts">
+                                    <i class="bi bi-gear me-1"></i>Yedek Parça Sistemine Erişim
+                                </label>
+                            </div>
+                            
+                            <hr>
+                            <h6 class="mb-3"><i class="bi bi-eye me-2"></i>Görüntüleme ve Düzenleme İzinleri</h6>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="can_view_purchase_price" id="addCanViewPurchase">
+                                <label class="form-check-label" for="addCanViewPurchase">
+                                    <i class="bi bi-currency-euro me-1"></i>Geliş Fiyatlarını Görüntüleme
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="can_edit_parts_info" id="addCanEditParts">
+                                <label class="form-check-label" for="addCanEditParts">
+                                    <i class="bi bi-pencil me-1"></i>Parça Bilgilerini Düzenleme
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn-primary-custom" onclick="addUser()">
+                        <i class="bi bi-check-lg me-1"></i>Kullanıcı Ekle
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kullanıcı Düzenleme Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil me-2"></i>Kullanıcı Düzenle
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm">
+                        <input type="hidden" name="user_id" id="editUserId">
+                        <div class="mb-3">
+                            <label class="form-label">Ad Soyad</label>
+                            <input type="text" class="form-control" name="full_name" id="editFullName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kullanıcı Adı</label>
+                            <input type="text" class="form-control" name="username" id="editUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Şifre (Boş bırakın değiştirmek istemiyorsanız)</label>
+                            <input type="password" class="form-control" name="password" id="editPassword">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rol</label>
+                            <select class="form-select" name="role" id="editRole" required onchange="togglePermissions('edit')">
+                                <option value="user">Kullanıcı</option>
+                                <option value="admin">Yönetici</option>
+                            </select>
+                        </div>
+                        
+                        <div id="editPermissionsSection">
+                            <hr>
+                            <h6 class="mb-3"><i class="bi bi-key me-2"></i>Portal Erişim İzinleri</h6>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="can_access_inventory" id="editCanAccessInventory">
+                                <label class="form-check-label" for="editCanAccessInventory">
+                                    <i class="bi bi-box me-1"></i>Envanter Sistemine Erişim
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="can_access_order_system" id="editCanAccessOrder">
+                                <label class="form-check-label" for="editCanAccessOrder">
+                                    <i class="bi bi-cart me-1"></i>Sipariş Sistemine Erişim
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="can_access_parts_info" id="editCanAccessParts">
+                                <label class="form-check-label" for="editCanAccessParts">
+                                    <i class="bi bi-gear me-1"></i>Yedek Parça Sistemine Erişim
+                                </label>
+                            </div>
+                            
+                            <hr>
+                            <h6 class="mb-3"><i class="bi bi-eye me-2"></i>Görüntüleme ve Düzenleme İzinleri</h6>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="can_view_purchase_price" id="editCanViewPurchase">
+                                <label class="form-check-label" for="editCanViewPurchase">
+                                    <i class="bi bi-currency-euro me-1"></i>Geliş Fiyatlarını Görüntüleme
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="can_edit_parts_info" id="editCanEditParts">
+                                <label class="form-check-label" for="editCanEditParts">
+                                    <i class="bi bi-pencil me-1"></i>Parça Bilgilerini Düzenleme
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn-primary-custom" onclick="updateUser()">
+                        <i class="bi bi-check-lg me-1"></i>Güncelle
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bildirim Modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">
+                        <i class="bi bi-info-circle me-2"></i>Bildirim
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <p id="notificationMessage"></p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn-primary-custom" data-bs-dismiss="modal">Tamam</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showNotification(message, type = 'info') {
+            document.getElementById('notificationMessage').textContent = message;
+            const modal = new bootstrap.Modal(document.getElementById('notificationModal'));
+            modal.show();
+        }
+
+        // Rol değiştiğinde yetkileri otomatik ayarla
+        function togglePermissions(mode) {
+            const roleSelect = document.getElementById(mode === 'add' ? 'addRole' : 'editRole');
+            const isAdmin = roleSelect.value === 'admin';
+            
+            const prefix = mode === 'add' ? 'add' : 'edit';
+            const checkboxes = [
+                document.getElementById(prefix + 'CanAccessInventory'),
+                document.getElementById(prefix + 'CanAccessOrder'),
+                document.getElementById(prefix + 'CanAccessParts'),
+                document.getElementById(prefix + 'CanViewPurchase'),
+                document.getElementById(prefix + 'CanEditParts')
+            ];
+            
+            checkboxes.forEach(checkbox => {
+                if (isAdmin) {
+                    checkbox.checked = true;
+                    checkbox.disabled = true;
+                } else {
+                    checkbox.disabled = false;
+                }
+            });
+        }
+
+        async function addUser() {
+            const form = document.getElementById('addUserForm');
+            const formData = new FormData(form);
+            
+            // FormData'yı JSON'a çevir ve yetkileri ekle
+            const userData = {
+                username: formData.get('username'),
+                password: formData.get('password'),
+                fullname: formData.get('full_name'),
+                role: formData.get('role'),
+                can_access_inventory: document.getElementById('addCanAccessInventory').checked ? 1 : 0,
+                can_access_order_system: document.getElementById('addCanAccessOrder').checked ? 1 : 0,
+                can_access_parts_info: document.getElementById('addCanAccessParts').checked ? 1 : 0,
+                can_view_purchase_price: document.getElementById('addCanViewPurchase').checked ? 1 : 0,
+                can_edit_parts_info: document.getElementById('addCanEditParts').checked ? 1 : 0
+            };
+            
+            try {
+                const response = await fetch('/admin/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showNotification('Kullanıcı başarıyla eklendi!', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showNotification('Hata: ' + (data.error || data.message), 'error');
+                }
+            } catch (error) {
+                showNotification('Bağlantı hatası: ' + error.message, 'error');
+            }
+        }
+
+        async function editUser(id, username, fullName, role) {
+            document.getElementById('editUserId').value = id;
+            document.getElementById('editUsername').value = username;
+            document.getElementById('editFullName').value = fullName;
+            document.getElementById('editRole').value = role;
+            document.getElementById('editPassword').value = '';
+            
+            // Kullanıcı yetkilerini yükle
+            try {
+                const response = await fetch(`/admin/users/${id}`);
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const user = data.user;
+                    document.getElementById('editCanAccessInventory').checked = user.can_access_inventory === 1;
+                    document.getElementById('editCanAccessOrder').checked = user.can_access_order_system === 1;
+                    document.getElementById('editCanAccessParts').checked = user.can_access_parts_info === 1;
+                    document.getElementById('editCanViewPurchase').checked = user.can_view_purchase_price === 1;
+                    document.getElementById('editCanEditParts').checked = user.can_edit_parts_info === 1;
+                    
+                    // Admin ise checkboxları devre dışı bırak
+                    togglePermissions('edit');
+                }
+            } catch (error) {
+                console.error('Yetki bilgileri yüklenemedi:', error);
+            }
+            
+            const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+            modal.show();
+        }
+
+        async function updateUser() {
+            const form = document.getElementById('editUserForm');
+            const formData = new FormData(form);
+            const userId = formData.get('user_id');
+            
+            // FormData'yı JSON'a çevir ve yetkileri ekle
+            const userData = {
+                fullname: formData.get('full_name'),
+                role: formData.get('role'),
+                can_access_inventory: document.getElementById('editCanAccessInventory').checked ? 1 : 0,
+                can_access_order_system: document.getElementById('editCanAccessOrder').checked ? 1 : 0,
+                can_access_parts_info: document.getElementById('editCanAccessParts').checked ? 1 : 0,
+                can_view_purchase_price: document.getElementById('editCanViewPurchase').checked ? 1 : 0,
+                can_edit_parts_info: document.getElementById('editCanEditParts').checked ? 1 : 0
+            };
+            
+            try {
+                const response = await fetch(`/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showNotification('Kullanıcı başarıyla güncellendi!', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showNotification('Hata: ' + (data.error || data.message), 'error');
+                }
+            } catch (error) {
+                showNotification('Bağlantı hatası: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteUser(id, fullName) {
+            if (confirm(`"${fullName}" kullanıcısını silmek istediğinizden emin misiniz?`)) {
+                try {
+                    const response = await fetch(`/admin/users/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        showNotification('Kullanıcı başarıyla silindi!', 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showNotification('Hata: ' + data.message, 'error');
+                    }
+                } catch (error) {
+                    showNotification('Bağlantı hatası oluştu.', 'error');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

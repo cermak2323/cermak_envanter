@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Scanner - Sayım Sistemi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f5f5;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .scanner-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Üst Navigasyon Barı */
+        .top-nav {
+            background: white;
+            border-radius: 8px;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e5e5e5;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-home {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-home:hover {
+            background: #b91c1c;
+            color: white;
+        }
+
+        .btn-logout {
+            background: white;
+            color: #dc2626;
+            border: 2px solid #dc2626;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        .scanner-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border: 1px solid #e5e5e5;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .card-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #dc2626;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .card-title i {
+            font-size: 32px;
+        }
+
+        .scanner-input {
+            font-size: 28px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid #dc2626;
+            border-radius: 8px;
+            background: white;
+            font-weight: bold;
+        }
+
+        .scanner-input:focus {
+            outline: none;
+            border-color: #b91c1c;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #dc2626;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .scan-result {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border-left: 4px solid;
+        }
+
+        .success-scan {
+            background: #d1fae5;
+            border-left-color: #10b981;
+        }
+
+        .duplicate-scan {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+        }
+
+        .error-scan {
+            background: #fee2e2;
+            border-left-color: #dc2626;
+        }
+
+        .package-badge {
+            background: #dc2626;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+
+        .recent-scans {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .recent-scans::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .recent-scans::-webkit-scrollbar-track {
+            background: #f5f5f5;
+        }
+
+        .recent-scans::-webkit-scrollbar-thumb {
+            background: #dc2626;
+            border-radius: 4px;
+        }
+
+        .sound-toggle {
+            background: white;
+            border: 2px solid #dc2626;
+            color: #dc2626;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 22px;
+        }
+
+        .sound-toggle:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-finish {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-finish:hover {
+            background: #059669;
+        }
+
+        .btn-excel {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-excel:hover {
+            background: #2563eb;
+        }
+
+        .btn-dashboard {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .btn-dashboard:hover {
+            background: #7c3aed;
+        }
+
+        .session-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .session-info-card {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #dc2626;
+            border: 1px solid #e5e5e5;
+        }
+
+        .session-info-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .session-info-value {
+            font-size: 20px;
+            color: #dc2626;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Üst Navigasyon -->
+    <div class="scanner-container">
+        <div class="top-nav">
+            <div class="nav-left">
+                <a href="/inventory" class="nav-btn btn-home">
+                    <i class="bi bi-house-fill"></i> Ana Sayfa
+                </a>
+                <a href="/" class="nav-btn" style="background: #6c757d;">
+                    <i class="bi bi-grid-3x3-gap"></i> Portala Dön
+                </a>
+                <a href="/logout" class="nav-btn btn-logout">
+                    <i class="bi bi-box-arrow-left"></i> Çıkış
+                </a>
+            </div>
+            <div class="sound-toggle" id="soundToggle" onclick="toggleSound()" title="Ses Açık/Kapalı">
+                <i class="bi bi-volume-up" id="soundIcon"></i>
+            </div>
+        </div>
+
+        <!-- Ana Scanner Kartı -->
+        <div class="scanner-card">
+            <div class="card-header">
+                <h1 class="card-title">
+                    <i class="bi bi-qr-code-scan"></i>
+                    QR Scanner Sayım Sistemi
+                </h1>
+                <p class="text-muted mb-0" style="font-size: 16px; font-weight: 500;" id="sessionInfo">
+                    <i class="bi bi-hourglass-split"></i> Sayım bilgileri yükleniyor...
+                </p>
+            </div>
+
+            <!-- Session Detay Bilgileri -->
+            <div class="session-info-grid">
+                <div class="session-info-card">
+                    <div class="session-info-label">Sayım Adı</div>
+                    <div class="session-info-value" id="sessionName">-</div>
+                </div>
+                <div class="session-info-card">
+                    <div class="session-info-label">Süre</div>
+                    <div class="session-info-value" id="sessionDuration">0s 0dk</div>
+                </div>
+                <div class="session-info-card">
+                    <div class="session-info-label">İlerleme</div>
+                    <div class="session-info-value" id="sessionProgress">0%</div>
+                </div>
+                <div class="session-info-card">
+                    <div class="session-info-label">Beklenen / Sayılan</div>
+                    <div class="session-info-value">
+                        <span id="expectedCount">0</span> / <span id="scannedCount">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR Input -->
+            <div class="mt-4">
+                <input type="text" 
+                       id="scannerInput" 
+                       class="form-control scanner-input" 
+                       placeholder="QR Kodu Okutun..." 
+                       autofocus
+                       autocomplete="off"
+                       accept-charset="UTF-8">
+            </div>
+
+            <!-- Aksiyon Butonları -->
+            <div class="action-buttons mt-4">
+                <a href="#" class="action-btn btn-dashboard" onclick="openDashboard(); return false;">
+                    <i class="bi bi-speedometer2"></i> Canlı Dashboard
+                </a>
+                <button class="action-btn btn-excel" onclick="downloadExcel()">
+                    <i class="bi bi-file-earmark-excel-fill"></i> Excel Raporu İndir
+                </button>
+                <button class="action-btn btn-finish" onclick="finishCount()">
+                    <i class="bi bi-check-circle-fill"></i> Sayımı Bitir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.5.0/dist/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let totalScans = 0;
+        let packageScans = 0;
+        let duplicateScans = 0;
+        let soundEnabled = true;
+        let sessionId = null;
+        let sessionData = null;
+        let updateInterval = null;
+        let autoSubmitTimer = null;
+        let reportCache = []; // Rapor cache
+        let filteredReportCache = []; // Filtrelenen rapor cache
+        let currentSearchText = ''; // Güncel arama metni
+        let lastReportUpdate = 0; // Son rapor güncelleme zamanı
+        let recentScansCache = []; // Son taramalar cache
+        const MAX_RECENT_SCANS = 1000; // Son taramalar limiti (sayfalı sistem)
+        const REPORT_UPDATE_INTERVAL = 30000; // 30 saniye (rapor güncelleme)
+        const SESSION_UPDATE_INTERVAL = 60000; // 60 saniye (session güncelleme)
+        
+        // Sayfalama değişkenleri
+        let reportCurrentPage = 1;
+        let scansCurrentPage = 1;
+        const ITEMS_PER_PAGE = 25;
+        
+        const socket = io();
+        const scannerInput = document.getElementById('scannerInput');
+
+        // URL'den session_id al
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlSessionId = urlParams.get('session_id');
+
+        // LocalStorage'dan verileri yükle
+        function loadStatsFromStorage() {
+            const storageKey = `scanner_stats_${urlSessionId}`;
+            const savedData = localStorage.getItem(storageKey);
+            
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    totalScans = data.totalScans || 0;
+                    packageScans = data.packageScans || 0;
+                    duplicateScans = data.duplicateScans || 0;
+                    recentScansCache = data.recentScans || [];
+                    
+                    console.log('Veriler localStorage\'dan yüklendi:', data);
+                    updateStats();
+                    renderRecentScans();
+                } catch (e) {
+                    console.error('LocalStorage okuma hatası:', e);
+                }
+            }
+        }
+
+        // LocalStorage'a verileri kaydet
+        function saveStatsToStorage() {
+            const storageKey = `scanner_stats_${sessionId}`;
+            const data = {
+                totalScans,
+                packageScans,
+                duplicateScans,
+                recentScans: recentScansCache,
+                lastUpdate: new Date().toISOString()
+            };
+            
+            try {
+                localStorage.setItem(storageKey, JSON.stringify(data));
+                console.log('Veriler localStorage\'a kaydedildi');
+            } catch (e) {
+                console.error('LocalStorage kaydetme hatası:', e);
+            }
+        }
+
+        // Sayfa yüklendiğinde
+        window.addEventListener('load', async function() {
+            // LocalStorage'dan sayaçları yükle
+            loadStatsFromStorage();
+            
+            await loadSessionInfo();
+            startSessionUpdateTimer();
+            
+            // Sayfa kapatılırken verileri kaydet
+            window.addEventListener('beforeunload', saveStatsToStorage);
+        });
+
+        async function loadSessionInfo() {
+            try {
+                // Önce aktif sayımı kontrol et
+                const response = await fetch('/api/get_active_count_session');
+                const data = await response.json();
+                
+                if (data.success && data.has_active) {
+                    sessionData = data.session;
+                    sessionId = data.session.id;
+                    updateSessionDisplay();
+                    
+                    // Raporu yükle
+                    await loadCountReport();
+                } else {
+                    // Aktif sayım yok
+                    document.getElementById('sessionInfo').innerHTML = 
+                        '<span class="text-danger">Aktif sayım bulunamadı! Admin panelinden sayım başlatın.</span>';
+                }
+            } catch (error) {
+                console.error('Session yükleme hatası:', error);
+            }
+        }
+
+        // Rapor artık live_dashboard'da gösteriliyor
+        async function loadCountReport() {
+            // Rapor live_dashboard'a taşındı
+            console.log('Report loading skipped - moved to live_dashboard');
+        }
+
+        // Rapor render etme (artık live_dashboard'da)
+        function renderReport() {
+            console.log('Report rendering skipped - moved to live_dashboard');
+        }
+
+        // Rapor arama (artık live_dashboard'da)
+        function searchReport() {
+            console.log('Report search skipped - moved to live_dashboard');
+        }
+
+        // Rapor sayfa değiştir (artık live_dashboard'da)
+        function changeReportPage(page) {
+            console.log('Report page change skipped - moved to live_dashboard');
+        }
+
+        // Placeholder for removed functions
+        function noopFunction() {}
+
+        // Eski rapor fonksiyonları - artık live_dashboard'da
+        function performSearch() { console.log('Moved to live_dashboard'); }
+        function clearSearch() { console.log('Moved to live_dashboard'); }
+        function filterReport() { console.log('Moved to live_dashboard'); }
+
+        function updateSessionDisplay() {
+            if (!sessionData) return;
+
+            // Başlık
+            document.getElementById('sessionInfo').textContent = `${sessionData.name}`;
+            
+            // Detaylar
+            document.getElementById('sessionName').textContent = sessionData.name;
+            
+            const hours = Math.floor(sessionData.duration_seconds / 3600);
+            const minutes = Math.floor((sessionData.duration_seconds % 3600) / 60);
+            document.getElementById('sessionDuration').textContent = `${hours}s ${minutes}dk`;
+            
+            document.getElementById('sessionProgress').textContent = `${sessionData.percentage}%`;
+            
+            // Beklenen ve sayılan - DOĞRU SIRADA
+            document.getElementById('expectedCount').textContent = sessionData.total_expected || 0;
+            document.getElementById('scannedCount').textContent = sessionData.total_scanned || 0;
+        }
+
+        function startSessionUpdateTimer() {
+            // Her 60 saniyede bir session güncelle (rapor 30 saniyede bir)
+            updateInterval = setInterval(async () => {
+                await loadSessionInfo();
+            }, SESSION_UPDATE_INTERVAL);
+            
+            // Rapor güncellemesi (daha sık ama cache'li)
+            setInterval(async () => {
+                await loadCountReport();
+            }, REPORT_UPDATE_INTERVAL);
+        }
+
+        // Ses efektleri
+        const successSound = new Audio('data:audio/wav;base64,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');
+        const errorSound = new Audio('data:audio/wav;base64,UklGRhQFAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YfAEAAAAhYaIiYmIhYJ/fHl3dnV2eHt+gIOGiImIhYJ+e3l3dnZ4e36Bg4aIiYiEgXx5d3Z2eHt/goWIiYiFgX15d3Z3eXt/goWIiYiFgX15d3Z3eXt/goWIiYiFgn56d3Z3eXt/goWIiIiEgX15d3Z3eXx/goWIiIiFgX16eHZ3eXx/g4WIiIiFgX16eHd3eXx/g4WIiIiFgn56eHd3eXx/g4WIiIiFgn56eHd3eXx/g4WIiIiFgn96eHd3eXx/g4WHiIiFgn96eHd4eXx/g4WHiIiFg396eXd4eXx/g4WHiIiFg396eXh4eXx/g4WHiIiFg396eXh4eXx/g4WHh4iFg396eXh4eXx/goWHh4iFg396eXh4eXx/goWHh4iFhH96eXh4eXx/goWHh4iFhH96eXh5eXx/goWHh4iFhH96eXh5eXx/goWHh4iFhH96eXh5eXx/goWHh4iFhH96eXh5eXx/goWHh4iFhH96eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIB6eXh5eXx/goWHh4iFhIA=');
+        const duplicateSound = new Audio('data:audio/wav;base64,UklGRhQFAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YfAEAAAAe3x9fn9/f359fHt6eXl5eXl6e3x9fn9/gICAgH9+fXx7enl5eXl5ent8fX5/gICAgIB/fn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgICAfn18e3p5eXl5eXp7fH1+f4CAgA==');
+
+        // Scanner input event - Enter tuşu
+        scannerInput.addEventListener('keypress', async function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Form submit'i engelle
+                clearTimeout(autoSubmitTimer); // Timer'ı iptal et
+                let qrCode = this.value.trim();
+                if (qrCode) {
+                    // ⚡ TÜRKÇE KARAKTER TAMİRİ - Scanner İ harfini okuyamıyor
+                    // ANTF -> ANTİF (F harfinden önce İ olmalı)
+                    // Yaygın Türkçe kelimeler için otomatik düzeltme
+                    if (qrCode.match(/^ANTF\d/i)) {
+                        qrCode = qrCode.replace(/^ANTF/i, 'ANTİF');
+                        console.log('🔧 Türkçe düzeltme: ANTF -> ANTİF');
+                    }
+                    
+                    // ⚡ QR DÖNÜŞÜM - Scanner ? ve * okur, düzeltiriz
+                    // ? -> _  (ANTİF03?6 -> ANTİF03_6)
+                    // * -> -  (Y129648*01780 -> Y129648-01780)
+                    const originalCode = qrCode;
+                    qrCode = qrCode.replace(/\?/g, '_').replace(/\*/g, '-');
+                    
+                    // Debug log
+                    if (originalCode !== qrCode) {
+                        console.log('QR Transform:', originalCode, '->', qrCode);
+                    }
+                    
+                    // 🔧 SADECE SAYIM YOKKEN sondaki _X kaldır (sayımda _3, _4 önemli!)
+                    let cleanedCode = qrCode;
+                    if (!sessionId && qrCode.includes('_')) {
+                        const parts = qrCode.split('_');
+                        if (parts.length > 1 && parts[parts.length - 1].length === 1 && /^\d$/.test(parts[parts.length - 1])) {
+                            cleanedCode = parts.slice(0, -1).join('_');
+                        }
+                    }
+                    
+                    // 🔍 KONTROL: Sayım modu varsa sayım yap, yoksa part_info'ya git
+                    if (!sessionId) {
+                        // Sayım yok, direkt part detay sayfasına git
+                        window.location.href = `/part_info/${cleanedCode}`;
+                    } else {
+                        // Sayım modu aktif, normal tarama işlemi yap
+                        await processScan(cleanedCode);
+                    }
+                    this.value = '';
+                }
+            }
+        });
+
+        // Scanner input event - Otomatik gönderim (QR scanner Enter basmıyorsa)
+        scannerInput.addEventListener('input', function(e) {
+            clearTimeout(autoSubmitTimer);
+            
+            const value = this.value.trim();
+            if (value.length > 3) { // En az 4 karakter varsa
+                // 100ms sonra otomatik gönder - DAHA HIZLI (önceden 300ms)
+                autoSubmitTimer = setTimeout(async () => {
+                    let trimmedValue = this.value.trim();
+                    if (trimmedValue) {
+                        // ⚡ TÜRKÇE KARAKTER TAMİRİ
+                        if (trimmedValue.match(/^ANTF\d/i)) {
+                            trimmedValue = trimmedValue.replace(/^ANTF/i, 'ANTİF');
+                            console.log('🔧 Türkçe düzeltme (auto): ANTF -> ANTİF');
+                        }
+                        
+                        // ⚡ QR DÖNÜŞÜM - Scanner ? ve * okur, düzeltiriz
+                        const originalValue = trimmedValue;
+                        trimmedValue = trimmedValue.replace(/\?/g, '_').replace(/\*/g, '-');
+                        
+                        // Debug log
+                        if (originalValue !== trimmedValue) {
+                            console.log('QR Transform (auto):', originalValue, '->', trimmedValue);
+                        }
+                        
+                        // 🔧 SADECE SAYIM YOKKEN sondaki _X kaldır
+                        let cleanedCode = trimmedValue;
+                        if (!sessionId && trimmedValue.includes('_')) {
+                            const parts = trimmedValue.split('_');
+                            if (parts.length > 1 && parts[parts.length - 1].length === 1 && /^\d$/.test(parts[parts.length - 1])) {
+                                cleanedCode = parts.slice(0, -1).join('_');
+                            }
+                        }
+                        
+                        // 🔍 KONTROL: Sayım modu varsa sayım yap, yoksa part_info'ya git
+                        if (!sessionId) {
+                            window.location.href = `/part_info/${cleanedCode}`;
+                        } else {
+                            await processScan(cleanedCode);
+                        }
+                        this.value = '';
+                    }
+                }, 100); // 100ms - HIZLI OKUMA
+            }
+        });
+
+        // QR tarama işleme
+        async function processScan(qrCode) {
+            if (!sessionId) {
+                alert('Aktif sayım yok! Lütfen admin panelinden sayım başlatın.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/scan_qr', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        qr_id: qrCode,
+                        session_id: sessionId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Backend'den gelen GERÇEK toplam sayıyı kullan (paket için önemli!)
+                    if (data.total_scans) {
+                        totalScans = data.total_scans;
+                    } else {
+                        totalScans++;
+                    }
+                    
+                    if (data.is_package) packageScans++;
+                    
+                    addScanResult(data, 'success');
+                    playSound(successSound);
+                    
+                    // ANLIK GÜNCELLEME: Her taramada session bilgilerini güncelle
+                    await loadSessionInfo();
+                    
+                    // ⚡ PERFORMANS: Her 50 taramada bir rapor güncelle
+                    if (totalScans % 50 === 0) {
+                        lastReportUpdate = 0; // Cache'i invalidate et
+                        await loadCountReport();
+                    }
+                    
+                    // Her taramada localStorage'a kaydet
+                    saveStatsToStorage();
+                } else if (data.duplicate) {
+                    duplicateScans++;
+                    addScanResult(data, 'duplicate');
+                    playSound(duplicateSound);
+                    
+                    // Duplicate'te de ilerlemeyi güncelle
+                    await loadSessionInfo();
+                    saveStatsToStorage();
+                } else {
+                    addScanResult(data, 'error');
+                    playSound(errorSound);
+                }
+
+                updateStats();
+            } catch (error) {
+                addScanResult({ message: 'Bağlantı hatası: ' + error.message }, 'error');
+                playSound(errorSound);
+            }
+        }
+
+        // Scan sonucu ekle
+        function addScanResult(data, type) {
+            const scanDiv = document.createElement('div');
+            scanDiv.className = `scan-result ${type}-scan`;
+            
+            let icon = type === 'success' ? '[OK]' : (type === 'duplicate' ? '[DUP]' : '[ERR]');
+            let packageBadge = data.is_package ? '<span class="package-badge">PAKET</span>' : '';
+            
+            // Cache'e ekle
+            recentScansCache.unshift({
+                icon: icon,
+                item_name: data.item_name || 'QR Kod',
+                packageBadge: packageBadge,
+                package_items: data.package_items,
+                message: data.message,
+                time: new Date().toLocaleTimeString('tr-TR')
+            });
+
+            // Max 1000 cache'de tut
+            if (recentScansCache.length > MAX_RECENT_SCANS) {
+                recentScansCache.pop();
+            }
+            
+            // Yeni tarama geldiğinde ilk sayfaya dön
+            scansCurrentPage = 1;
+
+            // Render et (batch DOM update)
+            renderRecentScans();
+        }
+
+        // Son taramaları render et (artık live_dashboard'da gösteriliyor)
+        function renderRecentScans() {
+            // Son taramalar live_dashboard'a taşındı
+            console.log('Recent scans count:', recentScansCache.length);
+        }
+        
+        // Son taramalar sayfa değiştir
+        function changeScansPage(page) {
+            scansCurrentPage = page;
+            renderRecentScans();
+        }
+
+        // İstatistikleri güncelle (artık dashboard'da gösteriliyor)
+        function updateStats() {
+            // İstatistikler live_dashboard'a taşındı
+            console.log('Stats:', { totalScans, packageScans, duplicateScans });
+        }
+
+        // Ses açma/kapama
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            icon.className = soundEnabled ? 'bi bi-volume-up' : 'bi bi-volume-mute';
+        }
+
+        function playSound(sound) {
+            if (soundEnabled) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log('Ses çalınamadı:', e));
+            }
+        }
+
+        // Sayımı bitir
+        async function finishCount() {
+            if (!confirm('Sayımı bitirmek istediğinize emin misiniz?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/finish_count', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({session_id: sessionId})
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(data.message);
+                    // İstatistikleri sıfırla
+                    totalScans = 0;
+                    packageScans = 0;
+                    duplicateScans = 0;
+                    recentScansCache = []; // Cache temizle
+                    updateStats();
+                    
+                    // LocalStorage'ı temizle
+                    const storageKey = `scanner_stats_${sessionId}`;
+                    localStorage.removeItem(storageKey);
+                    
+                    // Yeni session ID oluştur
+                    sessionId = Date.now();
+                } else {
+                    alert('Hata: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Finish count error:', error);
+                alert('Sayım bitirilemedi: ' + error.message);
+            }
+        }
+
+        // Canlı Dashboard aç
+        function openDashboard() {
+            if (!sessionId) {
+                alert('Aktif sayım bulunamadı!');
+                return;
+            }
+            
+            window.open(`/live_dashboard?session_id=${sessionId}`, '_blank');
+        }
+
+        // Excel indir
+        function downloadExcel() {
+            if (!sessionId) {
+                alert('Aktif sayım bulunamadı!');
+                return;
+            }
+            
+            window.location.href = `/api/download_count_excel/${sessionId}`;
+        }
+
+        // Socket.IO bağlantısı
+        socket.on('connect', function() {
+            console.log('Socket.IO bağlandı');
+        });
+
+        // ⚠️ CONSOLE KORUMASI - QR kodları console'a yazılmasın!
+        // Console'da QR kod yazmayı engelle
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        // Console'a yazarken QR kod formatını kontrol et
+        console.log = function(...args) {
+            const msg = args.join(' ');
+            // QR kod formatı tespit edilirse input'a aktar
+            // Basit format: 2+ karakter, harf/rakam/özel karakter içeren
+            if (msg && msg.length >= 2 && msg.match(/^[A-Z0-9İÜŞÇĞÖ\?\*_\-\/]+$/i)) {
+                document.getElementById('scannerInput').value = msg;
+                document.getElementById('scannerInput').dispatchEvent(new KeyboardEvent('keypress', {key: 'Enter'}));
+                return;
+            }
+            originalLog.apply(console, args);
+        };
+
+        // Sayfa odağı
+        window.addEventListener('focus', () => {
+            scannerInput.focus();
+        });
+        
+        // Click ile de focus
+        document.addEventListener('click', () => {
+            if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'BUTTON') {
+                scannerInput.focus();
+            }
+        });
+
+        // İlk odaklanma
+        setTimeout(() => scannerInput.focus(), 500);
+        
+        // Her 2 saniyede bir focus kontrol et
+        setInterval(() => {
+            if (document.activeElement !== scannerInput) {
+                scannerInput.focus();
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

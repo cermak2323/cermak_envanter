@@ -1,0 +1,41 @@
+{
+  "name": "envanterqr",
+  "version": "1.0.0",
+  "description": "Cermak Takeuchi Envanter QR Sistemi - Electron Desktop Arayüz",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win"
+  },
+  "author": "Cermak Takeuchi",
+  "license": "ISC",
+  "productName": "Cermak Envanter QR",
+  "devDependencies": {
+    "electron": "^32.1.2",
+    "electron-builder": "^25.0.5"
+  },
+  "build": {
+    "appId": "com.cermak.envanterqr",
+    "productName": "Cermak Envanter QR",
+    "copyright": "© 2025 Cermak Takeuchi",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "cermaktakeuchi_logo.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Cermak Envanter QR",
+      "installerIcon": "cermaktakeuchi_logo.ico",
+      "uninstallerIcon": "cermaktakeuchi_logo.ico",
+      "installerHeaderIcon": "cermaktakeuchi_logo.ico"
+    }
+  }
+}

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ part.part_name }} - Parça Detayı</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --cermak-primary: #dc3545;
+            --cermak-primary-dark: #c82333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(180deg, #f5f5f7 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 50%, #bd2130 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .info-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .info-item .value {
+            font-size: 1.125rem;
+            color: #212529;
+            font-weight: 600;
+        }
+
+        .qr-generator-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 2rem;
+            border: 2px solid var(--cermak-primary);
+        }
+
+        .qr-generator-card h4 {
+            color: var(--cermak-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .quantity-input-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .quantity-input {
+            flex: 1;
+            max-width: 200px;
+            padding: 0.75rem;
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .btn-generate {
+            background: var(--cermak-primary);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            font-size: 1.125rem;
+        }
+
+        .btn-generate:hover {
+            background: var(--cermak-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .qr-codes-table-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--cermak-primary) 0%, var(--cermak-primary-dark) 100%);
+            color: white;
+        }
+
+        .qr-table {
+            width: 100%;
+        }
+
+        .qr-table thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .qr-table th {
+            padding: 1rem;
+            font-weight: 600;
+            color: #495057;
+            text-align: left;
+        }
+
+        .qr-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .badge-status {
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .badge-used {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-unused {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-back {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 0.65rem 1.25rem;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.25);
+            color: white;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div>
+                <h1 style="margin: 0; font-size: 1.75rem; font-weight: 700;">
+                    <i class="bi bi-box-seam me-2"></i>
+                    {{ part.part_name }}
+                </h1>
+                <p style="margin: 0; opacity: 0.9; font-size: 1rem;">{{ part.part_code }}</p>
+            </div>
+            <a href="/parts" class="btn-back">
+                <i class="bi bi-arrow-left"></i>
+                Parça Listesi
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Parça Bilgileri -->
+        <div class="info-card">
+            <h4 style="margin-bottom: 1.5rem; color: #212529;">
+                <i class="bi bi-info-circle me-2"></i>
+                Parça Bilgileri
+            </h4>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Parça Kodu</label>
+                    <div class="value">{{ part.part_code }}</div>
+                </div>
+                <div class="info-item">
+                    <label>Parça Adı</label>
+                    <div class="value">{{ part.part_name }}</div>
+                </div>
+                <div class="info-item">
+                    <label>Toplam QR Kod</label>
+                    <div class="value" style="color: var(--cermak-primary);">
+                        <i class="bi bi-qr-code me-2"></i>
+                        {{ total_qr_count }}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label>Kullanılmayan QR</label>
+                    <div class="value" style="color: #28a745;">
+                        <i class="bi bi-check-circle me-2"></i>
+                        {{ qr_codes|length }}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label>Kullanılan QR</label>
+                    <div class="value" style="color: #6c757d;">
+                        <i class="bi bi-x-circle me-2"></i>
+                        {{ used_qr_count }}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label>Oluşturulma Tarihi</label>
+                    <div class="value">{{ part.created_at.strftime('%Y-%m-%d') if part.created_at else '-' }}</div>
+                </div>
+            </div>
+            {% if part.description %}
+            <div class="info-item" style="margin-top: 1.5rem;">
+                <label>Açıklama</label>
+                <div class="value">{{ part.description }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- QR Kod Üretme -->
+        <div class="qr-generator-card">
+            <h4>
+                <i class="bi bi-qr-code-scan me-2"></i>
+                QR Kod Üret
+            </h4>
+            <p style="color: #6c757d; margin-bottom: 1.5rem;">
+                Her tıklamada 1 adet QR kod üretilir. Kullanılan QR kodlar otomatik olarak listeden kaldırılır.
+            </p>
+            
+            <div id="alertContainer"></div>
+
+
+            <div class="quantity-input-group" style="margin-bottom: 1rem;">
+                <input id="quantityInput" type="number" class="quantity-input" min="1" max="500" value="1" title="Üretilecek adet">
+                <div style="color: #6c757d; font-size: 0.95rem;">Adet (ör. 30)</div>
+            </div>
+
+            <button id="generateBtn" class="btn-generate" onclick="generateSingleQR()" style="font-size: 1.25rem; padding: 1rem 2.5rem;">
+                <span class="loading-spinner spinner-border spinner-border-sm" role="status"></span>
+                <i class="bi bi-plus-circle-fill"></i>
+                QR Kod Üret
+            </button>
+
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 12px; margin-top: 1.5rem;">
+                <small style="color: #6c757d;">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Not:</strong> QR kodları otomatik olarak sırayla oluşturulur ({{ part.part_code }}_1, {{ part.part_code }}_2, ...)
+                    <br>
+                    <i class="bi bi-folder me-2"></i>
+                    <strong>Konum:</strong> static/qr_codes/{{ part.part_code }}/
+                </small>
+            </div>
+        </div>
+
+        <!-- QR Kodları Tablosu -->
+        <div class="qr-codes-table-container">
+            <div class="table-header">
+                <h5 style="margin: 0;">
+                    <i class="bi bi-list-check me-2"></i>
+                    Kullanılmayan QR Kodları (<span id="qrCount">{{ qr_codes|length }}</span>)
+                </h5>
+                <small style="opacity: 0.8;">Kullanılan QR kodlar otomatik olarak gizlenir</small>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="qr-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>QR Kod</th>
+                            <th>Oluşturulma</th>
+                            <th>Dosya Yolu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="qrTableBody">
+                        {% if qr_codes %}
+                            {% for qr in qr_codes %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><strong>{{ qr.qr_id }}</strong></td>
+                                <td>{{ qr.created_at.strftime('%Y-%m-%d %H:%M:%S') if qr.created_at else '-' }}</td>
+                                <td>
+                                    <code style="font-size: 0.875rem; color: #6c757d;">
+                                        static/qr_codes/{{ part.part_code }}/{{ qr.qr_id }}.png
+                                    </code>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4">
+                                    <div class="empty-state">
+                                        <i class="bi bi-qr-code"></i>
+                                        <h6>Henüz kullanılabilir QR kod yok</h6>
+                                        <p>Yukarıdaki butondan QR kod üretebilirsiniz</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Preview Modal -->
+    <div class="modal fade" id="qrPreviewModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 16px; border: none;">
+                <div class="modal-header" style="background: var(--cermak-primary); color: white; border-radius: 16px 16px 0 0;">
+                    <h5 class="modal-title">
+                        <i class="bi bi-qr-code-scan me-2"></i>
+                        QR Kod Oluşturuldu
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center" style="padding: 2rem;">
+                    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                        <img id="qrPreviewImage" src="" alt="QR Code" style="max-width: 100%; height: auto; border: 3px solid var(--cermak-primary); border-radius: 8px;">
+                    </div>
+                    <h5 id="qrPreviewId" style="color: var(--cermak-primary); margin-bottom: 1.5rem;"></h5>
+                    
+                    <div class="d-flex gap-2 justify-content-center flex-wrap">
+                        <a id="qrDownloadLink" href="" download="" class="btn btn-success" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
+                            <i class="bi bi-download me-2"></i>
+                            QR Kodunu İndir
+                        </a>
+                        <button id="tsplPrintBtn" onclick="printQRWithTSPL()" class="btn btn-primary" style="border-radius: 12px; padding: 0.75rem 1.5rem; display: none;">
+                            <i class="bi bi-printer-fill me-2"></i>
+                            Yazdır
+                        </button>
+                        <button id="markUsedBtn" onclick="markQRAsUsed()" class="btn btn-warning" style="border-radius: 12px; padding: 0.75rem 1.5rem;">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Kullanıldı İşaretle
+                        </button>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3" style="border-radius: 12px;">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <small>QR kodu kullanıldı olarak işaretlerseniz listeden kaldırılır</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQRId = null;
+        let currentQRImageUrl = null;
+        let currentQuantity = 1;  // Store quantity for print
+        let generatedQRs = [];    // Store all generated QR IDs for printing
+
+        async function generateSingleQR() {
+            const btn = document.getElementById('generateBtn');
+            const spinner = btn.querySelector('.loading-spinner');
+            const alertContainer = document.getElementById('alertContainer');
+
+            // Butonu devre dışı bırak
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            try {
+                const qty = parseInt(document.getElementById('quantityInput').value || '1', 10) || 1;
+                
+                const response = await fetch('/generate_qr/{{ part.part_code }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        quantity: qty
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Store quantity for later printing
+                    currentQuantity = qty;
+                    
+                    // Çoklu QR üretildiyse galeri göster
+                    const modalEl = document.getElementById('qrPreviewModal');
+                    const modalBody = modalEl.querySelector('.modal-body');
+                    const galleryContainerId = 'qrPreviewGallery';
+
+                    let gallery = document.getElementById(galleryContainerId);
+                    if (gallery) gallery.remove();
+
+                    if (Array.isArray(data.generated) && data.generated.length > 1) {
+                        // Store all generated QRs for printing
+                        generatedQRs = data.generated.map(item => item.qr_id);
+                        
+                        gallery = document.createElement('div');
+                        gallery.id = galleryContainerId;
+                        gallery.style.display = 'grid';
+                        gallery.style.gridTemplateColumns = 'repeat(auto-fit, minmax(180px, 1fr))';
+                        gallery.style.gap = '12px';
+                        gallery.style.marginBottom = '12px';
+
+                        data.generated.forEach(item => {
+                            const card = document.createElement('div');
+                            card.style.background = '#fff';
+                            card.style.padding = '8px';
+                            card.style.borderRadius = '8px';
+                            card.style.textAlign = 'center';
+                            card.style.border = '1px solid rgba(0,0,0,0.05)';
+
+                            const img = document.createElement('img');
+                            img.src = item.qr_image_url;
+                            img.alt = item.qr_id;
+                            img.style.maxWidth = '100%';
+                            img.style.height = 'auto';
+                            img.style.border = '2px solid var(--cermak-primary)';
+                            img.style.borderRadius = '6px';
+
+                            const caption = document.createElement('div');
+                            caption.style.marginTop = '8px';
+                            caption.style.fontWeight = '600';
+                            caption.textContent = item.qr_id;
+
+                            const dl = document.createElement('a');
+                            dl.href = item.qr_image_url;
+                            dl.download = `${item.qr_id}.png`;
+                            dl.className = 'btn btn-sm btn-success';
+                            dl.style.marginTop = '8px';
+                            dl.textContent = 'İndir';
+
+                            card.appendChild(img);
+                            card.appendChild(caption);
+                            card.appendChild(dl);
+                            gallery.appendChild(card);
+                        });
+
+                        modalBody.insertBefore(gallery, modalBody.querySelector('.d-flex'));
+
+                        // ZIP link
+                        const downloadLink = document.getElementById('qrDownloadLink');
+                        if (data.zip_url) {
+                            downloadLink.href = data.zip_url;
+                            downloadLink.download = `qr_bulk_{{ part.part_code }}.zip`;
+                            downloadLink.textContent = 'Tümünü ZIP olarak İndir';
+                            downloadLink.className = 'btn btn-success';
+                        } else {
+                            downloadLink.href = '#';
+                            downloadLink.className = 'btn btn-secondary disabled';
+                            downloadLink.textContent = 'ZIP yok';
+                        }
+
+                        // Show print button for all QRs
+                        document.getElementById('tsplPrintBtn').style.display = 'inline-block';
+                        // Set first QR as preview
+                        currentQRId = data.generated[0].qr_id;
+
+                        const modal = new bootstrap.Modal(modalEl);
+                        modal.show();
+
+                    } else {
+                        // Tek kayıt ise mevcut modal yapısını kullan
+                        const item = (Array.isArray(data.generated) && data.generated[0]) || { qr_id: data.qr_id, qr_image_url: data.qr_image_url };
+                        // Store in array for consistent printing
+                        generatedQRs = [item.qr_id];
+                        currentQRId = item.qr_id;
+                        currentQRImageUrl = item.qr_image_url;
+                        document.getElementById('qrPreviewImage').src = item.qr_image_url;
+                        document.getElementById('qrPreviewId').textContent = item.qr_id;
+                        document.getElementById('qrDownloadLink').href = item.qr_image_url;
+                        document.getElementById('qrDownloadLink').download = `${item.qr_id}.png`;
+                        
+                        // Print butonu göster (sadece tek QR için)
+                        document.getElementById('tsplPrintBtn').style.display = 'inline-block';
+
+                        const modal = new bootstrap.Modal(modalEl);
+                        modal.show();
+                    }
+
+                    btn.disabled = false;
+                    spinner.style.display = 'none';
+                } else {
+                    showAlert('❌ ' + (data.error || 'QR kod üretilirken hata oluştu'), 'danger');
+                    btn.disabled = false;
+                    spinner.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+                showAlert('❌ Bağlantı hatası oluştu', 'danger');
+                btn.disabled = false;
+                spinner.style.display = 'none';
+            }
+        }
+
+        async function printQRWithTSPL() {
+            if (!generatedQRs || generatedQRs.length === 0) return;
+            
+            const btn = document.getElementById('tsplPrintBtn');
+            btn.disabled = true;
+            
+            try {
+                // Print each generated QR once (not quantity times the same QR)
+                let successCount = 0;
+                for (const qrId of generatedQRs) {
+                    const response = await fetch(`/api/tspl/print-qr/${qrId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ quantity: 1 })  // Each QR prints once
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        successCount++;
+                    }
+                }
+                
+                if (successCount === generatedQRs.length) {
+                    showAlert(`✅ ${generatedQRs.length} adet yazdırıldı`, 'success');
+                    btn.disabled = false;
+                } else {
+                    showAlert(`❌ ${successCount}/${generatedQRs.length} yazdırıldı - hatalar var`, 'danger');
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Print error:', error);
+                showAlert('❌ Yazdırma sırasında hata oluştu', 'danger');
+                btn.disabled = false;
+            }
+        }
+
+        async function markQRAsUsed() {
+            if (!currentQRId) return;
+            
+            const btn = document.getElementById('markUsedBtn');
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch(`/mark_qr_used/${currentQRId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Modal'ı kapat
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('qrPreviewModal'));
+                    modal.hide();
+                    
+                    // Başarı mesajı
+                    showAlert(`✅ ${currentQRId} kullanıldı olarak işaretlendi`, 'success');
+                    
+                    // Sayfayı 1 saniye sonra yenile
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showAlert('❌ ' + (data.error || 'İşaretleme sırasında hata oluştu'), 'danger');
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+                showAlert('❌ Bağlantı hatası oluştu', 'danger');
+                btn.disabled = false;
+            }
+        }
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alert);
+
+            // 5 saniye sonra otomatik kapat
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+    // === QR / Barkod Tarama Sistemi ===
+    // Part detail sayfasında yeni bir QR okutulduğunda o parçanın sayfasına yönlendir
+    
+    function normalizePartCode(raw) {
+        if (!raw) return '';
+        let code = raw.trim().toUpperCase();
+        
+        // Türkçe karakterleri İngilizce'ye çevir
+        const trMap = {
+            'Ç':'C', 'Ğ':'G', 'İ':'I', 'Ö':'O', 'Ş':'S', 'Ü':'U',
+            'ç':'C', 'ğ':'G', 'ı':'I', 'i':'I', 'ö':'O', 'ş':'S', 'ü':'U'
+        };
+        for (const [tr, en] of Object.entries(trMap)) {
+            code = code.replace(new RegExp(tr, 'g'), en);
+        }
+        
+        // Scanner hataları düzelt
+        code = code.replace(/[*?_]/g, '-');
+        code = code.replace(/-\d+$/, '');
+        
+        return code;
+    }
+    
+    async function redirectToScannedPart(scannedCode) {
+        const normalized = normalizePartCode(scannedCode);
+        if (!normalized) return;
+        
+        console.log('[DETAIL SCAN] Okundu:', scannedCode, '→', normalized);
+        
+        try {
+            const response = await fetch(`/api/search_parts?q=${encodeURIComponent(normalized)}`);
+            const data = await response.json();
+            
+            if (data && data.length > 0) {
+                const targetCode = data[0].part_code;
+                console.log('[DETAIL SCAN] Yönlendiriliyor:', targetCode);
+                window.location.href = `/part_info/${encodeURIComponent(targetCode)}`;
+            } else {
+                showScanToast('Parça bulunamadı: ' + normalized);
+            }
+        } catch (error) {
+            console.error('[DETAIL SCAN] Hata:', error);
+            showScanToast('Arama hatası');
+        }
+    }
+    
+    let detailScanBuffer = '';
+    let detailScanTimeout = null;
+    
+    document.addEventListener('keypress', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        
+        if (e.which === 13) {
+            if (detailScanBuffer.length > 0) {
+                redirectToScannedPart(detailScanBuffer);
+                detailScanBuffer = '';
+            }
+            e.preventDefault();
+            return;
+        }
+        
+        detailScanBuffer += String.fromCharCode(e.which);
+        clearTimeout(detailScanTimeout);
+        detailScanTimeout = setTimeout(() => {
+            if (detailScanBuffer.length >= 5) {
+                redirectToScannedPart(detailScanBuffer);
+            }
+            detailScanBuffer = '';
+        }, 250);
+    });
+    
+    function showScanToast(message) {
+        let toast = document.getElementById('scanToast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'scanToast';
+            Object.assign(toast.style, {
+                position: 'fixed',
+                bottom: '20px',
+                right: '20px',
+                background: 'rgba(220, 53, 69, 0.95)',
+                color: 'white',
+                padding: '12px 18px',
+                borderRadius: '12px',
+                fontWeight: '600',
+                zIndex: '9999',
+                transition: 'opacity 0.3s',
+                opacity: '0'
+            });
+            document.body.appendChild(toast);
+        }
+        toast.textContent = message;
+        toast.style.opacity = '1';
+        setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+    }
+    
+    window.simulateScan = function(code) {
+        if (!code) return;
+        console.log('[DETAIL SIMULATE] Başlatılıyor:', code);
+        
+        for (const char of code) {
+            const event = new KeyboardEvent('keypress', {
+                bubbles: true,
+                cancelable: true,
+                key: char,
+                which: char.charCodeAt(0),
+                charCode: char.charCodeAt(0),
+                keyCode: char.charCodeAt(0)
+            });
+            document.dispatchEvent(event);
+        }
+        
+        const enterEvent = new KeyboardEvent('keypress', {
+            bubbles: true,
+            cancelable: true,
+            key: 'Enter',
+            which: 13,
+            charCode: 13,
+            keyCode: 13
+        });
+        document.dispatchEvent(enterEvent);
+        
+        console.log('[DETAIL SIMULATE] Tamamlandı');
+    };
+    
+    console.log('[DETAIL SCAN] QR Tarama sistemi hazır');
+    </script>
+</body>
+</html>

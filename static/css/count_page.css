@@ -1,0 +1,1554 @@
+/* � PROFESSIONAL ENTERPRISE DESIGN SYSTEM */
+        :root {
+            /* 🎨 Corporate Color Palette */
+            --primary-corporate: #0066cc;
+            --primary-dark: #004999;
+            --primary-light: #3385d6;
+            
+            --secondary-corporate: #2d3748;
+            --secondary-dark: #1a202c;
+            --secondary-light: #4a5568;
+            
+            --accent-blue: #0066cc;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            
+            /* 🎭 Professional Gradients */
+            --gradient-primary: linear-gradient(135deg, #0066cc 0%, #004999 100%);
+            --gradient-header: linear-gradient(to right, #1e3a8a 0%, #1e40af 100%);
+            --gradient-bg: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+            
+            /* 📐 Shadows - Subtle & Professional */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+            
+            /* 🔲 Border Radius - Clean & Minimal */
+            --border-radius: 8px;
+            --border-radius-lg: 12px;
+            --border-radius-xl: 16px;
+            
+            /* ⚡ Transitions - Smooth & Professional */
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.15s ease;
+            
+            /* 🎨 Background Colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #e2e8f0;
+            
+            /* 📝 Text Colors */
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-tertiary: #718096;
+            --text-white: #ffffff;
+            
+            /* 🔳 Border Colors */
+            --border-color: #e2e8f0;
+            --border-color-dark: #cbd5e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* iOS Safe Area Support */
+        @supports (padding: env(safe-area-inset-top)) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: var(--bg-soft);
+            min-height: 100vh;
+            height: 100vh;
+            color: var(--text-primary);
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0 !important;
+                margin: 0 !important;
+                background: #000;
+                width: 100vw;
+                height: 100vh;
+                height: 100dvh;
+                overflow: hidden;
+                position: fixed;
+                top: 0;
+                left: 0;
+            }
+        }
+
+        .app-container {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 0;
+            padding: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                width: 100vw;
+                height: 100vh;
+                height: 100dvh;
+            }
+        }
+
+        /* � PROFESSIONAL CORPORATE HEADER */
+        .app-header {
+            background: var(--gradient-header);
+            border-bottom: 3px solid var(--primary-dark);
+            padding: 20px 40px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 100;
+            width: 100vw;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                display: flex !important;
+                padding: 16px 20px;
+                gap: 1rem;
+                padding-top: max(16px, env(safe-area-inset-top));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                display: none !important;
+            }
+        }
+
+        .header-title {
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .header-title small {
+            font-size: 0.75rem;
+            font-weight: 500;
+            opacity: 0.95;
+        }
+
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 1.1rem;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            min-width: 0;
+        }
+
+        @media (max-width: 768px) {
+            .header-actions {
+                display: flex;
+                gap: 0.5rem;
+            }
+        }
+
+        .btn-header {
+            background: rgba(255,255,255,0.25);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+
+        .btn-header:hover {
+            background: rgba(255,255,255,0.35);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .btn-header {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.8rem;
+                border-radius: 6px;
+            }
+
+            .btn-header span {
+                display: none;
+            }
+
+            .btn-header i {
+                margin: 0;
+            }
+        }
+
+        /* 📱 Main Content - İki Sütunlu Layout */
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* İKİ SÜTUN */
+            gap: 1.5rem;
+            min-height: 0;
+            overflow: auto;
+            background: var(--bg-soft);
+            width: 100vw;
+            height: auto;
+            padding: 2rem 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                position: relative;
+                width: 100vw;
+                height: auto;
+                grid-template-columns: 1fr; /* Mobile'da tek sütun */
+                gap: 0;
+                background: #000;
+                padding: 1rem;
+            }
+        }
+
+        /* Fullscreen Camera Mode (MOBILE ONLY) */
+        body.camera-fullscreen .progress-section {
+            display: none;
+        }
+
+        /* QR Scanner - PC'DE GIZLI, SADECE MOBILDE GORUNUR */
+        .scanner-section {
+            display: none !important; /* PC'de tamamen gizli */
+        }
+
+        @media (max-width: 768px) {
+            .scanner-section {
+                display: flex !important; /* Sadece mobilde gorunur */
+                background: #000 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                z-index: 10000;
+                height: 100vh !important;
+                height: 100dvh !important;
+                width: 100vw !important;
+                margin: 0 !important;
+            }
+        }
+
+
+        .scanner-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        @media (max-width: 768px) {
+            .scanner-header {
+                display: none !important;
+            }
+        }
+
+        #reader {
+            border-radius: 15px;
+            overflow: hidden;
+            flex: 1;
+            min-height: 300px;
+            max-height: 400px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: auto;
+            height: auto;
+        }
+
+        /* MOBILE FULLSCREEN - CLEAN */
+        @media (max-width: 768px) {
+            #reader {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                min-height: 100dvh !important;
+                max-height: 100dvh !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border-radius: 0 !important;
+                background: #000 !important;
+                z-index: 10 !important;
+                display: block !important;
+            }
+
+            /* VIDEO VE OVERLAY HER ZAMAN VİSİBLE */
+            #reader video,
+            #reader canvas,
+            #qrOverlay,
+            #scanRegion,
+            #overlayMessages {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+
+            /* Sadece PLACEHOLDER'i gizle */
+            #reader .camera-placeholder {
+                display: none !important;
+            }
+
+            /* Video tam ekran */
+            #reader video {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                object-fit: cover !important;
+                z-index: 1 !important;
+            }
+        }
+
+        .scanner-controls {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .scanner-controls {
+                display: none !important;
+            }
+        }
+
+        .btn-scanner {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .btn-scanner {
+                min-width: 80px;
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+                border-radius: 8px;
+            }
+        }
+
+        .btn-start {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            color: white;
+        }
+
+        .btn-stop {
+            background: #6c757d;
+            color: white;
+            border: none;
+        }
+
+        .btn-stop:hover {
+            background: #5a6268;
+            color: white;
+        }
+
+        /* 📊 KIRMIZI TEMA - Progress Section */
+        .progress-section {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem 2.5rem;
+            box-shadow: var(--shadow-md);
+            border: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            transition: var(--transition);
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+        }
+
+        .progress-section:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-red);
+        }
+
+        @media (max-width: 768px) {
+            .progress-section {
+                display: flex !important;
+                padding: 1.5rem;
+                gap: 1.25rem;
+            }
+        }
+
+        .progress-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .progress-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-red);
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .progress-stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        /* � PROFESSIONAL STAT CARDS */
+        .stat-item {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid var(--border-color);
+            transition: var(--transition);
+            position: relative;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-corporate);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-corporate);
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 12px;
+            color: var(--primary-corporate);
+            letter-spacing: -1px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .text-primary .stat-number { 
+            background: linear-gradient(135deg, var(--cermak-info) 0%, #0051D5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-info .stat-number { 
+            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-success .stat-number { 
+            background: linear-gradient(135deg, var(--cermak-success) 0%, #30D158 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* MODERN PROGRESS BAR - Apple iOS Style */
+        .progress-bar-container {
+            height: 50px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #dc3545 0%, #c82333 100%);
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-right: 16px;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .detailed-stats {
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 2px solid #f0f0f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .time-info {
+            font-size: 1rem;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .time-info small {
+            font-weight: 600;
+            color: #dc3545;
+            font-size: 0.95rem;
+        }
+
+        .time-info div:not(.row) {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #333;
+            margin-top: 0.4rem;
+        }
+
+        /* Activity Timeline */
+        .activity-timeline {
+            background: #f8f9fa;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.2s ease;
+            animation: slideInActivity 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: #f1f3f4;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--cermak-success);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            word-break: break-word;
+        }
+
+        .activity-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+            color: #6c757d;
+            flex-wrap: wrap;
+        }
+
+        .activity-user {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .activity-time {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        @keyframes slideInActivity {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scan Messages - RADIKAL FIX */
+        .scan-messages {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            padding: 20px;
+            font-size: 1.1rem;
+        }
+
+        .scan-messages p {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* MOBILE: Show messages on top of camera - ULTRA YÜKSEK Z-INDEX */
+        @media (max-width: 768px) {
+            .scan-messages {
+                position: fixed !important;
+                top: 20px !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                z-index: 9999999 !important; /* RADİKAL FIX: MESAJLAR EN ÜSTTE */
+                flex: none !important;
+                overflow: visible !important;
+                pointer-events: none !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 10px !important;
+                padding: 10px !important;
+                margin: 0 !important;
+            }
+        }
+
+        .scan-message {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        /* MOBILE: Message styling */
+        @media (max-width: 768px) {
+            .scan-message {
+                padding: 15px 25px;
+                border-radius: 10px;
+                margin: 5px auto;
+                font-size: 16px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+                pointer-events: auto;
+                width: 90%;
+                max-width: 400px;
+            }
+        }
+
+        .scan-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid var(--cermak-success);
+        }
+
+        .scan-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid var(--cermak-primary);
+        }
+
+        .scan-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid var(--cermak-warning);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* QR Scan Flash - Visual feedback */
+        @keyframes scanFlash {
+            0% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+                border-color: rgba(40, 167, 69, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 20px 10px rgba(40, 167, 69, 0.4);
+                border-color: rgba(40, 167, 69, 0.8);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+                border-color: rgba(40, 167, 69, 0.3);
+            }
+        }
+
+        @keyframes successPulse {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            15% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+            85% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+        }
+
+        #reader.scan-success {
+            animation: scanFlash 0.6s ease-out;
+            border: 3px solid rgba(40, 167, 69, 0.5);
+        }
+
+        #reader::after {
+            content: attr(data-success-text);
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(40, 167, 69, 0.95);
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 100000;
+            animation: none;
+            white-space: nowrap;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            #reader::after {
+                top: 60px;
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
+        }
+
+        #reader.show-success-text::after {
+            content: '✅ QR OKUNDU!';
+            animation: successPulse 1.5s ease forwards;
+        }
+
+        /* Finish Button */
+        .finish-section {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .finish-section-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border-top: 2px solid rgba(231, 76, 60, 0.2);
+            padding: 1.5rem;
+            z-index: 1000;
+            box-shadow: 
+                0 -8px 32px rgba(0,0,0,0.12),
+                0 -2px 8px rgba(231, 76, 60, 0.08);
+        }
+
+        /* � PROFESSIONAL FINISH BUTTON */
+        .btn-finish {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            border: 3px solid var(--primary-dark);
+            padding: 0;
+            font-weight: 700;
+            font-size: 32px;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .btn-finish {
+                z-index: 200;
+                bottom: 30px;
+                right: 30px;
+                width: 65px;
+                height: 65px;
+            }
+        }
+
+        .btn-finish:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: var(--shadow-xl);
+            background: var(--primary-dark);
+        }
+
+        .btn-finish:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .btn-finish i {
+            font-size: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .app-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-actions {
+                justify-content: center;
+            }
+
+            .scanner-section, .progress-section {
+                padding: 1rem;
+            }
+
+            /* Only apply compact reader height when NOT in fullscreen camera mode */
+            body:not(.camera-fullscreen) #reader {
+                min-height: 250px;
+                max-height: 300px;
+            }
+
+            .scanner-controls {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            .btn-scanner {
+                min-width: auto;
+                padding: 0.6rem 0.75rem;
+                font-size: 0.85rem;
+            }
+
+            .progress-stats {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 1rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+
+            .stat-item {
+                background: #f8f9fa;
+                padding: 1rem;
+                border-radius: 12px;
+                text-align: center;
+            }
+
+            .stat-number {
+                font-size: 2rem !important;
+                font-weight: 700;
+                color: #dc3545;
+            }
+
+            .stat-label {
+                font-size: 0.85rem;
+                color: #6c757d;
+                margin-top: 0.5rem;
+            }
+
+            /* Mobil debug panel - GİZLE */
+            #debugPanel {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.5rem;
+                padding-bottom: 100px;
+            }
+
+            .app-container {
+                padding: 0;
+            }
+
+            .app-header {
+                padding: 1rem;
+                border-radius: 15px;
+                margin-bottom: 0.5rem;
+            }
+
+            .header-title {
+                font-size: 1.25rem;
+            }
+
+            .btn-header {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+            }
+
+            .scanner-controls {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.4rem;
+            }
+
+            .btn-scanner {
+                min-width: auto;
+                padding: 0.5rem 0.5rem;
+                font-size: 0.75rem;
+                border-radius: 8px;
+            }
+
+            .btn-scanner i {
+                font-size: 0.9rem;
+            }
+
+            /* DESKTOP #reader stilleri - MOBİLDE UYGULANMAZ */
+            body:not(.camera-fullscreen) #reader {
+                min-height: 200px;
+                max-height: 250px;
+                border-radius: 10px;
+            }
+
+            /* MOBİL FULLSCREEN MODE - #reader tam ekran */
+            body.camera-fullscreen #reader {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100dvh !important;
+                max-height: 100dvh !important;
+                min-height: 100dvh !important;
+                z-index: 9999 !important;
+                background: #000 !important;
+            }
+
+            .btn-finish {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                font-size: 20px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 100;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                min-width: auto;
+            }
+
+            #debugPanel {
+                display: none !important;
+            }
+        }
+
+        /* QR Scanning Frame - Modern Corner Design */
+        .qr-scan-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            height: 280px;
+            pointer-events: none;
+            z-index: 99999 !important;
+            border: 3px solid rgba(74, 144, 226, 0.5);
+            background: rgba(74, 144, 226, 0.1);
+        }
+
+        /* MOBILE: MAVİ KÖŞE ÇERÇEVELERİ - Kullanıcının istediği stil */
+        @media (max-width: 768px) {
+            .qr-scan-frame {
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 75vw !important;
+                height: 75vw !important;
+                max-width: 350px !important;
+                max-height: 350px !important;
+                z-index: 100000 !important;
+                pointer-events: none !important;
+
+                /* Arka plan */
+                background: transparent !important;
+                border: none !important;
+            }
+
+            /* MAVİ KÖŞE ÇERÇEVELERİ - 4 köşede L şeklinde */
+            .qr-scan-frame::before,
+            .qr-scan-frame::after {
+                content: '';
+                position: absolute;
+                width: 60px;
+                height: 60px;
+                border-color: #4A90E2;
+                border-style: solid;
+            }
+
+            /* SOL ÜST KÖŞE */
+            .qr-scan-frame::before {
+                top: 0;
+                left: 0;
+                border-width: 6px 0 0 6px;
+                border-top-left-radius: 8px;
+            }
+
+            /* SAĞ ÜST KÖŞE */
+            .qr-scan-frame::after {
+                top: 0;
+                right: 0;
+                border-width: 6px 6px 0 0;
+                border-top-right-radius: 8px;
+            }
+        }
+
+        /* SAĞ ALT ve SOL ALT KÖŞELERİ - Ekstra pseudo-elementler gerektirdiğinden JS ile ekleyeceğiz */
+        @media (max-width: 768px) {
+            #qrScanFrame {
+                position: relative;
+            }
+
+            /* Mobilde köşe çizgileri için container */
+            #qrScanFrame .corner {
+                position: absolute;
+                width: 60px;
+                height: 60px;
+                border-color: #4A90E2;
+                border-style: solid;
+                border-width: 0;
+            }
+
+            #qrScanFrame .corner.bottom-left {
+                bottom: 0;
+                left: 0;
+                border-width: 0 0 6px 6px;
+                border-bottom-left-radius: 8px;
+            }
+
+            #qrScanFrame .corner.bottom-right {
+                bottom: 0;
+                right: 0;
+                border-width: 0 6px 6px 0;
+                border-bottom-right-radius: 8px;
+            }
+        }
+
+        /* Corner borders - only corners visible - BÜYÜTÜLDÜ */
+        .qr-scan-frame::before,
+        .qr-scan-frame::after,
+        .qr-scan-frame .corner-tl,
+        .qr-scan-frame .corner-tr,
+        .qr-scan-frame .corner-bl,
+        .qr-scan-frame .corner-br {
+            content: '';
+            position: absolute;
+            width: 60px;   /* 50px → 60px */
+            height: 60px;  /* 50px → 60px */
+            border: 6px solid #00FF00;  /* Parlak yeşil - daha görünür */
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.8);  /* Yeşil parlama efekti */
+        }
+
+        @media (max-width: 768px) {
+            .qr-scan-frame::before,
+            .qr-scan-frame::after,
+            .qr-scan-frame .corner-tl,
+            .qr-scan-frame .corner-tr,
+            .qr-scan-frame .corner-bl,
+            .qr-scan-frame .corner-br {
+                width: 70px;   /* Mobilde daha da büyük */
+                height: 70px;
+                border-width: 7px;
+            }
+        }
+
+        /* Top-left corner */
+        .qr-scan-frame::before {
+            top: 0;
+            left: 0;
+            border-right: none;
+            border-bottom: none;
+            border-top-left-radius: 12px;
+        }
+
+        /* Top-right corner */
+        .qr-scan-frame::after {
+            top: 0;
+            right: 0;
+            border-left: none;
+            border-bottom: none;
+            border-top-right-radius: 12px;
+        }
+
+        /* Bottom-left corner */
+        .qr-scan-frame .corner-bl {
+            bottom: 0;
+            left: 0;
+            border-right: none;
+            border-top: none;
+            border-bottom-left-radius: 12px;
+        }
+
+        /* Bottom-right corner */
+        .qr-scan-frame .corner-br {
+            bottom: 0;
+            right: 0;
+            border-left: none;
+            border-top: none;
+            border-bottom-right-radius: 12px;
+        }
+
+        /* Scanning line animation - REMOVED for cleaner look */
+        .qr-scan-frame .scan-line {
+            display: none;
+        }
+
+        @keyframes scanLine {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        /* Helper text below frame - HIDDEN on mobile */
+        .qr-scan-frame .scan-hint {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            white-space: nowrap;
+            background: rgba(0,0,0,0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .qr-scan-frame .scan-hint {
+                display: none;
+            }
+        }
+
+        /* Camera Overlay - OLD STYLE (REMOVE) */
+        .camera-overlay {
+            display: none;
+        }
+
+        .btn-cermak:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220,53,69,0.3);
+            color: white;
+        }
+
+        /* Desktop default reader frame; avoid overriding mobile fullscreen */
+        @media (min-width: 769px) {
+            #reader {
+                max-width: 100%;
+                height: 300px;
+                margin: 0 auto;
+                border-radius: 15px;
+                overflow: hidden;
+                border: 3px dashed #dee2e6;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #f8f9fa;
+            }
+        }
+
+        /* Ensure video inserted by html5-qrcode is visible */
+        #reader video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            display: block !important;
+        }
+
+        /* KARARTMA OVERLAY - Sadece ortadaki kare açık */
+        #reader::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: 
+                linear-gradient(to bottom, 
+                    rgba(0,0,0,0.7) 0%,
+                    rgba(0,0,0,0.7) calc(50% - 200px),
+                    transparent calc(50% - 200px),
+                    transparent calc(50% + 200px),
+                    rgba(0,0,0,0.7) calc(50% + 200px),
+                    rgba(0,0,0,0.7) 100%
+                ),
+                linear-gradient(to right,
+                    rgba(0,0,0,0.7) 0%,
+                    rgba(0,0,0,0.7) calc(50% - 200px),
+                    transparent calc(50% - 200px),
+                    transparent calc(50% + 200px),
+                    rgba(0,0,0,0.7) calc(50% + 200px),
+                    rgba(0,0,0,0.7) 100%
+                );
+            pointer-events: none;
+            z-index: 5000 !important;
+            display: none;
+        }
+
+        /* Mobile fullscreen video */
+        @media (max-width: 768px) {
+            #reader video {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                object-fit: cover !important;
+                z-index: 10000 !important;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+
+            /* Mobilde karartmayı göster */
+            #reader::after {
+                display: block;
+                z-index: 50000 !important;
+                background: 
+                    linear-gradient(to bottom, 
+                        rgba(0,0,0,0.75) 0%,
+                        rgba(0,0,0,0.75) calc(50% - 37.5vw),
+                        transparent calc(50% - 37.5vw),
+                        transparent calc(50% + 37.5vw),
+                        rgba(0,0,0,0.75) calc(50% + 37.5vw),
+                        rgba(0,0,0,0.75) 100%
+                    ),
+                    linear-gradient(to right,
+                        rgba(0,0,0,0.75) 0%,
+                        rgba(0,0,0,0.75) calc(50% - 37.5vw),
+                        transparent calc(50% - 37.5vw),
+                        transparent calc(50% + 37.5vw),
+                        rgba(0,0,0,0.75) calc(50% + 37.5vw),
+                        rgba(0,0,0,0.75) 100%
+                    );
+            }
+
+            #reader canvas {
+                display: none !important;
+            }
+        }
+
+        #reader.active {
+            border-color: var(--cermak-red);
+            background: white;
+        }
+
+        .scan-message {
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px 0;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .scan-success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .scan-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        /* Kırmızı yanıp sönme animasyonu - DUPLICATE QR için */
+        #reader.scan-error {
+            animation: errorFlash 0.5s ease-in-out 2;
+            border: 4px solid #dc3545 !important;
+        }
+
+        @keyframes errorFlash {
+            0%, 100% { 
+                background-color: rgba(220, 53, 69, 0);
+                transform: scale(1);
+            }
+            50% { 
+                background-color: rgba(220, 53, 69, 0.3);
+                transform: scale(1.02);
+            }
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--cermak-red);
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+
+        .progress-custom {
+            height: 25px;
+            border-radius: 15px;
+            background-color: #e9ecef;
+        }
+
+        .progress-bar-custom {
+            background: linear-gradient(135deg, var(--cermak-red) 0%, var(--cermak-red-dark) 100%);
+            border-radius: 15px;
+            line-height: 25px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .scan-history {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .scan-item {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-left: 4px solid var(--cermak-red);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .scan-item-time {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .camera-placeholder {
+            color: #6c757d;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .camera-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .user-badge {
+            background: white;
+            color: var(--cermak-red);
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-weight: 600;
+        }
+
+        /* ========================================
+           QR READER Z-INDEX FIX - UI Overlay Fix
+           Video arka planda kalmalı, UI elementleri üstte
+           ======================================== */
+        
+        /* Reader container - orta seviye */
+        #reader {
+            position: relative;
+            z-index: 10 !important;
+        }
+
+        /* Video - EN ALTTA (arka plan) */
+        #reader video {
+            z-index: 1 !important;
+        }
+
+        /* QR Canvas ve scan region - video üzerinde */
+        #reader canvas,
+        #reader__scan_region,
+        #reader__dashboard,
+        #reader__dashboard_section,
+        #reader__header_message,
+        #reader__camera_selection,
+        #reader__camera_permission_button {
+            z-index: 100 !important;
+            position: relative;
+        }
+
+        /* QR Scan Frame (yeşil alan) - overlay üzerinde */
+        .qr-scan-frame,
+        #qrScanFrame {
+            z-index: 200 !important;
+            position: relative;
+        }
+
+        /* Full screen messages - en üstte */
+        .full-screen-message {
+            z-index: 1000 !important;
+            position: fixed;
+        }
+
+        /* Scan success/error feedback */
+        #reader.scan-success,
+        #reader.scan-error {
+            z-index: 10 !important;
+        }
+
+        #reader::after {
+            z-index: 500 !important;
+        }
+
+        /* Modals - en üst seviye */
+        .modal,
+        .modal-backdrop {
+            z-index: 1050 !important;
+        }
+
+        /* Stats cards ve diğer UI - normal akış */
+        .stats-card,
+        .scan-history,
+        .scan-item {
+            z-index: auto;
+        }

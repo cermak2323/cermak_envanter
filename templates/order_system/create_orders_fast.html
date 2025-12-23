@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Hızlı Ekleme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        body {
+            background: #f5f5f5;
+            padding-top: 1rem;
+        }
+        .header {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .section-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-primary-action {
+            background: #dc2626;
+            color: white;
+            border: none;
+        }
+        .btn-primary-action:hover {
+            background: #b91c1c;
+            color: white;
+        }
+        .list-item {
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+        .list-item:hover {
+            background: #f9fafb;
+            border-color: #dc2626;
+        }
+        .list-item.active {
+            background: #fee2e2;
+            border-color: #dc2626;
+            border-width: 2px;
+        }
+        .table-container {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .table thead {
+            position: sticky;
+            top: 0;
+            background: #dc2626;
+            color: white;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .total-section {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border-left: 4px solid #dc2626;
+        }
+        .excel-row-success {
+            background: #dcfce7;
+        }
+        .excel-row-error {
+            background: #fee2e2;
+        }
+        #excelPreviewSection {
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <h2><i class="bi bi-lightning-fill"></i> Sipariş Hızlı Ekleme</h2>
+            <p>Mevcut siparişleri seçip, parçaları hızlıca kopyala veya ekle</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 0. EXCEL YÜKLEME - YENİ PARÇALAR EKLE -->
+        <div class="section-card" style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-left: 4px solid #16a34a;">
+            <h4><i class="bi bi-file-earmark-excel"></i> Excel'den Hızlı Sipariş Ekle</h4>
+            <p class="text-muted mb-3">
+                <small>Excel dosyasında <strong>Parça Kodu</strong> ve <strong>Adet</strong> sütunları olmalıdır. 
+                Parça adları otomatik çekilecektir. <a href="sample_order.xlsx" download="sample_order.xlsx">
+                <i class="bi bi-download"></i> Örnek dosyayı indir</a></small>
+            </p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="excelFile" class="form-label">📄 Excel Dosyası Seç</label>
+                        <input type="file" class="form-control" id="excelFile" accept=".xlsx,.xls,.csv" 
+                               onchange="handleExcelUpload(event)">
+                        <small class="text-muted d-block mt-2">Desteklenen: .xlsx, .xls, .csv</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="excelListName" class="form-label">Sipariş Listesi Adı</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="excelListName" placeholder="Örn: CER2025001">
+                            <button class="btn btn-outline-success" type="button" onclick="generateListName()">
+                                <i class="bi bi-arrow-repeat"></i> Oluştur
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="excelPreviewSection" style="display:none; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e5e7eb; background: #f9fafb; padding: 1.5rem; border-radius: 8px;">
+                <h5><i class="bi bi-eye"></i> Ön İzleme</h5>
+                <p class="text-muted mb-3">Aşağıdaki parçalar siparişlere eklenecektir:</p>
+                
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped mb-3 table-hover">
+                        <thead class="table-light" style="position: sticky; top: 0;">
+                            <tr>
+                                <th style="width: 20%;">
+                                    <i class="bi bi-box"></i> Parça Kodu
+                                </th>
+                                <th style="width: 35%;">
+                                    <i class="bi bi-file-text"></i> Parça Adı
+                                </th>
+                                <th style="width: 15%;">
+                                    <i class="bi bi-hash"></i> Adet
+                                </th>
+                                <th style="width: 30%;">
+                                    <i class="bi bi-check-circle"></i> Durum
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="excelPreviewTable">
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="alert mb-3" id="excelValidationMsg" role="alert" style="margin: 0;"></div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                    <button class="btn btn-outline-secondary" onclick="resetExcelForm()">
+                        <i class="bi bi-arrow-clockwise"></i> Başa Dön
+                    </button>
+                    <button class="btn btn-success btn-lg" id="addExcelButton" onclick="addExcelToOrders()" style="display:none; padding: 0.75rem 2rem;">
+                        <i class="bi bi-check-circle-fill"></i> Siparişlere Ekle
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. MEVCUT SİPARİŞLER -->
+        <div class="section-card">
+            <h4><i class="bi bi-list-check"></i> Adım 1: Mevcut Siparişleri Seç</h4>
+            <p class="text-muted">Aşağıdaki siparişlerden birini seçerek parçalarını görebilirsiniz.</p>
+            
+            <div id="loadingDiv" style="display:none;" class="text-center py-4">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
+                </div>
+                <p>Siparişler yükleniyor...</p>
+            </div>
+
+            <div id="noListsDiv" style="display:none;" class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Henüz siparişli parça yok.
+            </div>
+
+            <div id="listsDiv" style="display:none;">
+                <div id="listContainer"></div>
+            </div>
+        </div>
+
+        <!-- 2. SEÇİLİ SİPARİŞİN PARÇALARI -->
+        <div class="section-card" id="detailSection" style="display:none;">
+            <h4><i class="bi bi-basket"></i> Adım 2: Sipariş Detayları - <span id="selectedListName"></span></h4>
+            <p class="text-muted" id="selectedListInfo"></p>
+            
+            <div class="table-container">
+                <table class="table table-striped table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Parça Kodu</th>
+                            <th>Parça Adı</th>
+                            <th>Miktarı</th>
+                            <th>Birim Fiyat (€)</th>
+                            <th>Toplam (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="partsTableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="total-section">
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Toplam Parça:</strong> <span id="totalParts">0</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Toplam Fiyat:</strong> <span id="totalPrice">0.00</span> €
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. İŞLEM SEÇ -->
+        <div class="section-card" id="actionSection" style="display:none;">
+            <h4><i class="bi bi-tools"></i> Adım 3: Ne Yapmak İstiyorsun?</h4>
+            
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <button class="btn btn-primary-action w-100" onclick="showCopyOption()">
+                        <i class="bi bi-clipboard"></i> Bu Siparişi Kopyala (Aynı Parçaları Yeni Sipariş Yap)
+                    </button>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <button class="btn btn-primary-action w-100" onclick="showAddToExisting()">
+                        <i class="bi bi-plus-circle"></i> Parçaları Başka Listeye Ekle
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kopyala Seçeneği -->
+            <div id="copySection" style="display:none; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
+                <h5>Yeni Sipariş Adı (Veya Boş Bırak - Otomatik Oluşturulsun):</h5>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="newListName" placeholder="Örn: CER2025001">
+                    <button class="btn btn-success" onclick="copyOrder()">
+                        <i class="bi bi-check-circle"></i> Kopyala
+                    </button>
+                </div>
+            </div>
+
+            <!-- Başka Listeye Ekle -->
+            <div id="addToExistingSection" style="display:none; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
+                <h5>Hangi Listeye Eklemek İstiyorsun?</h5>
+                <select class="form-select mb-3" id="targetListSelect">
+                    <option value="">-- Seç --</option>
+                </select>
+                <button class="btn btn-success" onclick="addToExistingList()">
+                    <i class="bi bi-plus-circle"></i> Ekle
+                </button>
+            </div>
+        </div>
+
+        <!-- Debug -->
+        <div class="section-card" style="background: #f9fafb; border-left: 4px solid #dc2626;">
+            <h6><i class="bi bi-bug"></i> Durum</h6>
+            <small id="debugInfo" style="font-family: monospace; color: #666;">Sistem hazırlanıyor...</small>
+        </div>
+    </div>
+
+    <script>
+        let orderLists = {};
+        let selectedListName = null;
+        let selectedListItems = [];
+        let excelData = [];  // Excel'den okunan veriler
+
+        // Sayfayı başlat
+        window.onload = function() {
+            updateDebug('Sipariş listesi yükleniyor...');
+            loadOrderLists();
+        };
+
+        // ============================================================================
+        // EXCEL YÜKLEME FONKSİYONLARI
+        // ============================================================================
+
+        // Excel dosyasını yükle ve oku
+        function handleExcelUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const rows = XLSX.utils.sheet_to_json(worksheet);
+
+                    console.log('📊 Excel satırları:', rows);
+
+                    // Verileri işle
+                    processExcelData(rows);
+                    updateDebug('✅ Excel dosyası yüklendi');
+                } catch (error) {
+                    updateDebug('❌ Excel hatası: ' + error.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Excel verilerini işle
+        function processExcelData(rows) {
+            excelData = [];
+            const previewTable = document.getElementById('excelPreviewTable');
+            previewTable.innerHTML = '';
+
+            if (!rows || rows.length === 0) {
+                document.getElementById('excelValidationMsg').innerHTML = 
+                    '<strong>❌ Hata:</strong> Excel dosyasında veri bulunamadı. Dosyayı kontrol edin.';
+                document.getElementById('excelValidationMsg').className = 'alert alert-danger';
+                document.getElementById('excelPreviewSection').style.display = 'block';
+                return;
+            }
+
+            let validCount = 0;
+
+            rows.forEach((row, idx) => {
+                // Parça Kodu sütununu bul (Case-insensitive)
+                const partCodeKey = Object.keys(row).find(k => k.toLowerCase().includes('parça kodu') || k.toLowerCase().includes('kod') || k.toLowerCase().includes('part'));
+                // Adet sütununu bul
+                const quantityKey = Object.keys(row).find(k => k.toLowerCase().includes('adet') || k.toLowerCase().includes('quantity') || k.toLowerCase().includes('miktar') || k.toLowerCase().includes('qty'));
+
+                const partCode = row[partCodeKey]?.toString().trim();
+                const quantity = parseInt(row[quantityKey]) || 0;
+
+                if (!partCode || quantity <= 0) {
+                    return; // Geçersiz satırı atla
+                }
+
+                excelData.push({
+                    part_code: partCode,
+                    quantity: quantity,
+                    part_name: '',  // Boş başla, API'den çekilecek
+                    status: '🔄 Kontrol ediliyor...'
+                });
+
+                validCount++;
+            });
+
+            console.log('📝 İşlenen parçalar:', excelData);
+
+            if (validCount === 0) {
+                document.getElementById('excelValidationMsg').innerHTML = 
+                    '<strong>❌ Hata:</strong> Excel dosyasında geçerli parça bulunamadı. "Parça Kodu" ve "Adet" sütunları kontrol edin.';
+                document.getElementById('excelValidationMsg').className = 'alert alert-danger';
+                document.getElementById('excelPreviewSection').style.display = 'block';
+                return;
+            }
+
+            // Başlangıç mesajını göster
+            document.getElementById('excelValidationMsg').innerHTML = `<strong>⏳ ${validCount} parça kontrol ediliyor...</strong>`;
+            document.getElementById('excelValidationMsg').className = 'alert alert-info';
+            document.getElementById('excelPreviewSection').style.display = 'block';
+
+            // Parça bilgilerini API'den çek
+            fetchPartDetailsFromExcel();
+        }
+
+        // Excel'deki parçaların bilgilerini API'den çek
+        async function fetchPartDetailsFromExcel() {
+            const previewTable = document.getElementById('excelPreviewTable');
+            previewTable.innerHTML = '';
+
+            let validParts = 0;
+            let invalidParts = 0;
+
+            for (let item of excelData) {
+                try {
+                    const response = await fetch(`/order_system/api/get_part_info/${item.part_code}`);
+                    const data = await response.json();
+
+                    if (data.success && data.part) {
+                        item.part_name = data.part.part_name;
+                        item.supplier = data.part.supplier;
+                        item.unit_price = data.part.unit_price || 0;
+                        item.status = '✅ Bulundu';
+                        validParts++;
+                    } else {
+                        item.status = '❌ Bulunamadı';
+                        invalidParts++;
+                    }
+                } catch (error) {
+                    item.status = '❌ Hata: ' + error.message;
+                    invalidParts++;
+                }
+
+                // Ön izlemede göster
+                const row = previewTable.insertRow();
+                const statusColor = item.status.includes('✅') ? '#dcfce7' : '#fee2e2';
+                row.style.background = statusColor;
+                row.innerHTML = `
+                    <td><strong>${item.part_code}</strong></td>
+                    <td>${item.part_name || '-'} ${item.supplier ? `<br/><small class="text-muted">${item.supplier}</small>` : ''}</td>
+                    <td><strong>${item.quantity}</strong></td>
+                    <td>${item.status}</td>
+                `;
+            }
+
+            // Sonuç mesajı
+            let msgHtml = '';
+            if (validParts === 0 && invalidParts === 0) {
+                msgHtml = '<strong>⚠️ Uyarı:</strong> Excel dosyasında geçerli veri bulunamadı. "Parça Kodu" ve "Adet" sütunları kontrol edin.';
+            } else if (validParts === 0) {
+                msgHtml = `<strong>❌ Hata:</strong> ${invalidParts} parça bulunamadı. Parça kodlarını kontrol edin.`;
+            } else {
+                msgHtml = `<strong>✅ ${validParts} parça bulundu</strong>${invalidParts > 0 ? `, ${invalidParts} bulunamadı` : ', tümü hazır!'}`;
+            }
+
+            document.getElementById('excelValidationMsg').innerHTML = msgHtml;
+            const msgElement = document.getElementById('excelValidationMsg');
+            if (validParts === 0) {
+                msgElement.className = 'alert alert-danger';
+            } else if (invalidParts > 0) {
+                msgElement.className = 'alert alert-warning';
+            } else {
+                msgElement.className = 'alert alert-success';
+            }
+
+            document.getElementById('excelPreviewSection').style.display = 'block';
+
+            // Ekle butonunu göster eğer geçerli parçalar varsa
+            if (validParts > 0) {
+                document.getElementById('addExcelButton').style.display = 'block';
+            }
+        }
+
+        // Excel formunu sıfırla
+        function resetExcelForm() {
+            document.getElementById('excelFile').value = '';
+            document.getElementById('excelListName').value = '';
+            document.getElementById('excelPreviewSection').style.display = 'none';
+            document.getElementById('addExcelButton').disabled = false;
+            document.getElementById('addExcelButton').style.display = 'none';
+            excelData = [];
+            updateDebug('Excel formu temizlendi');
+        }
+
+        // Otomatik liste adı oluştur
+        function generateListName() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const random = Math.floor(Math.random() * 900) + 100;
+            const listName = `CER${year}${String(random).padStart(3, '0')}`;
+            document.getElementById('excelListName').value = listName;
+        }
+
+        // Excel verilerini sipariş listesine ekle
+        async function addExcelToOrders() {
+            const listName = document.getElementById('excelListName').value.trim();
+            if (!listName) {
+                updateDebug('❌ Sipariş listesi adı boş olamaz');
+                alert('Lütfen sipariş listesi adı girin veya "Otomatik Oluştur" tuşuna tıklayın');
+                return;
+            }
+
+            // Sadece geçerli parçaları filtrele
+            const validItems = excelData.filter(item => item.status.includes('✅'));
+
+            if (validItems.length === 0) {
+                updateDebug('❌ Eklenecek geçerli parça yok');
+                alert('Eklenecek geçerli parça bulunamadı. Lütfen Excel dosyasını kontrol edin.');
+                return;
+            }
+
+            try {
+                document.getElementById('addExcelButton').disabled = true;
+                updateDebug('⏳ Parçalar ekleniyor...');
+
+                const response = await fetch('/order_system/api/add_manual_orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        list_name: listName,
+                        items: validItems.map(item => ({
+                            part_code: item.part_code,
+                            part_name: item.part_name,
+                            supplier: item.supplier,
+                            quantity: item.quantity,
+                            unit_price: item.unit_price,
+                            total_price: item.quantity * item.unit_price
+                        }))
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    updateDebug(`✅ ${data.orders_created} parça "${listName}" listesine eklendi`);
+                    alert(`✅ Başarılı!\n${data.orders_created} parça "${listName}" listesine eklendi.`);
+                    
+                    // Formu temizle
+                    resetExcelForm();
+
+                    // Sipariş listesini yenile
+                    loadOrderLists();
+                } else {
+                    updateDebug('❌ Hata: ' + (data.error || 'Bilinmeyen hata'));
+                    alert('❌ Hata: ' + (data.error || 'Bilinmeyen hata'));
+                    document.getElementById('addExcelButton').disabled = false;
+                }
+            } catch (error) {
+                updateDebug('❌ Hata: ' + error.message);
+                alert('❌ Hata: ' + error.message);
+                document.getElementById('addExcelButton').disabled = false;
+            }
+        }
+
+        // Mevcut siparişleri yükle
+        async function loadOrderLists() {
+            document.getElementById('loadingDiv').style.display = 'block';
+            document.getElementById('listsDiv').style.display = 'none';
+            document.getElementById('noListsDiv').style.display = 'none';
+
+            try {
+                const response = await fetch('/order_system/api/get_order_lists');
+                const data = await response.json();
+
+                if (data.success && data.order_lists) {
+                    orderLists = data.order_lists;
+                    displayLists();
+                    loadTargetLists();
+                    updateDebug('✅ Siparişler yüklendi');
+                } else {
+                    document.getElementById('noListsDiv').style.display = 'block';
+                    updateDebug('⚠️ Siparişli parça yok');
+                }
+            } catch (error) {
+                updateDebug('❌ Hata: ' + error.message);
+            } finally {
+                document.getElementById('loadingDiv').style.display = 'none';
+            }
+        }
+
+        // Siparişleri göster
+        function displayLists() {
+            const container = document.getElementById('listContainer');
+            container.innerHTML = '';
+
+            Object.keys(orderLists).forEach(supplier => {
+                Object.keys(orderLists[supplier]).forEach(listName => {
+                    const listData = orderLists[supplier][listName];
+                    // API obje döndürüyor: { orders: [], order_date, total_amount }
+                    const items = Array.isArray(listData) ? listData : (listData.orders || []);
+                    const itemCount = items.length;
+                    const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.total_price) || 0), 0);
+
+                    const div = document.createElement('div');
+                    div.className = 'list-item';
+                    div.onclick = () => selectList(listName, supplier, items);
+                    div.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${supplier}</strong><br>
+                                <small class="text-muted">${listName}</small>
+                            </div>
+                            <div class="text-end">
+                                <div><strong>${itemCount}</strong> parça</div>
+                                <small class="text-muted">${totalPrice.toFixed(2)} €</small>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+
+            document.getElementById('listsDiv').style.display = 'block';
+        }
+
+        // Sipariş seç
+        function selectList(listName, supplier, items) {
+            // API obje döndürüyor, items parametresi obje olabilir
+            const actualItems = Array.isArray(items) ? items : (items.orders || []);
+            
+            selectedListName = listName;
+            selectedListItems = actualItems;
+
+            // UI güncelle
+            document.querySelectorAll('.list-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            displayListDetails(listName, supplier, actualItems);
+            showActionSection();
+            updateDebug(`✅ "${listName}" seçildi (${actualItems.length} parça)`);
+        }
+
+        // Sipariş detaylarını göster
+        function displayListDetails(listName, supplier, items) {
+            // API obje döndürüyor, items parametresi obje olabilir
+            const actualItems = Array.isArray(items) ? items : (items.orders || []);
+            
+            document.getElementById('selectedListName').textContent = `${supplier} - ${listName}`;
+            const totalAmount = actualItems.reduce((sum, item) => sum + (parseFloat(item.total_price) || 0), 0);
+            document.getElementById('selectedListInfo').textContent = `${actualItems.length} parça, Toplam: ${totalAmount.toFixed(2)} €`;
+
+            const tbody = document.getElementById('partsTableBody');
+            tbody.innerHTML = '';
+
+            let totalParts = 0;
+            let totalPrice = 0;
+
+            actualItems.forEach(item => {
+                const row = document.createElement('tr');
+                const qty = parseInt(item.quantity) || 0;
+                const price = parseFloat(item.unit_price) || 0;
+                const total = qty * price;
+
+                totalParts += qty;
+                totalPrice += total;
+
+                row.innerHTML = `
+                    <td><strong>${item.part_code}</strong></td>
+                    <td>${item.part_name || '-'}</td>
+                    <td>${qty}</td>
+                    <td>${price.toFixed(2)}</td>
+                    <td>${total.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('totalParts').textContent = totalParts;
+            document.getElementById('totalPrice').textContent = totalPrice.toFixed(2);
+            document.getElementById('detailSection').style.display = 'block';
+        }
+
+        // İşlem seçeneklerini göster
+        function showActionSection() {
+            document.getElementById('actionSection').style.display = 'block';
+            document.getElementById('copySection').style.display = 'none';
+            document.getElementById('addToExistingSection').style.display = 'none';
+        }
+
+        // Kopyala seçeneğini göster
+        function showCopyOption() {
+            document.getElementById('copySection').style.display = 'block';
+            document.getElementById('addToExistingSection').style.display = 'none';
+        }
+
+        // Başka Listeye Ekle seçeneğini göster
+        function showAddToExisting() {
+            document.getElementById('copySection').style.display = 'none';
+            document.getElementById('addToExistingSection').style.display = 'block';
+        }
+
+        // Hedef listeleri yükle
+        async function loadTargetLists() {
+            const select = document.getElementById('targetListSelect');
+            
+            Object.keys(orderLists).forEach(supplier => {
+                Object.keys(orderLists[supplier]).forEach(listName => {
+                    if (listName !== selectedListName) {
+                        const option = document.createElement('option');
+                        option.value = listName;
+                        option.textContent = `${supplier} - ${listName}`;
+                        select.appendChild(option);
+                    }
+                });
+            });
+        }
+
+        // Siparişi kopyala
+        async function copyOrder() {
+            if (!selectedListItems || selectedListItems.length === 0) {
+                alert('Lütfen bir sipariş seçin');
+                return;
+            }
+
+            const newListName = document.getElementById('newListName').value || selectedListName + '_KOPYASI_' + new Date().getTime();
+
+            if (!newListName) {
+                alert('Lütfen sipariş adı girin');
+                return;
+            }
+
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Kopyalanıyor...';
+
+            try {
+                const response = await fetch('/order_system/api/add_manual_orders', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        list_name: newListName,
+                        items: selectedListItems
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Başarılı!\n"${newListName}" adıyla yeni sipariş oluşturuldu.`);
+                    await loadOrderLists();
+                    document.getElementById('newListName').value = '';
+                    showActionSection();
+                } else {
+                    alert('❌ Hata: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Bağlantı hatası: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✅ Kopyala';
+            }
+        }
+
+        // Başka Listeye Ekle
+        async function addToExistingList() {
+            if (!selectedListItems || selectedListItems.length === 0) {
+                alert('Lütfen bir sipariş seçin');
+                return;
+            }
+
+            const targetList = document.getElementById('targetListSelect').value;
+            if (!targetList) {
+                alert('Lütfen hedef listeyi seçin');
+                return;
+            }
+
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Ekleniyor...';
+
+            try {
+                const response = await fetch('/order_system/api/add_manual_orders', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        list_name: targetList,
+                        items: selectedListItems
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Başarılı!\n${data.orders_created} parça "${targetList}" listesine eklendi.`);
+                    await loadOrderLists();
+                    showActionSection();
+                } else {
+                    alert('❌ Hata: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Bağlantı hatası: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✅ Ekle';
+            }
+        }
+
+        // Debug
+        function updateDebug(msg) {
+            document.getElementById('debugInfo').textContent = new Date().toLocaleTimeString() + ' - ' + msg;
+        }
+    </script>
+</body>
+</html>

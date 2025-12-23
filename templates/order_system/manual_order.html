@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuel Sipariş Ekle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 8px 32px rgba(14, 165, 233, 0.2);
+        }
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            margin-top: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        .form-control:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+        .part-info-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid #0ea5e9;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+        }
+        .autocomplete-list {
+            position: absolute;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .autocomplete-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .autocomplete-item:hover {
+            background: #f0f9ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1><i class="bi bi-pencil-square"></i> Manuel Sipariş Ekle</h1>
+            <p style="opacity: 0.9; margin: 0.5rem 0 0 0;">Parça seçin, sistem otomatik bilgileri tamamlar</p>
+        </div>
+    </div>
+
+    <div class="container" style="padding: 2rem 1rem;">
+        <div class="form-card">
+            <form id="orderForm" onsubmit="submitOrder(event)">
+                <!-- Parça Kodu -->
+                <div class="mb-4" style="position: relative;">
+                    <label class="form-label">
+                        <i class="bi bi-upc-scan"></i> Parça Kodu
+                    </label>
+                    <input type="text" 
+                           class="form-control form-control-lg" 
+                           id="partCodeInput"
+                           placeholder="Parça kodunu yazın veya listeden seçin..."
+                           autocomplete="off"
+                           required>
+                    <div id="autocompleteList" class="autocomplete-list" style="display: none;"></div>
+                </div>
+
+                <!-- Parça Bilgileri (Otomatik Doldurulacak) -->
+                <div id="partInfoBox" class="part-info-box" style="display: none;">
+                    <h6><i class="bi bi-info-circle"></i> Parça Bilgileri</h6>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <small class="text-muted">Parça Adı</small>
+                            <div id="partName" class="fw-bold">-</div>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted">Tedarikçi</small>
+                            <div id="partSupplier" class="fw-bold">-</div>
+                        </div>
+                        <div class="col-md-4 mt-3">
+                            <small class="text-muted">Birim Fiyat</small>
+                            <div id="partPrice" class="fw-bold text-primary">-</div>
+                        </div>
+                        <div class="col-md-4 mt-3">
+                            <small class="text-muted">Mevcut Stok</small>
+                            <div id="partStock" class="fw-bold">-</div>
+                        </div>
+                        <div class="col-md-4 mt-3">
+                            <small class="text-muted">Kritik Seviye</small>
+                            <div id="partCritical" class="fw-bold">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Miktar -->
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="bi bi-123"></i> Sipariş Miktarı
+                    </label>
+                    <input type="number" 
+                           class="form-control form-control-lg" 
+                           id="quantityInput"
+                           min="1"
+                           placeholder="Kaç adet sipariş edilecek?"
+                           required>
+                </div>
+
+                <!-- Notlar -->
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="bi bi-chat-text"></i> Notlar (Opsiyonel)
+                    </label>
+                    <textarea class="form-control" 
+                              id="notesInput" 
+                              rows="3"
+                              placeholder="Sipariş hakkında not ekleyebilirsiniz..."></textarea>
+                </div>
+
+                <!-- Toplam Fiyat -->
+                <div class="alert alert-info" id="totalPriceBox" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">Tahmini Toplam Tutar:</span>
+                        <span id="totalPrice" class="fs-4 fw-bold text-primary">0 €</span>
+                    </div>
+                </div>
+
+                <!-- Butonlar -->
+                <div class="row mt-4">
+                    <div class="col-md-4 mb-2">
+                        <button type="button" class="btn btn-secondary w-100" onclick="window.location.href='/order_system/'">
+                            <i class="bi bi-arrow-left"></i> Geri Dön
+                        </button>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <button type="button" class="btn btn-secondary w-100" onclick="window.location.href='/'" style="background: #6c757d; border-color: #6c757d;">
+                            <i class="bi bi-grid-3x3-gap"></i> Portala Dön
+                        </button>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <button type="submit" class="btn-submit w-100" id="submitBtn">
+                            <i class="bi bi-cart-plus"></i> Siparişi Oluştur
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedPart = null;
+        let searchTimeout = null;
+
+        const partCodeInput = document.getElementById('partCodeInput');
+        const quantityInput = document.getElementById('quantityInput');
+        const autocompleteList = document.getElementById('autocompleteList');
+
+        // Autocomplete
+        partCodeInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+
+            if (query.length < 2) {
+                autocompleteList.style.display = 'none';
+                return;
+            }
+
+            searchTimeout = setTimeout(() => searchParts(query), 300);
+        });
+
+        async function searchParts(query) {
+            try {
+                const response = await fetch(`/order_system/api/search_parts?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (data.success && data.parts.length > 0) {
+                    autocompleteList.innerHTML = data.parts.map(part => `
+                        <div class="autocomplete-item" onclick='selectPart(${JSON.stringify(part)})'>
+                            <strong>${part.part_code}</strong> - ${part.part_name || 'İsimsiz'}
+                            <div class="small text-muted">Stok: ${part.stock_quantity} | Kritik: ${part.critical_stock_level}</div>
+                        </div>
+                    `).join('');
+                    autocompleteList.style.display = 'block';
+                } else {
+                    autocompleteList.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Arama hatası:', error);
+            }
+        }
+
+        function selectPart(part) {
+            selectedPart = part;
+            partCodeInput.value = part.part_code;
+            autocompleteList.style.display = 'none';
+            loadPartInfo(part.part_code);
+        }
+
+        async function loadPartInfo(partCode) {
+            try {
+                const response = await fetch(`/order_system/api/get_part_info/${encodeURIComponent(partCode)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const part = data.part;
+                    selectedPart = part;
+
+                    document.getElementById('partName').textContent = part.part_name || '-';
+                    document.getElementById('partSupplier').textContent = part.supplier || '-';
+                    document.getElementById('partPrice').textContent = `${part.unit_price || 0} €`;
+                    document.getElementById('partStock').textContent = part.stock_quantity;
+                    document.getElementById('partCritical').textContent = part.critical_stock_level;
+
+                    document.getElementById('partInfoBox').style.display = 'block';
+                    updateTotalPrice();
+                }
+            } catch (error) {
+                alert('Parça bilgileri yüklenemedi!');
+            }
+        }
+
+        quantityInput.addEventListener('input', updateTotalPrice);
+
+        function updateTotalPrice() {
+            const quantity = parseInt(quantityInput.value) || 0;
+            if (selectedPart && quantity > 0) {
+                const total = quantity * parseFloat(selectedPart.unit_price || 0);
+                document.getElementById('totalPrice').textContent = `${total.toFixed(2)} €`;
+                document.getElementById('totalPriceBox').style.display = 'block';
+            } else {
+                document.getElementById('totalPriceBox').style.display = 'none';
+            }
+        }
+
+        async function submitOrder(event) {
+            event.preventDefault();
+
+            if (!selectedPart) {
+                alert('Lütfen geçerli bir parça seçin!');
+                return;
+            }
+
+            const quantity = parseInt(quantityInput.value);
+            const notes = document.getElementById('notesInput').value;
+
+            if (quantity <= 0) {
+                alert('Geçersiz miktar!');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Oluşturuluyor...';
+
+            try {
+                const response = await fetch('/order_system/api/add_manual_order', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        part_code: selectedPart.part_code,
+                        quantity: quantity,
+                        notes: notes
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Sipariş oluşturuldu!\n\nParça: ${data.part_name}\nToplam: ${data.total_price.toFixed(2)} €`);
+                    window.location.href = '/order_system/track_orders';
+                } else {
+                    alert('Hata: ' + data.error);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-cart-plus"></i> Siparişi Oluştur';
+                }
+            } catch (error) {
+                alert('Bağlantı hatası: ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-cart-plus"></i> Siparişi Oluştur';
+            }
+        }
+
+        // Click outside to close autocomplete
+        document.addEventListener('click', function(e) {
+            if (!partCodeInput.contains(e.target)) {
+                autocompleteList.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

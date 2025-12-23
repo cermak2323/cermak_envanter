@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Seçimi - Cermak</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #dc3545;
+            --primary-dark: #c82333;
+            --primary-blue: #2563eb;
+            --primary-dark-blue: #1e40af;
+            --primary-green: #10b981;
+            --primary-dark-green: #059669;
+        }
+
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            color: #2d3748;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideDown 0.6s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-section h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            animation: fadeInOut 3s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Clock Section */
+        .clock-section {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: transparent;
+            backdrop-filter: none;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: none;
+            z-index: 10;
+            text-align: right;
+            font-family: 'Inter', sans-serif;
+            border-left: none;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .clock-section .time {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .clock-section .date {
+            font-size: 0.85rem;
+            color: white;
+            margin: 0;
+            font-weight: 500;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .logout-btn {
+            background: rgba(220, 53, 69, 0.9);
+            border: none;
+            color: white;
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .logout-btn:hover {
+            background: rgba(200, 35, 51, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Systems Grid */
+        .systems-grid {
+            display: grid;
+            grid-template-columns: 180px;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: flex-start;
+            align-content: flex-start;
+        }
+
+        /* System Card */
+        .system-card {
+            background: rgba(255, 255, 255, 0.75);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: none;
+            border-top: 4px solid transparent;
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            animation: slideUp 0.5s ease forwards;
+            backdrop-filter: blur(10px);
+        }
+
+        .system-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .system-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .system-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .system-card.inventory {
+            border-top-color: #dc3545;
+        }
+
+        .system-card.order {
+            border-top-color: #2563eb;
+        }
+
+        .system-card.info {
+            border-top-color: #10b981;
+        }
+
+        .system-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .system-card.inventory:hover {
+            box-shadow: 0 12px 24px rgba(220, 53, 69, 0.2);
+        }
+
+        .system-card.order:hover {
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+        }
+
+        .system-card.info:hover {
+            box-shadow: 0 12px 24px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Card Header */
+        .card-header {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border: none;
+        }
+
+        .system-icon {
+            width: auto;
+            height: auto;
+            border-radius: 0;
+            display: block;
+            color: #212529;
+            font-size: 2rem;
+            box-shadow: none;
+            flex-shrink: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .system-card.inventory .system-icon {
+            color: #dc3545;
+        }
+
+        .system-card.order .system-icon {
+            color: #2563eb;
+        }
+
+        .system-card.info .system-icon {
+            color: #10b981;
+        }
+
+        .header-text h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #212529;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .header-text p {
+            display: block;
+            color: #6c757d;
+            font-size: 0.75rem;
+            margin: 0.3rem 0 0 0;
+            line-height: 1.3;
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 1rem 1rem 1rem;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .welcome-section h1 {
+                font-size: 1.8rem;
+            }
+
+            .main-container {
+                padding: 2rem 1rem;
+            }
+
+            .card-header {
+                padding: 1.5rem;
+            }
+
+            .card-body {
+                padding: 1rem 1.5rem 1.5rem;
+            }
+
+            .system-icon {
+                font-size: 2.5rem;
+            }
+
+            .header-text h3 {
+                font-size: 1rem;
+            }
+
+            .header-text p {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body style="background-image: url('{{ url_for('static', filename='login.png') }}');">
+    
+    <!-- Clock Section -->
+    <div class="clock-section">
+        <div>
+            <p class="time" id="clock">00:00:00</p>
+            <p class="date" id="date">01 Ocak 2025</p>
+        </div>
+        <a href="/profile" class="logout-btn" style="background: rgba(37, 99, 235, 0.9);">
+            <i class="bi bi-person-circle"></i> Profil
+        </a>
+        <a href="/logout" class="logout-btn">
+            <i class="bi bi-box-arrow-right"></i> Çıkış
+        </a>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1>Merhaba, {{ session.get('username', 'Kullanıcı') }}!</h1>
+        </div>
+
+        <!-- Systems Grid -->
+        <div class="systems-grid">
+            <!-- Envanter Sistemi -->
+            <a href="/inventory" class="system-card inventory">
+                <div class="card-header">
+                    <div class="system-icon">
+                        <i class="bi bi-qr-code-scan"></i>
+                    </div>
+                    <div class="header-text">
+                        <h3>Envanter Sistemi</h3>
+                        <p>QR kod bazlı parça yönetimi</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                </div>
+            </a>
+
+            <!-- Sipariş Sistemi -->
+            <a href="/takeuchi" class="system-card order">
+                <div class="card-header">
+                    <div class="system-icon">
+                        <i class="bi bi-cart-check-fill"></i>
+                    </div>
+                    <div class="header-text">
+                        <h3>Sipariş Sistemi</h3>
+                        <p>Takeuchi parça siparişleri</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                </div>
+            </a>
+
+            <!-- Yedek Parça Bilgi -->
+            <a href="/parts_info/" class="system-card info">
+                <div class="card-header">
+                    <div class="system-icon">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </div>
+                    <div class="header-text">
+                        <h3>Yedek Parça Bilgi</h3>
+                        <p>Parça katalog ve bilgileri</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Clock and Date
+        function updateClock() {
+            const now = new Date();
+            
+            // Time
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // Date in Turkish
+            const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+            const months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+            
+            const day = days[now.getDay()];
+            const date = now.getDate();
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+            
+            document.getElementById('date').textContent = `${date} ${month} ${year}`;
+        }
+        
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>

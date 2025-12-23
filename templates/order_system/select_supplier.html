@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tedarikçi Seçimi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 8px 32px rgba(220, 38, 38, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header-icon {
+            font-size: 3rem;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-4px);
+            color: white;
+        }
+
+        .supplier-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 0 1rem 2rem;
+        }
+
+        .supplier-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .supplier-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(220, 38, 38, 0.15);
+            border-color: #dc2626;
+        }
+
+        .supplier-icon {
+            font-size: 2.5rem;
+            color: #dc2626;
+            margin-bottom: 1rem;
+        }
+
+        .supplier-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .supplier-info {
+            flex-grow: 1;
+        }
+
+        .supplier-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .supplier-stat strong {
+            color: #dc2626;
+        }
+
+        .supplier-btn {
+            align-self: flex-start;
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .supplier-btn:hover {
+            background: #991b1b;
+            transform: translateX(4px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #64748b;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 0 1rem 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .admin-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.6rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .admin-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+            color: white;
+        }
+
+        .user-info {
+            margin: 0.25rem 0 0 0;
+            opacity: 0.95;
+            font-size: 0.85rem;
+        }
+
+        .back-btn-header {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn-header:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-4px);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Navbar -->
+    <div class="header">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="header-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <div>
+                        <h1>Tedarikçi Seçimi</h1>
+                        <p class="user-info">
+                            <i class="bi bi-person-circle"></i> {{ username if username else 'Kullanıcı' }}
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="/order_system/" class="admin-btn">
+                        <i class="bi bi-grid-3x3-gap"></i> Ana Menü
+                    </a>
+                    <a href="/" class="back-btn-header">
+                        <i class="bi bi-grid-3x3-gap"></i> Portala Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Arama Kutusu -->
+        <div class="search-box">
+            <i class="bi bi-search" style="color: #64748b; align-self: center;"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Tedarikçi adı ara...">
+        </div>
+
+        <!-- Tedarikçi Kartları -->
+        <div id="suppliersContainer" class="supplier-container">
+            <div style="text-align: center; width: 100%; padding: 2rem;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
+                </div>
+                <p class="mt-2 text-muted">Tedarikçiler yükleniyor...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let allSuppliers = [];
+
+        async function loadSuppliers() {
+            try {
+                const response = await fetch('/order_system/api/get_suppliers');
+                const data = await response.json();
+
+                if (data.success) {
+                    allSuppliers = data.suppliers;
+                    displaySuppliers(allSuppliers);
+                } else {
+                    showError(data.error || 'Tedarikçiler yüklenirken hata oluştu');
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        function displaySuppliers(suppliers) {
+            const container = document.getElementById('suppliersContainer');
+
+            if (suppliers.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; width: 100%; padding: 3rem 1rem;">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-inbox"></i>
+                        </div>
+                        <h4>Tedarikçi Bulunamadı</h4>
+                        <p class="text-muted">Sipariş oluşturabilecek tedarikçi bulunmuyor</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = suppliers.map(supplier => `
+                <a href="/order_system/create_orders?supplier=${encodeURIComponent(supplier.name)}" class="supplier-card" style="text-decoration: none; color: inherit;">
+                    <div class="supplier-icon">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <div class="supplier-name">${supplier.name}</div>
+                    <div class="supplier-info">
+                        <div class="supplier-stat">
+                            <i class="bi bi-box"></i>
+                            <span><strong>${supplier.part_count}</strong> parça</span>
+                        </div>
+                        <div class="supplier-stat">
+                            <i class="bi bi-graph-up"></i>
+                            <span><strong>${supplier.order_count}</strong> sipariş</span>
+                        </div>
+                        <div class="supplier-stat">
+                            <i class="bi bi-hourglass-split"></i>
+                            <span><strong>${supplier.pending_count}</strong> beklemede</span>
+                        </div>
+                    </div>
+                    <button class="supplier-btn" onclick="event.stopPropagation(); window.location.href='/order_system/create_orders?supplier=${encodeURIComponent(supplier.name)}'">
+                        <i class="bi bi-arrow-right"></i> Seç
+                    </button>
+                </a>
+            `).join('');
+        }
+
+        function searchSuppliers() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allSuppliers.filter(s => s.name.toLowerCase().includes(query));
+            displaySuppliers(filtered);
+        }
+
+        function showError(message) {
+            const container = document.getElementById('suppliersContainer');
+            container.innerHTML = `
+                <div style="text-align: center; width: 100%; padding: 3rem 1rem;">
+                    <div class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle"></i> ${message}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Event Listeners
+        document.getElementById('searchInput').addEventListener('input', searchSuppliers);
+
+        // Sayfayı yükle
+        document.addEventListener('DOMContentLoaded', loadSuppliers);
+    </script>
+</body>
+</html>

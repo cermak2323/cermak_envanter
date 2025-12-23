@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otomatik Sipariş Oluştur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-red: #dc2626;
+            --primary-dark: #991b1b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .header-icon {
+            font-size: 2rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.75rem;
+            border-radius: 16px;
+            display: inline-block;
+        }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-4px);
+            color: white;
+        }
+
+        .user-info {
+            margin: 0.25rem 0 0 0;
+            opacity: 0.95;
+            font-size: 0.85rem;
+        }
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-top: 1.5rem;
+        }
+        
+        /* Excel Tarzı Tablo */
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+        }
+        
+        .excel-table thead {
+            background: #dc2626;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .excel-table th {
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #dc2626;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+        
+        .excel-table th:first-child {
+            width: 50px;
+            text-align: center;
+        }
+        
+        .excel-table tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .excel-table tbody tr:hover {
+            background: #fff7ed;
+        }
+        
+        .excel-table tbody tr.selected {
+            background: #dcfce7 !important;
+        }
+        
+        .excel-table tbody tr.protected {
+            background: #fee2e2;
+            opacity: 0.6;
+        }
+        
+        .excel-table td {
+            padding: 0.75rem 0.5rem;
+            border: 1px solid #e5e7eb;
+            vertical-align: middle;
+        }
+        
+        .excel-table td:first-child {
+            text-align: center;
+        }
+        
+        .excel-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .badge-status {
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .badge-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .badge-protected {
+            background: #fecaca;
+            color: #7f1d1d;
+        }
+        
+        .order-name-section {
+            background: #fef2f2;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #dc2626;
+        }
+        
+        .order-name-section h6 {
+            color: #dc2626;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-create {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-create:hover:not(:disabled) {
+            background: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        
+        .btn-create:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .table-container {
+            max-height: 600px;
+            overflow-y: auto;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Tab Styling */
+        .tab-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            bottom: -2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-align: center;
+        }
+        
+        .tab-btn i {
+            font-size: 1.1rem;
+        }
+        
+        .tab-btn:hover {
+            background: #f9f9f9;
+            color: #dc2626;
+        }
+        
+        .tab-btn.active {
+            color: #dc2626;
+            border-bottom-color: #dc2626;
+            background: transparent;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Manual Entry Form */
+        .manual-entry-form {
+            background: #f0f9ff;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #0284c7;
+            border-top: 1px solid #cffafe;
+        }
+        
+        .manual-entry-form h6 {
+            color: #0284c7;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 3fr 1fr 1fr 1fr;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+            background: white;
+        }
+
+        .order-qty-input {
+            border: 2px solid #fbbf24;
+            background: #fffbeb;
+            font-weight: 600;
+            color: #b45309;
+            transition: all 0.2s ease;
+        }
+
+        .order-qty-input:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+            background: white;
+        }
+
+        .order-qty-input::-webkit-outer-spin-button,
+        .order-qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .order-qty-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add-manual:hover {
+            background: #0369a1;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+        }
+
+        /* Excel Upload */
+        .excel-upload-zone {
+            background: #f0fdf4;
+            border: 3px dashed #16a34a;
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .excel-upload-zone h5 {
+            color: #16a34a;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .excel-upload-zone p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .excel-upload-zone:hover {
+            background: #dffce7;
+            border-color: #15803d;
+        }
+
+        .excel-upload-zone.dragover {
+            background: #dcfce7;
+            border-color: #15803d;
+            transform: scale(1.01);
+        }
+
+        .upload-icon {
+            font-size: 3.5rem;
+            color: #16a34a;
+            margin-bottom: 1rem;
+        }
+
+        .btn-download-template {
+            background: white;
+            color: #16a34a;
+            border: 2px solid #16a34a;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-download-template:hover {
+            background: #16a34a;
+            color: white;
+        }
+
+        .manual-items-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .manual-items-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .manual-items-table thead {
+            background: #0284c7;
+            color: white;
+        }
+
+        .manual-items-table th,
+        .manual-items-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        .manual-items-table tbody tr:hover {
+            background: #f0f9ff;
+        }
+
+        .btn-remove {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-remove:hover {
+            background: #b91c1c;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="header-icon">
+                        <i class="bi bi-cart-plus"></i>
+                    </div>
+                    <div>
+                        <h1>Sipariş Oluştur</h1>
+                        <p class="user-info" id="headerInfo">
+                            <i class="bi bi-list-ul"></i> Otomatik, manuel veya Excel ile sipariş listesi oluştur
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <a href="/order_system/select_supplier" class="back-btn">
+                        <i class="bi bi-arrow-left"></i> Tedarikçi Seç
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="padding: 2rem 1rem;">
+        <div class="content-card">
+            <!-- Tab Buttons -->
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('automatic')">
+                    <i class="bi bi-robot"></i> Otomatik (Kritik Parçalar)
+                </button>
+                <button class="tab-btn" onclick="switchTab('manual')">
+                    <i class="bi bi-pencil-square"></i> Manuel Ekleme
+                </button>
+                <button class="tab-btn" onclick="switchTab('excel')">
+                    <i class="bi bi-file-earmark-excel"></i> Excel İle Yükle
+                </button>
+            </div>
+
+            <!-- Tab 1: Automatic (Original Content) -->
+            <div id="automaticTab" class="tab-content active">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4><i class="bi bi-exclamation-triangle text-warning"></i> Kritik Stok Listesi</h4>
+                <button class="btn btn-primary" onclick="loadCriticalParts()">
+                    <i class="bi bi-arrow-clockwise"></i> Yenile
+                </button>
+            </div>
+
+            <div id="loadingDiv" class="text-center py-5">
+                <div class="spinner-border text-warning" role="status"></div>
+                <p class="mt-3">Kritik stok kontrol ediliyor...</p>
+            </div>
+
+            <div id="criticalPartsDiv" style="display: none;">
+                <!-- Tedarikçi ve Parça Kartları -->
+                <div id="suppliersContainer" class="suppliers-list">
+                    <!-- JavaScript tarafından dinamik olarak doldurulacak -->
+                </div>
+
+                <!-- Özet Bölümü -->
+                <div class="row mt-4" id="summarySection" style="display: none;">
+                    <h6><i class="bi bi-tag"></i> Sipariş Listesi Adı</h6>
+                    <div class="row align-items-center mt-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                                <input type="text" class="form-control" id="orderListName" 
+                                       placeholder="Örn: CER2025005" 
+                                       value="">
+                            </div>
+                            <small class="text-muted mt-1 d-block">
+                                <i class="bi bi-info-circle"></i> Önerilen format: CER + Yıl + Sıra No (Örn: CER2025005)
+                            </small>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-sm btn-outline-primary" onclick="generateOrderName()">
+                                <i class="bi bi-magic"></i> Otomatik Oluştur
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> 
+                    <strong>Not:</strong> Kırmızı satırlar zaten siparişte (Gelmedi durumunda) - seçilemez.
+                    <span class="ms-3"><strong id="selectedCount">0</strong> parça seçili</span>
+                </div>
+
+                <!-- Excel Tarzı Tablo -->
+                <div class="table-container">
+                    <table class="excel-table" id="partsTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" class="excel-checkbox" id="selectAll" onclick="toggleSelectAll()">
+                                </th>
+                                <th>Parça Kodu</th>
+                                <th>Parça Adı</th>
+                                <th>Tedarikçi</th>
+                                <th>Mevcut Stok</th>
+                                <th>Kritik Seviye</th>
+                                <th>Beklenen Stok</th>
+                                <th>Sipariş Miktarı</th>
+                                <th>Birim Fiyat (€)</th>
+                                <th>Toplam (€)</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody id="partsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-warning mt-3" id="noPartsAlert" style="display: none;">
+                    <i class="bi bi-check-circle"></i> Tüm parçalar yeterli stokta!
+                </div>
+
+                <!-- Özet ve Oluştur Butonu -->
+                <div class="row mt-4" id="summarySection" style="display: none;">
+                    <div class="col-md-8">
+                        <div class="alert alert-success mb-0">
+                            <h6><i class="bi bi-calculator"></i> Sipariş Özeti</h6>
+                            <div class="row mt-2">
+                                <div class="col-md-4">
+                                    <strong>Seçili Parça:</strong> <span id="summaryPartCount">0</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Toplam Miktar:</strong> <span id="summaryTotalQty">0</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Toplam Tutar:</strong> <span id="summaryTotalPrice">0.00 €</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn-create" id="createOrdersBtn" onclick="createOrders()">
+                            <i class="bi bi-cart-check"></i> Sipariş Listesi Oluştur
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </div><!-- End Automatic Tab -->
+
+            <!-- Tab 2: Manual Entry -->
+            <div id="manualTab" class="tab-content">
+                <h4 class="mb-4"><i class="bi bi-pencil-square"></i> Manuel Parça Ekleme</h4>
+                
+                <!-- Sipariş Listesi Seçimi -->
+                <div class="order-name-section mb-4">
+                    <h6><i class="bi bi-tag"></i> Sipariş Listesi</h6>
+                    <div class="row align-items-center mt-3">
+                        <div class="col-md-8">
+                            <select class="form-control" id="manualTargetList" onchange="handleListSelection()">
+                                <option value="">-- Yeni Liste Oluştur --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="manualNewListName" 
+                                   placeholder="Yeni liste adı" style="display: none;">
+                        </div>
+                    </div>
+                    <small class="text-muted mt-2 d-block">
+                        <i class="bi bi-info-circle"></i> Mevcut bir listeye ekleyin veya yeni liste oluşturun
+                    </small>
+                </div>
+
+                <!-- Manual Entry Form -->
+                <div class="manual-entry-form">
+                    <h6 class="mb-3"><i class="bi bi-plus-circle"></i> Parça Bilgileri</h6>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Parça Kodu</label>
+                            <input type="text" class="form-control" id="manualPartCode" 
+                                   placeholder="Örn: P-12345" list="partCodeList">
+                            <datalist id="partCodeList"></datalist>
+                        </div>
+                        <div class="form-group">
+                            <label>Parça Adı</label>
+                            <input type="text" class="form-control" id="manualPartName" 
+                                   placeholder="Parça adı" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Tedarikçi</label>
+                            <input type="text" class="form-control" id="manualSupplier" 
+                                   placeholder="Tedarikçi" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Miktar</label>
+                            <input type="number" class="form-control" id="manualQuantity" 
+                                   placeholder="0" min="1" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button class="btn-add-manual" onclick="addManualItem()">
+                                <i class="bi bi-plus-lg"></i> Ekle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manual Items Table -->
+                <div id="manualItemsContainer" style="display: none;">
+                    <h6 class="mb-3"><i class="bi bi-list-check"></i> Eklenen Parçalar</h6>
+                    <div class="manual-items-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Parça Kodu</th>
+                                    <th>Parça Adı</th>
+                                    <th>Tedarikçi</th>
+                                    <th>Miktar</th>
+                                    <th>Birim Fiyat</th>
+                                    <th>Toplam</th>
+                                    <th>İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="manualItemsBody">
+                            </tbody>
+                            <tfoot>
+                                <tr style="font-weight: 600; background: #f9fafb;">
+                                    <td colspan="5" style="text-align: right;">TOPLAM:</td>
+                                    <td id="manualTotalPrice">0.00 €</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button class="btn-create" onclick="saveManualOrders()">
+                            <i class="bi bi-save"></i> Sipariş Kaydet
+                        </button>
+                    </div>
+                </div>
+            </div><!-- End Manual Tab -->
+
+            <!-- Tab 3: Excel Upload -->
+            <div id="excelTab" class="tab-content">
+                <h4 class="mb-4"><i class="bi bi-file-earmark-excel"></i> Excel İle Toplu Sipariş</h4>
+
+                <!-- Excel Upload Zone -->
+                <div class="excel-upload-zone" id="excelUploadZone" 
+                     onclick="document.getElementById('excelFileInput').click()"
+                     ondragover="handleDragOver(event)"
+                     ondragleave="handleDragLeave(event)"
+                     ondrop="handleDrop(event)">
+                    <div class="upload-icon">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                    </div>
+                    <h5>Excel Dosyası Yükleyin</h5>
+                    <p class="text-muted mb-3">Tıklayın veya dosyayı sürükleyip bırakın</p>
+                    <input type="file" id="excelFileInput" accept=".xlsx,.xls" 
+                           style="display: none;" onchange="handleFileSelect(event)">
+                    <button class="btn-download-template" onclick="event.stopPropagation(); downloadTemplate()">
+                        <i class="bi bi-download"></i> Excel Şablonu İndir
+                    </button>
+                </div>
+
+                <!-- Excel Preview -->
+                <div id="excelPreviewContainer" style="display: none;">
+                    <div class="order-name-section mb-4">
+                        <h6><i class="bi bi-tag"></i> Sipariş Listesi Adı</h6>
+                        <div class="row align-items-center mt-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="excelListName" 
+                                       placeholder="Liste adı giriniz">
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="mb-3"><i class="bi bi-table"></i> Excel Önizleme</h6>
+                    <div class="table-container">
+                        <table class="excel-table">
+                            <thead>
+                                <tr>
+                                    <th>Satır</th>
+                                    <th>Parça Kodu</th>
+                                    <th>Miktar</th>
+                                    <th>Parça Adı</th>
+                                    <th>Tedarikçi</th>
+                                    <th>Birim Fiyat</th>
+                                    <th>Toplam</th>
+                                    <th>Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody id="excelPreviewBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="alert alert-success mt-3">
+                        <strong>Toplam:</strong> <span id="excelTotalItems">0</span> parça - 
+                        <strong id="excelTotalPrice">0.00 €</strong>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button class="btn btn-secondary me-2" onclick="clearExcelUpload()">
+                            <i class="bi bi-x-circle"></i> İptal
+                        </button>
+                        <button class="btn-create" onclick="saveExcelOrders()">
+                            <i class="bi bi-upload"></i> Siparişleri Kaydet
+                        </button>
+                    </div>
+                </div>
+            </div><!-- End Excel Tab -->
+
+            <div class="mt-4">
+                <button class="btn" onclick="window.location.href='/order_system/'" style="background: #e5e7eb; color: #333; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="bi bi-arrow-left"></i> Geri Dön
+                </button>
+                <button class="btn" onclick="window.location.href='/'" style="background: #e5e7eb; color: #333; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; transition: all 0.3s ease; margin-left: 0.5rem;">
+                    <i class="bi bi-grid-3x3-gap"></i> Portala Dön
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        // ============ TAB SWITCHING ============
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+
+            // Load data based on tab
+            if (tabName === 'automatic') {
+                loadCriticalParts();
+            } else if (tabName === 'manual') {
+                loadExistingLists();
+                loadPartCodes();
+            }
+        }
+
+        // ============ AUTOMATIC TAB (Original Code) ============
+        let criticalParts = [];
+        let supplierGroups = {};
+        let selectedPartsBySupplier = {};
+        const selectedSupplier = new URLSearchParams(window.location.search).get('supplier');
+
+        async function loadCriticalParts() {
+            const loadingDiv = document.getElementById('loadingDiv');
+            const criticalPartsDiv = document.getElementById('criticalPartsDiv');
+            
+            if (!loadingDiv || !criticalPartsDiv) {
+                console.error('Required elements not found');
+                return;
+            }
+            
+            loadingDiv.style.display = 'block';
+            criticalPartsDiv.style.display = 'none';
+
+            try {
+                // Seçilen tedarikçi varsa sadece onun parçalarını getir
+                let url = '/order_system/api/check_critical_stock';
+                if (selectedSupplier) {
+                    url += '?supplier=' + encodeURIComponent(selectedSupplier);
+                }
+                
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.success) {
+                    criticalParts = data.critical_parts;
+                    groupBySupplier();
+                    displayPartsBySupplier();
+                }
+            } catch (error) {
+                console.error('Hata: ' + error.message);
+                if (loadingDiv) {
+                    loadingDiv.innerHTML = '<p class="alert alert-danger">Veri yüklenirken hata oluştu: ' + error.message + '</p>';
+                }
+            }
+
+            if (loadingDiv) loadingDiv.style.display = 'none';
+            if (criticalPartsDiv) criticalPartsDiv.style.display = 'block';
+        }
+
+        function groupBySupplier() {
+            supplierGroups = {};
+            selectedPartsBySupplier = {};
+            
+            console.log('🔧 groupBySupplier() başladı, parça sayısı:', criticalParts.length);
+            
+            criticalParts.forEach(part => {
+                let supplier = part.supplier || 'Tedarikçi Belirtilmemiş';
+                
+                // Eğer seçilen tedarikçi varsa ve bu parça başka tedarikçiye aitse atla
+                if (selectedSupplier && supplier !== selectedSupplier) {
+                    return;
+                }
+                
+                if (!supplierGroups[supplier]) {
+                    supplierGroups[supplier] = [];
+                    selectedPartsBySupplier[supplier] = new Set();
+                }
+                supplierGroups[supplier].push(part);
+            });
+            
+            console.log('✅ groupBySupplier() tamamlandı, tedarikçi sayısı:', Object.keys(supplierGroups).length);
+            console.log('📋 Tedarikçiler:', Object.keys(supplierGroups));
+        }
+
+        function generateOrderName(supplier) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const random = Math.floor(Math.random() * 900) + 100;
+            return `CER${year}${String(random).padStart(3, '0')}`;
+        }
+
+        function displayPartsBySupplier() {
+            const container = document.getElementById('suppliersContainer');
+            const noPartsAlert = document.getElementById('noPartsAlert');
+            const summarySection = document.getElementById('summarySection');
+
+            console.log('📊 displayPartsBySupplier() çağrıldı');
+            console.log('📊 criticalParts uzunluğu:', criticalParts.length);
+            console.log('📊 container element:', container);
+            console.log('📊 supplierGroups:', supplierGroups);
+
+            if (!container) {
+                console.error('❌ suppliersContainer div bulunamadı!');
+                return;
+            }
+
+            if (criticalParts.length === 0) {
+                console.log('⚠️ Hiçbir kritik parça yok');
+                noPartsAlert.style.display = 'block';
+                summarySection.style.display = 'none';
+                container.innerHTML = '';
+                return;
+            }
+
+            console.log('✅ Parçalar render ediliyor...');
+            noPartsAlert.style.display = 'none';
+            summarySection.style.display = 'flex';
+
+            container.innerHTML = Object.keys(supplierGroups).map(supplier => {
+                const parts = supplierGroups[supplier];
+                const supplierTotal = parts.reduce((sum, p) => {
+                    const qty = p.needed_quantity || 0;
+                    const price = parseFloat(p.unit_price) || 0;
+                    return sum + (qty * price);
+                }, 0);
+                
+                return `
+                    <div class="card mb-4 border-2">
+                        <div class="card-header bg-primary text-white">
+                            <div class="row align-items-center">
+                                <div class="col-md-4">
+                                    <h5 class="mb-0"><i class="bi bi-building"></i> ${supplier}</h5>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label text-white mb-0">Sipariş Listesi Adı:</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control" id="orderName_${supplier}" value="${generateOrderName(supplier)}">
+                                        <button class="btn btn-light" onclick="document.getElementById('orderName_${supplier}').value = generateOrderName('${supplier}')">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <span class="badge bg-light text-dark fs-6">${parts.length} Parça</span>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <button class="btn btn-light btn-sm" id="createBtn_${supplier}" style="display:none;" onclick="createOrderForSupplier('${supplier}')">
+                                        <i class="bi bi-check-circle"></i> <strong>Oluştur</strong> - <span id="price_${supplier}">0.00</span> €
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-container">
+                                <table class="excel-table">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" class="excel-checkbox" id="selectAll_${supplier}" 
+                                                       onclick="toggleSelectAllSupplier('${supplier}')">
+                                            </th>
+                                            <th>Parça Kodu</th>
+                                            <th>Parça Adı</th>
+                                            <th>Mevcut</th>
+                                            <th>Kritik</th>
+                                            <th>Beklenen</th>
+                                            <th>Sipariş</th>
+                                            <th>Birim (€)</th>
+                                            <th>Toplam (€)</th>
+                                            <th>Durum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${parts.map(part => {
+                                            const isProtected = part.is_protected;
+                                            const orderQty = part.needed_quantity || 0;
+                                            const unitPrice = parseFloat(part.unit_price) || 0;
+                                            const totalPrice = orderQty * unitPrice;
+                                            const rowId = `row_${supplier}_${part.part_code}`;
+                                            
+                                            return `
+                                                <tr class="${isProtected ? 'protected' : ''} ${selectedPartsBySupplier[supplier]?.has(part.part_code) ? 'selected' : ''}" id="${rowId}">
+                                                    <td>
+                                                        <input type="checkbox" 
+                                                               class="excel-checkbox part-checkbox" 
+                                                               data-supplier="${supplier}"
+                                                               data-part-code="${part.part_code}"
+                                                               ${isProtected ? 'disabled' : ''}
+                                                               ${selectedPartsBySupplier[supplier]?.has(part.part_code) ? 'checked' : ''}
+                                                               onchange="togglePartSelection('${supplier}', '${part.part_code}')">
+                                                    </td>
+                                                    <td><strong>${part.part_code}</strong></td>
+                                                    <td>${part.part_name || '-'}</td>
+                                                    <td class="text-center">${part.stock_quantity || 0}</td>
+                                                    <td class="text-center">${part.critical_stock_level || 0}</td>
+                                                    <td class="text-center">${part.expected_stock || '-'}</td>
+                                                    <td class="text-center">
+                                                        <input type="number" 
+                                                               class="form-control form-control-sm text-center order-qty-input" 
+                                                               value="${orderQty}" 
+                                                               min="0" 
+                                                               data-supplier="${supplier}"
+                                                               data-part-code="${part.part_code}"
+                                                               data-unit-price="${unitPrice}"
+                                                               onchange="updateOrderQuantity('${supplier}', '${part.part_code}', this.value, ${unitPrice})"
+                                                               style="width: 80px; padding: 4px;">
+                                                    </td>
+                                                    <td class="text-end">${unitPrice.toFixed(2)}</td>
+                                                    <td class="text-end"><strong class="order-total" data-supplier="${supplier}" data-part-code="${part.part_code}">${totalPrice.toFixed(2)}</strong></td>
+                                                    <td>
+                                                        ${isProtected ? 
+                                                            '<span class="badge-protected"><i class="bi bi-clock"></i> Siparişte</span>' :
+                                                            '<span class="badge-critical"><i class="bi bi-exclamation-triangle"></i> Kritik</span>'
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            updateSummary();
+        }
+
+        function toggleSelectAllSupplier(supplier) {
+            const selectAll = document.getElementById(`selectAll_${supplier}`);
+            const checkboxes = document.querySelectorAll(`.part-checkbox[data-supplier="${supplier}"]:not(:disabled)`);
+            
+            selectedPartsBySupplier[supplier].clear();
+            
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+                const partCode = cb.dataset.partCode;
+                const rowId = `row_${supplier}_${partCode}`;
+                
+                if (selectAll.checked) {
+                    selectedPartsBySupplier[supplier].add(partCode);
+                    document.getElementById(rowId).classList.add('selected');
+                } else {
+                    document.getElementById(rowId).classList.remove('selected');
+                }
+            });
+            
+            updateSummary();
+        }
+
+        function togglePartSelection(supplier, partCode) {
+            const rowId = `row_${supplier}_${partCode}`;
+            const row = document.getElementById(rowId);
+            
+            if (selectedPartsBySupplier[supplier].has(partCode)) {
+                selectedPartsBySupplier[supplier].delete(partCode);
+                row.classList.remove('selected');
+            } else {
+                selectedPartsBySupplier[supplier].add(partCode);
+                row.classList.add('selected');
+            }
+            
+            updateSummary();
+            
+            // Tümünü seç checkbox'ını güncelle
+            const checkboxes = document.querySelectorAll(`.part-checkbox[data-supplier="${supplier}"]:not(:disabled)`);
+            const checkedCount = document.querySelectorAll(`.part-checkbox[data-supplier="${supplier}"]:checked:not(:disabled)`).length;
+            document.getElementById(`selectAll_${supplier}`).checked = checkedCount === checkboxes.length;
+        }
+
+        // Sipariş adetini güncelle ve toplamı hesapla
+        function updateOrderQuantity(supplier, partCode, newQty, unitPrice) {
+            const qty = parseInt(newQty) || 0;
+            
+            // Part object'ini bul ve güncelle
+            const part = supplierGroups[supplier]?.find(p => p.part_code === partCode);
+            if (part) {
+                part.needed_quantity = qty;  // Edited quantity'yi sakla
+                part._edited = true;  // Editing flag
+            }
+            
+            // Toplamı güncelle
+            const totalPrice = qty * unitPrice;
+            const totalElement = document.querySelector(`.order-total[data-supplier="${supplier}"][data-part-code="${partCode}"]`);
+            if (totalElement) {
+                totalElement.textContent = totalPrice.toFixed(2);
+            }
+            
+            // Özet'i yenile (eğer seçili ise)
+            if (selectedPartsBySupplier[supplier]?.has(partCode)) {
+                updateSummary();
+            }
+        }
+
+        function updateSummary() {
+            let totalParts = 0;
+            let totalQty = 0;
+            let totalPrice = 0;
+            
+            Object.keys(selectedPartsBySupplier).forEach(supplier => {
+                const selectedCodes = selectedPartsBySupplier[supplier];
+                const parts = supplierGroups[supplier].filter(p => selectedCodes.has(p.part_code));
+                
+                totalParts += parts.length;
+                
+                // Bu supplier için seçili parçaların fiyatını hesapla
+                let supplierPrice = 0;
+                parts.forEach(p => {
+                    const qty = p.needed_quantity || 0;
+                    const price = parseFloat(p.unit_price) || 0;
+                    supplierPrice += qty * price;
+                    totalQty += qty;
+                    totalPrice += qty * price;
+                });
+                
+                // HER SUPPLIER İÇİN BUTONU GÜNCELLE
+                const supplierBtn = document.getElementById(`createBtn_${supplier}`);
+                const priceSpan = document.getElementById(`price_${supplier}`);
+                
+                if (supplierBtn && priceSpan) {
+                    if (selectedCodes.size > 0) {
+                        supplierBtn.style.display = 'inline-block';
+                        priceSpan.textContent = supplierPrice.toFixed(2);  // SEÇİLİ PARÇALARIN TOPLAMI
+                    } else {
+                        supplierBtn.style.display = 'none';
+                        priceSpan.textContent = '0.00';
+                    }
+                }
+            });
+
+            document.getElementById('summaryPartCount').textContent = totalParts;
+            document.getElementById('summaryTotalQty').textContent = totalQty;
+            document.getElementById('summaryTotalPrice').textContent = totalPrice.toFixed(2) + ' €';
+        }
+
+        // BİR SUPPLIER İÇİN SİPARİŞ OLUŞTUR
+        async function createOrderForSupplier(supplier) {
+            const selectedCodes = Array.from(selectedPartsBySupplier[supplier]);
+            
+            if (selectedCodes.length === 0) {
+                alert(`❌ ${supplier} için seçili parça yok!`);
+                return;
+            }
+
+            const orderName = document.getElementById(`orderName_${supplier}`).value.trim();
+            if (!orderName) {
+                alert(`❌ ${supplier} için sipariş listesi adı boş olamaz!`);
+                return;
+            }
+
+            if (!confirm(`${supplier} için ${selectedCodes.length} parça sipariş oluşturulacak. Onaylıyor musunuz?`)) {
+                return;
+            }
+
+            const btn = document.getElementById(`createBtn_${supplier}`);
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Oluşturuluyor...';
+
+            try {
+                // API'ye gönder - seçili parçaları item listesine çevir
+                const items = selectedCodes.map(code => {
+                    const part = supplierGroups[supplier].find(p => p.part_code === code);
+                    return {
+                        part_code: part.part_code,
+                        part_name: part.part_name,
+                        supplier: part.supplier,
+                        quantity: part.needed_quantity || 0,
+                        unit_price: part.unit_price || 0,
+                        total_price: (part.needed_quantity || 0) * (part.unit_price || 0)
+                    };
+                });
+
+                const response = await fetch('/order_system/api/add_manual_orders', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        list_name: orderName,
+                        items: items
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Başarılı!\n"${orderName}" adıyla ${data.orders_created} parça sipariş oluşturuldu.`);
+                    // Sayfayı yenile
+                    location.reload();
+                } else {
+                    alert('❌ Hata: ' + data.error);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-check-circle"></i> <strong>Oluştur</strong>';
+                }
+            } catch (error) {
+                alert('❌ Bağlantı hatası: ' + error.message);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> <strong>Oluştur</strong>';
+            }
+        }
+
+        async function createAllOrders() {
+            let totalSelected = 0;
+            const ordersToCreate = [];
+            
+            // Her tedarikçi için seçili parçaları kontrol et
+            Object.keys(selectedPartsBySupplier).forEach(supplier => {
+                const selectedCodes = Array.from(selectedPartsBySupplier[supplier]);
+                if (selectedCodes.length > 0) {
+                    const orderName = document.getElementById(`orderName_${supplier}`).value.trim();
+                    if (!orderName) {
+                        alert(`❌ ${supplier} için sipariş listesi adı boş olamaz!`);
+                        return;
+                    }
+                    ordersToCreate.push({
+                        supplier: supplier,
+                        order_list_name: orderName,
+                        selected_parts: selectedCodes
+                    });
+                    totalSelected += selectedCodes.length;
+                }
+            });
+            
+            if (ordersToCreate.length === 0) {
+                alert('❌ Lütfen en az bir parça seçin!');
+                return;
+            }
+
+            if (!confirm(`${ordersToCreate.length} tedarikçi için toplam ${totalSelected} parça siparişi oluşturulacak. Onaylıyor musunuz?`)) {
+                return;
+            }
+
+            const createBtn = document.getElementById('createOrdersBtn');
+            createBtn.disabled = true;
+            createBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Oluşturuluyor...';
+
+            try {
+                let totalCreated = 0;
+                let totalProtected = 0;
+                
+                for (const orderData of ordersToCreate) {
+                    const response = await fetch('/order_system/api/create_automatic_orders', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(orderData)
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        totalCreated += data.orders_created || 0;
+                        totalProtected += data.protected_count || 0;
+                    } else {
+                        alert(`❌ ${orderData.supplier} için hata: ` + data.error);
+                    }
+                }
+                
+                alert(`✅ Başarılı!\n\n${totalCreated} sipariş oluşturuldu.\n${totalProtected} parça zaten siparişte.`);
+                window.location.href = '/order_system/track_orders';
+                
+            } catch (error) {
+                alert('❌ Bağlantı hatası: ' + error.message);
+                createBtn.disabled = false;
+                createBtn.innerHTML = '<i class="bi bi-cart-check"></i> Tüm Siparişleri Oluştur';
+            }
+        }
+
+        // ============ MANUAL TAB ============
+        let manualItems = [];
+        let allParts = [];
+
+        async function loadExistingLists() {
+            try {
+                const response = await fetch('/order_system/api/get_order_lists');
+                const data = await response.json();
+                
+                const select = document.getElementById('manualTargetList');
+                if (!select) return;
+                
+                select.innerHTML = '<option value="">-- Yeni Liste Oluştur --</option>';
+                
+                if (data.success && data.order_lists) {
+                    Object.keys(data.order_lists).forEach(supplier => {
+                        Object.keys(data.order_lists[supplier]).forEach(listName => {
+                            const option = document.createElement('option');
+                            option.value = `${supplier}|||${listName}`;
+                            option.textContent = `${listName} (${supplier})`;
+                            select.appendChild(option);
+                        });
+                    });
+                }
+            } catch (error) {
+                console.error('Liste yükleme hatası:', error);
+            }
+        }
+
+        async function loadPartCodes() {
+            try {
+                const response = await fetch('/order_system/api/get_all_parts');
+                const data = await response.json();
+                
+                if (data.success) {
+                    allParts = data.parts;
+                    const datalist = document.getElementById('partCodeList');
+                    if (!datalist) return;
+                    
+                    datalist.innerHTML = '';
+                    
+                    data.parts.forEach(part => {
+                        const option = document.createElement('option');
+                        option.value = part.part_code;
+                        option.textContent = `${part.part_code} - ${part.part_name}`;
+                        datalist.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Parça kodları yüklenemedi:', error);
+            }
+        }
+
+        function handleListSelection() {
+            const select = document.getElementById('manualTargetList');
+            const newNameInput = document.getElementById('manualNewListName');
+            
+            if (select.value === '') {
+                newNameInput.style.display = 'block';
+            } else {
+                newNameInput.style.display = 'none';
+            }
+        }
+
+        document.getElementById('manualPartCode')?.addEventListener('input', async function() {
+            const partCode = this.value.trim();
+            if (!partCode) return;
+            
+            const part = allParts.find(p => p.part_code === partCode);
+            if (part) {
+                document.getElementById('manualPartName').value = part.part_name || '';
+                document.getElementById('manualSupplier').value = part.supplier || '';
+            }
+        });
+
+        function addManualItem() {
+            const partCode = document.getElementById('manualPartCode').value.trim();
+            const partName = document.getElementById('manualPartName').value.trim();
+            const supplier = document.getElementById('manualSupplier').value.trim();
+            const quantity = parseInt(document.getElementById('manualQuantity').value);
+            
+            if (!partCode || !partName || !supplier || !quantity || quantity < 1) {
+                alert('❌ Lütfen tüm alanları doldurun!');
+                return;
+            }
+            
+            const part = allParts.find(p => p.part_code === partCode);
+            if (!part) {
+                alert('❌ Parça bulunamadı!');
+                return;
+            }
+            
+            const unitPrice = parseFloat(part.unit_price || 0);
+            const totalPrice = unitPrice * quantity;
+            
+            manualItems.push({
+                part_code: partCode,
+                part_name: partName,
+                supplier: supplier,
+                quantity: quantity,
+                unit_price: unitPrice,
+                total_price: totalPrice
+            });
+            
+            renderManualItems();
+            
+            // Clear form
+            document.getElementById('manualPartCode').value = '';
+            document.getElementById('manualPartName').value = '';
+            document.getElementById('manualSupplier').value = '';
+            document.getElementById('manualQuantity').value = 1;
+        }
+
+        function renderManualItems() {
+            const tbody = document.getElementById('manualItemsBody');
+            const totalPriceElem = document.getElementById('manualTotalPrice');
+            const itemsContainer = document.getElementById('manualItemsContainer');
+            
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            let total = 0;
+            manualItems.forEach((item, index) => {
+                total += item.total_price;
+                const row = `<tr>
+                    <td>${item.part_code}</td>
+                    <td>${item.part_name}</td>
+                    <td>${item.supplier}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.unit_price.toFixed(2)} €</td>
+                    <td>${item.total_price.toFixed(2)} €</td>
+                    <td>
+                        <button class="btn-remove" onclick="removeManualItem(${index})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+            
+            if (totalPriceElem) totalPriceElem.textContent = total.toFixed(2) + ' €';
+            if (itemsContainer) itemsContainer.style.display = manualItems.length > 0 ? 'block' : 'none';
+        }
+
+        function removeManualItem(index) {
+            manualItems.splice(index, 1);
+            renderManualItems();
+        }
+
+        async function saveManualOrders() {
+            if (manualItems.length === 0) {
+                alert('❌ Lütfen en az bir parça ekleyin!');
+                return;
+            }
+            
+            const targetList = document.getElementById('manualTargetList').value;
+            const newListName = document.getElementById('manualNewListName').value.trim();
+            
+            let listName, supplier;
+            
+            if (targetList === '') {
+                if (!newListName) {
+                    alert('❌ Lütfen yeni liste adı girin!');
+                    return;
+                }
+                listName = newListName;
+                supplier = manualItems[0].supplier; // Use first item's supplier
+            } else {
+                [supplier, listName] = targetList.split('|||');
+            }
+            
+            try {
+                const response = await fetch('/order_system/api/add_manual_orders', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        list_name: listName,
+                        supplier: supplier,
+                        items: manualItems
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ ${data.orders_created} sipariş başarıyla eklendi!`);
+                    manualItems = [];
+                    renderManualItems();
+                    window.location.href = '/order_system/track_orders';
+                } else {
+                    alert('❌ Hata: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Bağlantı hatası: ' + error.message);
+            }
+        }
+
+        // ============ EXCEL TAB ============
+        let excelData = [];
+
+        function downloadTemplate() {
+            const template = [
+                ['Parça Kodu', 'Miktar'],
+                ['P-12345', '10'],
+                ['P-67890', '5']
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(template);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Sipariş');
+            XLSX.writeFile(wb, 'siparis_sablonu.xlsx');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('excelUploadZone').classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('excelUploadZone').classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('excelUploadZone').classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                processExcelFile(files[0]);
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                processExcelFile(file);
+            }
+        }
+
+        async function processExcelFile(file) {
+            const reader = new FileReader();
+            
+            reader.onload = async function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                
+                // Skip header row
+                excelData = [];
+                let rowNum = 1;
+                
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i];
+                    if (row[0] && row[1]) { // part_code and quantity
+                        rowNum++;
+                        const partCode = row[0].toString().trim();
+                        const quantity = parseInt(row[1]);
+                        
+                        // Fetch part details from backend
+                        const part = allParts.find(p => p.part_code === partCode);
+                        
+                        if (part && quantity > 0) {
+                            excelData.push({
+                                row: rowNum,
+                                part_code: partCode,
+                                quantity: quantity,
+                                part_name: part.part_name,
+                                supplier: part.supplier,
+                                unit_price: parseFloat(part.unit_price || 0),
+                                total_price: parseFloat(part.unit_price || 0) * quantity,
+                                status: '✅ Geçerli'
+                            });
+                        } else {
+                            excelData.push({
+                                row: rowNum,
+                                part_code: partCode,
+                                quantity: quantity,
+                                part_name: '-',
+                                supplier: '-',
+                                unit_price: 0,
+                                total_price: 0,
+                                status: part ? '❌ Geçersiz miktar' : '❌ Parça bulunamadı'
+                            });
+                        }
+                    }
+                }
+                
+                renderExcelPreview();
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        function renderExcelPreview() {
+            const tbody = document.getElementById('excelPreviewBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            let totalValid = 0;
+            let totalPrice = 0;
+            
+            excelData.forEach(item => {
+                const isValid = item.status === '✅ Geçerli';
+                if (isValid) {
+                    totalValid++;
+                    totalPrice += item.total_price;
+                }
+                
+                const rowClass = isValid ? '' : 'protected';
+                const row = `<tr class="${rowClass}">
+                    <td>${item.row}</td>
+                    <td>${item.part_code}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.part_name}</td>
+                    <td>${item.supplier}</td>
+                    <td>${item.unit_price.toFixed(2)} €</td>
+                    <td>${item.total_price.toFixed(2)} €</td>
+                    <td>${item.status}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+            
+            const totalItemsElem = document.getElementById('excelTotalItems');
+            const totalPriceElem = document.getElementById('excelTotalPrice');
+            const uploadZone = document.getElementById('excelUploadZone');
+            const previewContainer = document.getElementById('excelPreviewContainer');
+            
+            if (totalItemsElem) totalItemsElem.textContent = totalValid;
+            if (totalPriceElem) totalPriceElem.textContent = totalPrice.toFixed(2) + ' €';
+            
+            if (uploadZone) uploadZone.style.display = 'none';
+            if (previewContainer) previewContainer.style.display = 'block';
+        }
+
+        function clearExcelUpload() {
+            excelData = [];
+            
+            const fileInput = document.getElementById('excelFileInput');
+            const listNameInput = document.getElementById('excelListName');
+            const uploadZone = document.getElementById('excelUploadZone');
+            const previewContainer = document.getElementById('excelPreviewContainer');
+            
+            if (fileInput) fileInput.value = '';
+            if (listNameInput) listNameInput.value = '';
+            if (uploadZone) uploadZone.style.display = 'block';
+            if (previewContainer) previewContainer.style.display = 'none';
+        }
+
+        async function saveExcelOrders() {
+            const listName = document.getElementById('excelListName').value.trim();
+            
+            if (!listName) {
+                alert('❌ Lütfen sipariş listesi adı girin!');
+                return;
+            }
+            
+            const validItems = excelData.filter(item => item.status === '✅ Geçerli');
+            
+            if (validItems.length === 0) {
+                alert('❌ Geçerli parça bulunamadı!');
+                return;
+            }
+            
+            // Group by supplier
+            const groupedBySupplier = {};
+            validItems.forEach(item => {
+                if (!groupedBySupplier[item.supplier]) {
+                    groupedBySupplier[item.supplier] = [];
+                }
+                groupedBySupplier[item.supplier].push({
+                    part_code: item.part_code,
+                    part_name: item.part_name,
+                    supplier: item.supplier,
+                    quantity: item.quantity,
+                    unit_price: item.unit_price,
+                    total_price: item.total_price
+                });
+            });
+            
+            try {
+                let totalCreated = 0;
+                
+                for (const [supplier, items] of Object.entries(groupedBySupplier)) {
+                    const response = await fetch('/order_system/api/add_manual_orders', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            list_name: listName,
+                            supplier: supplier,
+                            items: items
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        totalCreated += data.orders_created;
+                    }
+                }
+                
+                alert(`✅ ${totalCreated} sipariş başarıyla oluşturuldu!`);
+                clearExcelUpload();
+                window.location.href = '/order_system/track_orders';
+                
+            } catch (error) {
+                alert('❌ Bağlantı hatası: ' + error.message);
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Header'ı güncelle
+            if (selectedSupplier) {
+                const headerInfo = document.getElementById('headerInfo');
+                if (headerInfo) {
+                    headerInfo.innerHTML = `<i class="bi bi-building"></i> <strong>${selectedSupplier}</strong> ile sipariş oluşturma`;
+                }
+            }
+            
+            loadCriticalParts();
+            loadExistingLists();
+            loadPartCodes();
+        });
+    </script>
+</body>
+</html>
+

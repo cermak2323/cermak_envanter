@@ -1,0 +1,49 @@
+2025-12-16 10:56:45,194 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-16 10:56:45,205 - apscheduler.scheduler - INFO - Added job "_run_sync_job" to job store "default"
+2025-12-16 10:56:45,207 - apscheduler.scheduler - INFO - Scheduler started
+2025-12-16 10:56:45,207 - backend.scheduler - INFO - [SCHED] Started B2 periodic sync every 30 min.
+2025-12-16 10:56:45,404 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-16 10:56:45,404 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-16 10:56:45,407 - apscheduler.scheduler - INFO - Added job "Gnlk Otomatik Database Backup" to job store "default"
+2025-12-16 10:56:45,407 - apscheduler.scheduler - INFO - Added job "Saatlik Backup Btnl Kontrol" to job store "default"
+2025-12-16 10:56:45,407 - apscheduler.scheduler - INFO - Scheduler started
+2025-12-16 10:56:45,407 - app - INFO - [OK] Backup Scheduler Balatld:
+2025-12-16 10:56:45,407 - app - INFO -    [DAILY] Gnlk Backup: Her gn 02:00'de
+2025-12-16 10:56:45,407 - app - INFO -    [HOURLY] Saatlik Kontrol: Her saat banda
+2025-12-16 10:56:45,407 - app - INFO -    [PATH] Backup Klasr: C:\Users\rsade\Desktop\Yeni klasör\EnvanterQR\EnvanterQR\backups
+2025-12-16 10:56:45,421 - sqlalchemy.engine.Engine - INFO - SELECT DATABASE()
+2025-12-16 10:56:45,421 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-12-16 10:56:45,421 - sqlalchemy.engine.Engine - INFO - SELECT @@sql_mode
+2025-12-16 10:56:45,421 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-12-16 10:56:45,421 - sqlalchemy.engine.Engine - INFO - SELECT @@lower_case_table_names
+2025-12-16 10:56:45,421 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-12-16 10:56:45,421 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-12-16 10:56:45,421 - sqlalchemy.engine.Engine - INFO - SHOW FULL TABLES FROM `flaskdb`
+2025-12-16 10:56:45,421 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-12-16 10:56:45,434 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+Traceback (most recent call last):
+  File "C:\Users\rsade\Desktop\Yeni klasör\EnvanterQR\EnvanterQR\app.py", line 1792, in init_db
+    print(" \U0001f512 Adding UNIQUE constraint for multi-scanner safety...")
+  File "C:\Users\rsade\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1254.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f512' in position 1: character maps to <undefined>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\rsade\Desktop\Yeni klasör\EnvanterQR\EnvanterQR\app.py", line 1804, in init_db
+    print(f" \u2139\ufe0f Constraint check: {str(constraint_error)[:100]}")
+  File "C:\Users\rsade\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1254.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 1-2: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\rsade\Desktop\Yeni klasör\EnvanterQR\EnvanterQR\app.py", line 13990, in <module>
+    register_order_system(app)
+  File "C:\Users\rsade\Desktop\Yeni klasör\EnvanterQR\EnvanterQR\order_system.py", line 1418, in register_order_system
+    print("[ORDER SYSTEM] Parça Sipariþ Sistemi modülü yüklendi \u2705")
+  File "C:\Users\rsade\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1254.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2705' in position 53: character maps to <undefined>

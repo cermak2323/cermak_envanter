@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Takeuchi - Admin Panel</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cermak-primary: #dc3545;
+            --cermak-primary-dark: #c82333;
+            --cermak-bg: #f8f9fa;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --shadow-soft: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-medium: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-strong: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        body {
+            background: var(--cermak-bg);
+            color: var(--text-primary);
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--cermak-primary) 0%, var(--cermak-primary-dark) 100%);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white !important;
+            margin-right: auto;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+        
+        /* Main Content */
+        .main-container {
+            padding: 2rem 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--cermak-primary) 0%, var(--cermak-primary-dark) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-header p {
+            opacity: 0.95;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+        
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            border-top: 3px solid var(--cermak-primary);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .card-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--cermak-primary) 0%, var(--cermak-primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+        
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--cermak-primary);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            background: rgba(220, 53, 69, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone:hover {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: var(--cermak-primary-dark);
+        }
+
+        .upload-zone.drag-over {
+            background: rgba(220, 53, 69, 0.15);
+            border-color: var(--cermak-primary-dark);
+            transform: scale(1.02);
+        }
+
+        .upload-zone input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-hint {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .upload-formats {
+            background: white;
+            padding: 0.6rem;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            color: var(--cermak-primary);
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background: var(--cermak-primary);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--cermak-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-outline-secondary {
+            font-weight: 600;
+        }
+
+        /* Messages */
+        .alert {
+            border: none;
+            border-radius: 10px;
+            border-left: 4px solid;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #155724;
+            border-color: #28a745;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #721c24;
+            border-color: #dc3545;
+        }
+
+        /* Tables */
+        .table {
+            font-size: 0.95rem;
+        }
+
+        .table thead {
+            background: var(--cermak-bg);
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .table thead th {
+            font-weight: 700;
+            color: var(--text-primary);
+            border: none;
+            padding: 1rem;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        /* Badges */
+        .badge {
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .badge-success {
+            background: rgba(40, 167, 69, 0.2);
+            color: #155724;
+        }
+
+        .badge-danger {
+            background: rgba(220, 53, 69, 0.2);
+            color: #721c24;
+        }
+
+        /* Import Results */
+        .import-results {
+            background: var(--cermak-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-left: 4px solid var(--cermak-primary);
+        }
+
+        .import-results h5 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .import-results ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .import-results li {
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .import-results li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .import-results li.error:before {
+            content: "✗ ";
+            color: #dc3545;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .page-header {
+                padding: 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card-title {
+                font-size: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 0.75rem;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .table {
+                font-size: 0.85rem;
+            }
+
+            .table thead th,
+            .table tbody td {
+                padding: 0.75rem;
+            }
+        }
+
+        /* Loading indicator */
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.25em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid" style="padding: 0 1.5rem;">
+            <a class="navbar-brand" href="/takeuchi">
+                <i class="bi bi-wrench-adjustable"></i> TAKEUCHI PARÇA YÖNETİMİ
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/takeuchi"><i class="bi bi-house"></i> Ana Menü</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/takeuchi/add"><i class="bi bi-plus-circle"></i> Parça Ekle</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/takeuchi/check"><i class="bi bi-check-circle"></i> Parça Kontrol</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/takeuchi/admin"><i class="bi bi-gear"></i> Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Çıkış</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1><i class="bi bi-person-check"></i> Admin Paneli</h1>
+            <p>Takeuchi parçaları yönetin, siparişler oluşturun ve teslimatları takip edin</p>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div id="successMessage" class="alert alert-success d-none" role="alert">
+            <i class="bi bi-check-circle"></i> <span id="successText"></span>
+        </div>
+        <div id="errorMessage" class="alert alert-danger d-none" role="alert">
+            <i class="bi bi-exclamation-circle"></i> <span id="errorText"></span>
+        </div>
+
+        <!-- Stats and Upload -->
+        <div class="row g-4 mb-4">
+            <!-- Stats Card -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-graph-up"></i> Sistem İstatistikleri</h5>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-number" id="tempOrdersCount">0</div>
+                                <div class="stat-label">Geçici Siparişler</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="totalPartsCount">0</div>
+                                <div class="stat-label">Toplam Parçalar</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="uploadedPartsCount">0</div>
+                                <div class="stat-label">Yüklü Parçalar</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-secondary w-100" onclick="refreshStats()">
+                            <i class="bi bi-arrow-clockwise"></i> İstatistikleri Yenile
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Card -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-cloud-upload"></i> Parça Yükle (Excel)</h5>
+                        
+                        <div class="upload-zone" id="uploadZone" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFileSelect(event)">
+                            <div class="upload-icon">📄</div>
+                            <div class="upload-text">Excel dosyasını buraya sürükleyin</div>
+                            <div class="upload-hint">veya tıklayarak seçin</div>
+                            <div class="upload-formats">
+                                Desteklenen: .xlsx, .xls
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <button class="btn btn-primary" onclick="triggerFileInput();">
+                                <i class="bi bi-folder-open"></i> Dosya Seç
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="showTemplate();">
+                                <i class="bi bi-file-earmark-spreadsheet"></i> Şablon İndir
+                            </button>
+                        </div>
+
+                        <div id="importResults"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Temp Orders -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-list-check"></i> Geçici Siparişler</h5>
+                <div id="tempOrdersSection" class="table-responsive">
+                    <div class="text-center py-4" style="color: var(--text-secondary);">
+                        <i class="bi bi-hourglass-split" style="font-size: 2rem; opacity: 0.5;"></i>
+                        <p class="mt-2">Yükleniyor...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Parts List -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-box"></i> Yüklü Takeuchi Parçaları</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="partsTable">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-hash"></i> Parça Kodu</th>
+                                <th>Parça Adı</th>
+                                <th>Değişen Kod</th>
+                                <th>Build Out</th>
+                                <th>Fiyat (TL)</th>
+                                <th>Yükleme Tarihi</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody id="partsTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center py-4" style="color: var(--text-secondary);">
+                                    <i class="bi bi-inbox" style="font-size: 2rem; opacity: 0.5;"></i>
+                                    <p class="mt-2">Veri yükleniyor...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- XLSX Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+
+    <script>
+        // Sayfa yüklendiğinde veriler getir
+        window.addEventListener('load', function() {
+            refreshStats();
+            loadTempOrders();
+            loadPartsList();
+        });
+
+        function triggerFileInput() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                uploadExcelFile(file);
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            document.getElementById('uploadZone').classList.add('drag-over');
+        }
+
+        function handleDragLeave(event) {
+            document.getElementById('uploadZone').classList.remove('drag-over');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            document.getElementById('uploadZone').classList.remove('drag-over');
+            
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                    uploadExcelFile(file);
+                } else {
+                    showError('Yalnızca Excel dosyaları (.xlsx, .xls) kabul edilir');
+                }
+            }
+        }
+
+        function uploadExcelFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const resultsDiv = document.getElementById('importResults');
+            resultsDiv.innerHTML = '<div class="text-center py-3"><div class="spinner-border spinner-border-sm text-danger" role="status"><span class="visually-hidden">Yükleniyor...</span></div> Dosya yükleniyor...</div>';
+
+            fetch('/api/takeuchi/admin/upload-parts', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccess(`✅ ${data.imported_count} parça başarıyla yüklendi!`);
+                    
+                    let resultsHTML = `
+                        <div class="import-results">
+                            <h5><i class="bi bi-check-circle"></i> İthalatça Özeti</h5>
+                            <ul>
+                                <li><strong>Yüklenen:</strong> ${data.imported_count} parça</li>
+                                <li><strong>Toplam satır:</strong> ${data.total_rows} satır</li>
+                    `;
+
+                    if (data.error_rows && data.error_rows.length > 0) {
+                        resultsHTML += '<li class="mt-2"><strong style="color: #dc3545;">Hatalar:</strong><ul class="mt-2" style="margin-left: 1rem;">';
+                        data.error_rows.forEach(err => {
+                            resultsHTML += `<li class="error">${err}</li>`;
+                        });
+                        resultsHTML += '</ul></li>';
+                    }
+
+                    resultsHTML += '</ul></div>';
+                    resultsDiv.innerHTML = resultsHTML;
+
+                    // Yenile
+                    setTimeout(() => {
+                        loadPartsList();
+                        refreshStats();
+                    }, 1500);
+
+                    // Input'u sıfırla
+                    document.getElementById('fileInput').value = '';
+                } else {
+                    showError(data.error || 'Yükleme başarısız oldu');
+                    resultsDiv.innerHTML = '';
+                }
+            })
+            .catch(error => {
+                showError('Hata: ' + error.message);
+                resultsDiv.innerHTML = '';
+            });
+        }
+
+        function loadPartsList() {
+            fetch('/api/takeuchi/admin/parts-list')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('partsTableBody');
+                    if (data.success && data.parts.length > 0) {
+                        tbody.innerHTML = data.parts.map(part => `
+                            <tr>
+                                <td><strong>${part.part_code}</strong></td>
+                                <td>${part.part_name}</td>
+                                <td>${part.alternative_code || '-'}</td>
+                                <td>${part.build_out || '-'}</td>
+                                <td style="color: #28a745; font-weight: 600;">${part.cost_price.toFixed(2)} ₺</td>
+                                <td><small class="text-muted">${new Date(part.created_at).toLocaleDateString('tr-TR')}</small></td>
+                                <td><span class="badge badge-success"><i class="bi bi-check-circle"></i> Aktif</span></td>
+                            </tr>
+                        `).join('');
+                        document.getElementById('uploadedPartsCount').textContent = data.parts.length;
+                    } else {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="7" class="text-center py-4" style="color: var(--text-secondary);">
+                                    <i class="bi bi-inbox" style="font-size: 2rem; opacity: 0.5;"></i>
+                                    <p class="mt-2">Henüz parça yüklenmedi</p>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading parts:', error);
+                });
+        }
+
+        function loadTempOrders() {
+            fetch('/api/takeuchi/admin/temp-orders')
+                .then(response => response.json())
+                .then(data => {
+                    const section = document.getElementById('tempOrdersSection');
+                    
+                    if (data.success && data.temp_orders && data.temp_orders.length > 0) {
+                        let html = `
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Kullanıcı</th>
+                                        <th>Parçalar</th>
+                                        <th>Adet</th>
+                                        <th>Tarih</th>
+                                        <th>İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+
+                        let totalOrders = data.temp_orders.length;
+                        document.getElementById('tempOrdersCount').textContent = totalOrders;
+
+                        data.temp_orders.forEach(order => {
+                            html += `
+                                <tr>
+                                    <td>${order.created_by || 'Kullanıcı'}</td>
+                                    <td>${order.item_count || 0} parça</td>
+                                    <td>${order.items ? order.items.reduce((sum, i) => sum + (i.quantity || 0), 0) : 0} adet</td>
+                                    <td><small class="text-muted">${new Date(order.created_at).toLocaleDateString('tr-TR')}</small></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="showCreateOrderForm(${order.id})">
+                                            <i class="bi bi-check-lg"></i> Sipariş Oluştur
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+
+                        html += `
+                                </tbody>
+                            </table>
+                        `;
+                        section.innerHTML = html;
+                    } else {
+                        document.getElementById('tempOrdersCount').textContent = '0';
+                        section.innerHTML = `
+                            <div class="text-center py-4" style="color: var(--text-secondary);">
+                                <i class="bi bi-inbox" style="font-size: 2rem; opacity: 0.5;"></i>
+                                <p class="mt-2">Beklemede olan geçici sipariş yok</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading temp orders:', error);
+                    document.getElementById('tempOrdersSection').innerHTML = `
+                        <div class="alert alert-danger mb-0">
+                            Hata: ${error.message}
+                        </div>
+                    `;
+                });
+        }
+
+        function showCreateOrderForm(tempOrderId) {
+            const orderName = prompt('Sipariş Adını Girin (örn: "Kasım Ayı Takeuchi Siparişi"):');
+            if (orderName === null || orderName.trim() === '') {
+                return;
+            }
+
+            fetch('/api/takeuchi/admin/create-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    temp_order_id: tempOrderId,
+                    order_name: orderName.trim()
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccess(`✅ Sipariş ${data.order_code} başarıyla oluşturuldu!`);
+                    setTimeout(() => {
+                        loadTempOrders();
+                        refreshStats();
+                    }, 1500);
+                } else {
+                    showError(data.error || 'Sipariş oluşturulamadı');
+                }
+            })
+            .catch(error => {
+                showError('Hata: ' + error.message);
+            });
+        }
+
+        function refreshStats() {
+            loadPartsList();
+            loadTempOrders();
+        }
+
+        function showTemplate() {
+            const templateData = [
+                ['Parça Kodu', 'Parça Adı', 'Değişen Parça Kodu', 'Build Out', 'Geliş Fiyatı'],
+                ['TP001', 'Takeuchi Parça 1', 'ALT001', 'BUILD-1', '150.00'],
+                ['TP002', 'Takeuchi Parça 2', 'ALT002', 'BUILD-2', '250.00'],
+                ['TP003', 'Takeuchi Parça 3', 'ALT003', 'BUILD-3', '350.00']
+            ];
+
+            const ws = XLSX.utils.aoa_to_sheet(templateData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Şablon");
+            XLSX.writeFile(wb, "takeuchi_parca_template.xlsx");
+        }
+
+        function showSuccess(message) {
+            const elem = document.getElementById('successMessage');
+            const text = document.getElementById('successText');
+            text.textContent = message;
+            elem.classList.remove('d-none');
+            setTimeout(() => { elem.classList.add('d-none'); }, 4000);
+        }
+
+        function showError(message) {
+            const elem = document.getElementById('errorMessage');
+            const text = document.getElementById('errorText');
+            text.textContent = message;
+            elem.classList.remove('d-none');
+            setTimeout(() => { elem.classList.add('d-none'); }, 4000);
+        }
+    </script>
+</body>
+</html>

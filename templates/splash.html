@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cermak Envanter Sistemi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .splash-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+        }
+
+        .splash-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
+        }
+
+        .splash-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+        }
+
+        .splash-logo {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            animation: slideDown 0.8s ease;
+        }
+
+        .splash-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            animation: slideDown 0.8s ease 0.2s both;
+        }
+
+        .splash-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s ease 0.4s both;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-spinner svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 2rem;
+            font-size: 0.95rem;
+            opacity: 0.85;
+            animation: fadeInOut 1.5s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-container">
+        <video autoplay muted loop playsinline>
+            <source src="{{ url_for('serve_portal_video') }}" type="video/mp4">
+        </video>
+        
+        <div class="splash-overlay"></div>
+        
+        <div class="splash-content">
+            <div class="splash-logo">
+                <i style="font-size: 3rem;">📦</i>
+            </div>
+            <h1 class="splash-title">CERMAK</h1>
+            <p class="splash-subtitle">Envanter & Sipariş Yönetim Sistemi</p>
+            
+            <div class="loading-spinner">
+                <svg viewBox="0 0 50 50">
+                    <circle cx="25" cy="25" r="20" fill="none" stroke="white" stroke-width="2" stroke-dasharray="31.4" stroke-dashoffset="0"></circle>
+                </svg>
+            </div>
+            
+            <p class="loading-text">Sistem yükleniyor...</p>
+        </div>
+    </div>
+
+    <script>
+        // 3 saniye sonra login'e yönlendir
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 3000);
+    </script>
+</body>
+</html>

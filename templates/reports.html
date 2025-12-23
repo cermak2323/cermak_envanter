@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sayım Raporları - Cermak Envanter Yönetimi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --cermak-red: #dc3545;
+            --cermak-red-dark: #c82333;
+            --cermak-red-darker: #bd2130;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .navbar-custom {
+            background: linear-gradient(135deg, var(--cermak-red) 0%, var(--cermak-red-dark) 100%);
+            box-shadow: 0 4px 15px rgba(220,53,69,0.3);
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: none;
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--cermak-red) 0%, var(--cermak-red-dark) 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+        
+        .btn-cermak {
+            background: linear-gradient(135deg, var(--cermak-red) 0%, var(--cermak-red-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-cermak:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220,53,69,0.3);
+            color: white;
+        }
+        
+        .user-badge {
+            background: white;
+            color: var(--cermak-red);
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-weight: 600;
+        }
+        
+        .table-custom {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .table thead th {
+            background: linear-gradient(135deg, var(--cermak-red) 0%, var(--cermak-red-dark) 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 15px;
+        }
+        
+        .table tbody tr {
+            transition: all 0.3s;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
+        }
+        
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--cermak-red);
+        }
+        
+        .stats-label {
+            font-size: 1rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .badge-positive {
+            background-color: #28a745;
+        }
+        
+        .badge-negative {
+            background-color: #dc3545;
+        }
+        
+        .badge-neutral {
+            background-color: #6c757d;
+        }
+        
+        .btn-download {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40,167,69,0.3);
+            color: white;
+        }
+        
+        .search-filter {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .search-box {
+            border-radius: 25px;
+            border: 2px solid var(--cermak-red);
+            padding: 10px 20px;
+        }
+        
+        .search-box:focus {
+            box-shadow: 0 0 0 0.2rem rgba(220,53,69,0.25);
+            border-color: var(--cermak-red);
+        }
+        
+        .loading-spinner {
+            text-align: center;
+            padding: 50px;
+            color: #6c757d;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .navbar-custom {
+                border-radius: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .d-flex.align-items-center {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .user-badge {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+            
+            .btn {
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .search-filter {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .search-box {
+                padding: 8px 16px;
+                margin-bottom: 0.5rem;
+            }
+            
+            .btn-cermak {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+            
+            .table thead th {
+                padding: 10px 8px;
+                font-size: 0.8rem;
+            }
+            
+            .table tbody td {
+                padding: 8px 6px;
+                font-size: 0.8rem;
+            }
+            
+            .btn-download {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .stats-card {
+                margin-bottom: 15px;
+                padding: 15px;
+            }
+            
+            .stats-number {
+                font-size: 1.5rem;
+            }
+            
+            .stats-label {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .navbar-brand {
+                font-size: 1rem;
+            }
+            
+            .d-flex.align-items-center .btn {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+            
+            .user-badge {
+                font-size: 0.8rem;
+                padding: 4px 8px;
+            }
+            
+            .search-filter {
+                padding: 10px;
+            }
+            
+            .search-box {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .table thead th {
+                padding: 8px 4px;
+                font-size: 0.7rem;
+            }
+            
+            .table tbody td {
+                padding: 6px 4px;
+                font-size: 0.7rem;
+            }
+            
+            .btn-download {
+                padding: 4px 8px;
+                font-size: 0.7rem;
+            }
+            
+            .stats-card {
+                padding: 10px;
+            }
+            
+            .stats-number {
+                font-size: 1.3rem;
+            }
+            
+            .stats-label {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark navbar-custom">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <i class="bi bi-file-earmark-text"></i> Sayım Raporları
+            </span>
+            <div class="d-flex align-items-center">
+                <span class="user-badge me-3">
+                    <i class="bi bi-person-circle"></i> <span id="userName"></span>
+                </span>
+                <button class="btn btn-light me-2" onclick="goToMain()">
+                    <i class="bi bi-house"></i> Ana Sayfa
+                </button>
+                <button class="btn btn-secondary me-2" onclick="goToPortal()">
+                    <i class="bi bi-grid-3x3-gap"></i> Portala Dön
+                </button>
+                <button class="btn btn-light" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i> Çıkış
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- İstatistik Kartları -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalReports">0</div>
+                    <div class="stats-label">Toplam Rapor</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalExpected">0</div>
+                    <div class="stats-label">Toplam Beklenen</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalScanned">0</div>
+                    <div class="stats-label">Toplam Sayılan</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalDifference">0</div>
+                    <div class="stats-label">Toplam Fark</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Arama ve Filtreleme -->
+        <div class="search-filter">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control search-box" id="searchBox" placeholder="Rapor başlığı veya oluşturan kişi ile ara...">
+                        <button class="btn btn-cermak" onclick="filterReports()">
+                            <i class="bi bi-search"></i> Ara
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="clearFilter()">
+                            <i class="bi bi-x-circle"></i> Temizle
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button class="btn btn-cermak" onclick="refreshReports()">
+                        <i class="bi bi-arrow-clockwise"></i> Yenile
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rapor Listesi -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-list-ul"></i> Sayım Rapor Geçmişi</h5>
+            </div>
+            <div class="card-body p-0">
+                <div id="loadingSpinner" class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <p>Raporlar yükleniyor...</p>
+                </div>
+                
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="bi bi-file-earmark-x"></i>
+                    <h5>Henüz Rapor Bulunamadı</h5>
+                    <p>Sayım tamamladığınızda raporlar burada görünecektir.</p>
+                </div>
+                
+                <div id="reportsTable" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="table table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Rapor Başlığı</th>
+                                    <th>Tarih</th>
+                                    <th>Oluşturan</th>
+                                    <th>Beklenen</th>
+                                    <th>Sayılan</th>
+                                    <th>Fark</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let allReports = [];
+        let filteredReports = [];
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadReports();
+            
+            // Enter tuşu ile arama
+            document.getElementById('searchBox').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    filterReports();
+                }
+            });
+        });
+
+        async function checkAuth() {
+            const response = await fetch('/check_auth');
+            const data = await response.json();
+            if (data.authenticated) {
+                document.getElementById('userName').textContent = data.full_name;
+            } else {
+                window.location.href = '/';
+            }
+        }
+
+        async function loadReports() {
+            try {
+                document.getElementById('loadingSpinner').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'none';
+                document.getElementById('reportsTable').style.display = 'none';
+                
+                const response = await fetch('/api/get_saved_reports');
+                const reports = await response.json();
+                
+                allReports = reports;
+                filteredReports = reports;
+                
+                displayReports(reports);
+                updateStatistics(reports);
+                
+            } catch (error) {
+                console.error('Raporlar yüklenirken hata:', error);
+                alert('Raporlar yüklenirken hata oluştu: ' + error.message);
+            } finally {
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+        }
+
+        function displayReports(reports) {
+            const tableBody = document.getElementById('reportsTableBody');
+            
+            if (reports.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('reportsTable').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('reportsTable').style.display = 'block';
+            
+            tableBody.innerHTML = '';
+            
+            reports.forEach(report => {
+                const row = document.createElement('tr');
+                
+                // Fark hesapla
+                const difference = report.total_scanned - report.total_expected;
+                
+                // Fark için badge rengi belirle
+                let badgeClass = 'badge-neutral';
+                if (difference > 0) {
+                    badgeClass = 'badge-positive';
+                } else if (difference < 0) {
+                    badgeClass = 'badge-negative';
+                }
+                
+                // Tarih formatla
+                const endDate = new Date(report.ended_at);
+                const formattedDate = endDate.toLocaleDateString('tr-TR') + ' ' + endDate.toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'});
+                
+                row.innerHTML = `
+                    <td>
+                        <strong>${report.session_name}</strong><br>
+                        <small class="text-muted">ID: ${report.id}</small>
+                    </td>
+                    <td>${formattedDate}</td>
+                    <td>-</td>
+                    <td><span class="badge bg-primary">${report.total_expected}</span></td>
+                    <td><span class="badge bg-info">${report.total_scanned}</span></td>
+                    <td><span class="badge ${badgeClass}">${difference > 0 ? '+' : ''}${difference}</span></td>
+                    <td>
+                        <a href="/static/reports/${report.report_file_path}" download class="btn btn-download btn-sm">
+                            <i class="bi bi-download"></i> İndir
+                        </a>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        function updateStatistics(reports) {
+            const totalReports = reports.length;
+            const totalExpected = reports.reduce((sum, report) => sum + (report.total_expected || 0), 0);
+            const totalScanned = reports.reduce((sum, report) => sum + (report.total_scanned || 0), 0);
+            const totalDifference = totalScanned - totalExpected;
+            
+            document.getElementById('totalReports').textContent = totalReports;
+            document.getElementById('totalExpected').textContent = totalExpected.toLocaleString('tr-TR');
+            document.getElementById('totalScanned').textContent = totalScanned.toLocaleString('tr-TR');
+            
+            const diffElement = document.getElementById('totalDifference');
+            diffElement.textContent = (totalDifference > 0 ? '+' : '') + totalDifference.toLocaleString('tr-TR');
+            
+            // Fark rengini güncelle
+            if (totalDifference > 0) {
+                diffElement.style.color = '#28a745';
+            } else if (totalDifference < 0) {
+                diffElement.style.color = '#dc3545';
+            } else {
+                diffElement.style.color = '#6c757d';
+            }
+        }
+
+        function filterReports() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                filteredReports = allReports;
+            } else {
+                filteredReports = allReports.filter(report => 
+                    report.session_name.toLowerCase().includes(searchTerm) ||
+                    report.id.toString().includes(searchTerm)
+                );
+            }
+            
+            displayReports(filteredReports);
+            updateStatistics(filteredReports);
+        }
+
+        function clearFilter() {
+            document.getElementById('searchBox').value = '';
+            filteredReports = allReports;
+            displayReports(filteredReports);
+            updateStatistics(filteredReports);
+        }
+
+        function refreshReports() {
+            loadReports();
+        }
+
+        function goToMain() {
+            window.location.href = '/inventory';
+        }
+
+        function goToPortal() {
+            window.location.href = '/';
+        }
+
+        async function logout() {
+            await fetch('/logout', { method: 'POST' });
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

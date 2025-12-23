@@ -1,0 +1,126 @@
+<!-- Takeuchi Modülü Navbar -->
+<nav class="takeuchi-navbar" style="
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 15px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-radius: 8px;
+">
+    <!-- Logo / Başlık -->
+    <div class="navbar-brand" style="
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+    ">
+        <span style="font-size: 24px;">🔧</span>
+        <span>TAKEUCHI PARÇA YÖNETİMİ</span>
+    </div>
+
+    <!-- Menu Butonları -->
+    <div class="navbar-menu" style="
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    ">
+        <!-- Ana Menü -->
+        <a href="/takeuchi" class="nav-btn" style="
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            font-size: 14px;
+        " onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+            ⬅️ Ana Menü
+        </a>
+
+        <!-- Parça Ekle -->
+        <a href="/takeuchi/add" class="nav-btn" style="
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            font-size: 14px;
+        " onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+            ➕ Parça Ekle
+        </a>
+
+        <!-- Parça Kontrol -->
+        <a href="/takeuchi/check" class="nav-btn" style="
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            font-size: 14px;
+        " onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+            ✅ Parça Kontrol
+        </a>
+
+        <!-- Admin Panel -->
+        <a href="/takeuchi/admin" class="nav-btn" style="
+            color: #667eea;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            background: white;
+            border: 1px solid white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            ⚙️ Admin Paneli
+        </a>
+
+        <!-- Logout -->
+        <a href="/logout" class="nav-btn" style="
+            color: #ff6b6b;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,107,107,0.5);
+            transition: all 0.3s ease;
+            font-size: 14px;
+        " onmouseover="this.style.background='rgba(255,107,107,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+            🚪 Çıkış
+        </a>
+    </div>
+</nav>
+
+<style>
+    .navbar-responsive {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .takeuchi-navbar {
+            flex-direction: column;
+            gap: 15px !important;
+        }
+
+        .navbar-menu {
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            font-size: 12px !important;
+            padding: 6px 12px !important;
+        }
+    }
+</style>

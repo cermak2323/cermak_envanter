@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş - Cermak Envanter Sistemi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('{{ url_for("static", filename="login.png") }}');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+        }
+        .login-container {
+            max-width: 350px;
+            width: 100%;
+            margin-right: auto;
+            margin-left: 120px;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        .login-header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .login-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .login-header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        .login-body {
+            padding: 40px 30px;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+        }
+        .form-control:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220,53,69,0.25);
+        }
+        .btn-login {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220,53,69,0.3);
+            background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+            color: white;
+        }
+        .alert {
+            border-radius: 10px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .login-card {
+                margin: 1rem;
+                padding: 2rem;
+                max-width: 100%;
+            }
+            
+            .login-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .login-header i {
+                font-size: 2.5rem !important;
+            }
+            
+            .form-control {
+                padding: 0.9rem 1rem;
+                font-size: 1rem;
+            }
+            
+            .btn-login {
+                padding: 0.9rem;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                margin: 0.5rem;
+                padding: 1.5rem;
+            }
+            
+            .login-header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .login-header p {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Loading Screen Styling */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            background: #000;
+        }
+
+        .loading-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .loading-spinner {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+            margin-top: 120px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.25);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 32px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-spinner p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .loading-spinner small {
+            font-size: 1rem;
+            opacity: 0.85;
+            display: block;
+            margin-top: 12px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-screen {
+            background-image: url('{{ url_for("static", filename="login.png") }}');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            position: relative;
+        }
+
+        .login-screen > * {
+            position: relative;
+            z-index: 2;
+        }
+    
+    </style>
+</head>
+<body>
+    <!-- Loading Screen with Video -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <video autoplay muted playsinline id="loadingVideo" class="loading-video">
+                <source src="/api/video/portal" type="video/mp4">
+                Tarayıcınız video desteklemiyor
+            </video>
+            <div class="loading-overlay"></div>
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Sistem Yükleniyor...</p>
+                <small>Tablolar İnceleniyor • Veritabanı Bağlanıyor</small>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginScreen" class="login-screen" style="display: none;">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="bi bi-qr-code-scan" style="font-size: 3rem;"></i>
+                <h1>Cermak Envanter Yönetimi</h1>
+                <p>QR Kod Tabanlı Sayım Sistemi</p>
+            </div>
+            <div class="login-body">
+                <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+                
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label class="form-label">Kullanıcı Adı</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" id="username" required>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Şifre</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">
+                            Beni Hatırla
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-login">
+                        <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Video debug
+        const video = document.getElementById('loadingVideo');
+        const videoSrc = video.querySelector('source').src;
+        console.log('[VIDEO] Loading from:', videoSrc);
+        
+        let videoLoaded = false;
+        
+        video.addEventListener('canplay', () => {
+            console.log('[VIDEO] Can play!');
+            videoLoaded = true;
+        });
+        video.addEventListener('error', (e) => {
+            console.error('[VIDEO] Error:', e);
+            console.log('[VIDEO] Video failed, will show login after 2s instead of 4s');
+        });
+        video.addEventListener('playing', () => {
+            console.log('[VIDEO] Playing!');
+        });
+        
+        // Page load triggers loading screen
+        window.addEventListener('load', function() {
+            console.log('[PAGE] Load event fired');
+            // Show loading screen for 4 seconds, or less if video fails
+            const waitTime = 4000; // 4 seconds default
+            
+            setTimeout(function() {
+                const loadingScreen = document.getElementById('loadingScreen');
+                const loginScreen = document.getElementById('loginScreen');
+                
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.transition = 'opacity 0.5s ease-out';
+                
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                    loginScreen.style.display = 'flex';
+                }, 500);
+            }, waitTime);
+        });
+        
+        // If video errors, try static path fallback after 2s
+        setTimeout(() => {
+            if (!videoLoaded && video.paused) {
+                console.log('[VIDEO] Trying fallback static path');
+                const fallbackSource = video.querySelector('source');
+                fallbackSource.src = '/static/portal_video.mp4';
+                video.load();
+            }
+        }, 2000);
+
+        // Beni Hatırla - Sayfa yüklendiğinde verileri geri yükle
+        window.addEventListener('load', function() {
+            const rememberMe = localStorage.getItem('rememberMe');
+            if (rememberMe === 'true') {
+                document.getElementById('username').value = localStorage.getItem('savedUsername') || '';
+                document.getElementById('password').value = localStorage.getItem('savedPassword') || '';
+                document.getElementById('rememberMe').checked = true;
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.style.display = 'none';
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            // Beni Hatırla kaydı
+            if (rememberMe) {
+                localStorage.setItem('rememberMe', 'true');
+                localStorage.setItem('savedUsername', username);
+                localStorage.setItem('savedPassword', password);
+            } else {
+                localStorage.setItem('rememberMe', 'false');
+                localStorage.removeItem('savedUsername');
+                localStorage.removeItem('savedPassword');
+            }
+            
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Admin ise ana sayfaya, normal kullanıcı ise kameraya yönlendir
+                    if (data.role === 'admin') {
+                        window.location.href = '/';
+                    } else {
+                        // Normal kullanıcı - direkt kameraya yönlendir
+                        window.location.href = '/count';
+                    }
+                } else {
+                    errorDiv.textContent = data.error || 'Giriş başarısız';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Bir hata oluştu';
+                errorDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Takeuchi - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .admin-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-back {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .btn-back:hover {
+            background: #d0d0d0;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .panel h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 30px;
+            color: #999;
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .temp-order-card {
+            background: #f9f9f9;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .temp-order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .temp-order-creator {
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .temp-order-time {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .temp-order-items {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .temp-item {
+            padding: 8px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        
+        .temp-item:last-child {
+            border-bottom: none;
+        }
+        
+        .temp-item-code {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .temp-item-qty {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .temp-order-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 13px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn-small {
+            padding: 10px 15px;
+            font-size: 13px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .btn-create {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .btn-cancel:hover {
+            background: #d0d0d0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .temp-order-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Takeuchi Admin Panel</h1>
+            <p>Geçici siparişleri yönetin ve resmi siparişleri oluşturun</p>
+            <div class="admin-badge">👤 Admin Yetkili Erişim</div>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="loadTempOrders()">🔄 Yenile</button>
+            <button class="btn btn-back" onclick="goBack()">← Geri Dön</button>
+        </div>
+        
+        <div id="successMessage" class="message success-message"></div>
+        <div id="errorMessage" class="message error-message"></div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-number" id="tempOrderCount">0</div>
+                <div class="stat-label">Geçici Sipariş</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="tempItemCount">0</div>
+                <div class="stat-label">Toplam Parça</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="totalQty">0</div>
+                <div class="stat-label">Toplam Adet</div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>📋 Geçici Siparişler</h2>
+            <div id="tempOrdersContent" class="loading">
+                <div class="spinner"></div>
+                <p>Geçici siparişler yükleniyor...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTempOrders();
+        });
+        
+        async function loadTempOrders() {
+            try {
+                const response = await fetch('/api/takeuchi/admin/temp-orders');
+                const data = await response.json();
+                
+                const content = document.getElementById('tempOrdersContent');
+                
+                if (!data.success) {
+                    content.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">⚠️</div>
+                            <p>Siparişler yüklenemedi: ${data.error}</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // İstatistikleri güncelle
+                let totalQty = 0;
+                data.temp_orders.forEach(order => {
+                    order.items.forEach(item => {
+                        totalQty += item.quantity;
+                    });
+                });
+                
+                document.getElementById('tempOrderCount').textContent = data.temp_orders.length;
+                document.getElementById('tempItemCount').textContent = 
+                    data.temp_orders.reduce((sum, o) => sum + o.item_count, 0);
+                document.getElementById('totalQty').textContent = totalQty;
+                
+                if (!data.temp_orders || data.temp_orders.length === 0) {
+                    content.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <p>Henüz geçici sipariş bulunmamaktadır</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                data.temp_orders.forEach((order, index) => {
+                    let itemsHtml = '';
+                    let orderTotalQty = 0;
+                    
+                    order.items.forEach(item => {
+                        itemsHtml += `
+                            <div class="temp-item">
+                                <div class="temp-item-code">${item.part_code}</div>
+                                <div class="temp-item-qty">${item.quantity} adet</div>
+                            </div>
+                        `;
+                        orderTotalQty += item.quantity;
+                    });
+                    
+                    html += `
+                        <div class="temp-order-card">
+                            <div class="temp-order-header">
+                                <div>
+                                    <div class="temp-order-creator">👤 ${order.created_by}</div>
+                                    <div style="margin-top: 5px; font-size: 14px; font-weight: 600;">
+                                        ${order.item_count} parça / ${orderTotalQty} adet
+                                    </div>
+                                </div>
+                                <div class="temp-order-time">
+                                    ${new Date(order.created_at).toLocaleString('tr-TR')}
+                                </div>
+                            </div>
+                            
+                            <div class="temp-order-items">
+                                ${itemsHtml}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="orderName-${index}">Sipariş Adı (İsteğe Bağlı)</label>
+                                <input 
+                                    type="text" 
+                                    id="orderName-${index}"
+                                    placeholder="Örn: Ağustos Siparişi"
+                                >
+                            </div>
+                            
+                            <div class="temp-order-actions">
+                                <button 
+                                    class="btn-small btn-create" 
+                                    onclick="createOfficialOrder(${order.id}, ${index})">
+                                    ✅ Resmi Sipariş Oluştur
+                                </button>
+                                <button 
+                                    class="btn-small btn-cancel" 
+                                    onclick="deleteTemp(${order.id})">
+                                    🗑️ Sil
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                content.innerHTML = html;
+                
+            } catch (error) {
+                document.getElementById('tempOrdersContent').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">❌</div>
+                        <p>Hata: ${error}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function createOfficialOrder(tempOrderId, index) {
+            const orderName = document.getElementById(`orderName-${index}`).value.trim();
+            
+            if (!confirm(`Geçici siparişi resmi sipariş haline dönüştürmek istediğinize emin misiniz?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/takeuchi/admin/create-order', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        temp_order_id: tempOrderId,
+                        order_name: orderName
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess(`✅ Resmi sipariş oluşturuldu: ${data.order_code}`);
+                    setTimeout(() => loadTempOrders(), 500);
+                } else {
+                    showError(data.error || 'Sipariş oluşturulamadı');
+                }
+            } catch (error) {
+                showError('Hata: ' + error);
+            }
+        }
+        
+        function deleteTemp(tempOrderId) {
+            if (!confirm('Bu geçici siparişi silmek istediğinize emin misiniz?')) {
+                return;
+            }
+            
+            // TODO: DELETE endpoint ekle
+            showError('Bu özellik henüz mevcut değil');
+        }
+        
+        function goBack() {
+            window.location.href = '/takeuchi';
+        }
+        
+        function showSuccess(message) {
+            const elem = document.getElementById('successMessage');
+            elem.textContent = message;
+            elem.style.display = 'block';
+            setTimeout(() => { elem.style.display = 'none'; }, 4000);
+        }
+        
+        function showError(message) {
+            const elem = document.getElementById('errorMessage');
+            elem.textContent = '❌ ' + message;
+            elem.style.display = 'block';
+            setTimeout(() => { elem.style.display = 'none'; }, 4000);
+        }
+    </script>
+</body>
+</html>

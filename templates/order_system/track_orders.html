@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Takip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #dc2626;
+            --primary-dark: #991b1b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header-icon {
+            font-size: 2rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.75rem;
+            border-radius: 16px;
+            display: inline-block;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-4px);
+            color: white;
+        }
+
+        .user-info {
+            margin: 0.25rem 0 0 0;
+            opacity: 0.95;
+            font-size: 0.85rem;
+        }
+
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px solid #dc2626;
+            transition: all 0.3s;
+        }
+
+        .stat-card:nth-child(2) {
+            border-left-color: #666;
+        }
+
+        .stat-card:nth-child(3) {
+            border-left-color: #10b981;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            transform: translateY(-4px);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #dc2626;
+        }
+
+        .stat-card:nth-child(2) .stat-value {
+            color: #666;
+        }
+
+        .stat-card:nth-child(3) .stat-value {
+            color: #10b981;
+        }
+
+        /* Tedarikçi Grubu */
+        .supplier-group {
+            margin-bottom: 2.5rem;
+        }
+
+        .supplier-header {
+            background: #dc2626;
+            border: none;
+            border-radius: 12px;
+            padding: 1.75rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+            margin-bottom: 1.25rem;
+        }
+
+        .supplier-icon {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #dc2626;
+            font-size: 1.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .supplier-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            flex: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .supplier-badge {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 0.65rem 1.25rem;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        /* Sipariş Kartı */
+        .order-card {
+            background: white;
+            border: 2px solid #e5e5e5;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            transition: all 0.2s;
+        }
+
+        .order-card:hover {
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.15);
+            border-color: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .order-card:last-child {
+            border-radius: 10px;
+        }
+
+        .order-header {
+            padding: 1.5rem 1.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            transition: all 0.2s;
+            border-bottom: 2px solid #f5f5f5;
+            background: white;
+            position: relative;
+        }
+
+        .order-header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: #dc2626;
+            border-radius: 10px 0 0 0;
+        }
+
+        .order-header:hover {
+            background: #fafafa;
+        }
+
+        .order-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .order-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .order-icon {
+            width: 40px;
+            height: 40px;
+            background: #fef2f2;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #dc2626;
+            font-size: 1.25rem;
+        }
+
+        .order-stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .order-stats > span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .order-stats i {
+            font-size: 1rem;
+        }
+
+        .order-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+        }
+
+        .order-name {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #202124;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #dc2626;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3);
+        }
+
+        .status-partial {
+            background: #f59e0b;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+        }
+
+        .status-completed {
+            background: #10b981;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+        }
+
+        .order-stats {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.875rem;
+            color: #5f6368;
+        }
+
+        .expand-icon {
+            color: #dc2626;
+            transition: transform 0.3s;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .expand-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        .order-content {
+            display: none;
+            padding: 0;
+            background: #fafafa;
+            border-radius: 0 0 12px 12px;
+            overflow: hidden;
+        }
+
+        .order-content .parts-table {
+            margin: 0;
+        }
+
+        .order-content.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 2000px;
+            }
+        }
+
+        /* Modern Tablo */
+        .parts-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .parts-table thead {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            border: none;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+        }
+
+        .parts-table th {
+            padding: 0.9rem 0.75rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+        }
+
+        .parts-table th:last-child {
+            border-right: none;
+        }
+
+        .parts-table th i {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .parts-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s;
+        }
+
+        .parts-table tbody tr:hover {
+            background: #fef2f2;
+        }
+
+        .parts-table tbody tr.completed {
+            background: #f0fdf4;
+        }
+
+        .parts-table tbody tr.completed:hover {
+            background: #dcfce7;
+        }
+
+        .parts-table td {
+            padding: 0.9rem 0.75rem;
+            font-size: 0.85rem;
+            color: #333;
+            vertical-align: middle;
+            border-right: 1px solid #f0f0f0;
+        }
+
+        .parts-table td:last-child {
+            border-right: none;
+        }
+
+        .part-code {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 500;
+            color: #1a73e8;
+        }
+
+        .badge-quantity {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(51, 51, 51, 0.3);
+            display: inline-block;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .badge-received {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+            display: inline-block;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .badge-remaining {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3);
+            display: inline-block;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .btn-action {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+            white-space: nowrap;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.45);
+        }
+
+        .btn-action.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-action.success:hover {
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.45);
+        }
+
+        .btn-action.info {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+        }
+
+        .btn-action.info:hover {
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.45);
+        }
+
+        .btn-completed {
+            color: #10b981;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-completed i {
+            font-size: 1.1rem;
+        }
+
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .no-orders-card {
+            background: #fff;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .no-orders-icon {
+            width: 64px;
+            height: 64px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #9aa0a6;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .no-orders-text {
+            font-size: 1.125rem;
+            color: #5f6368;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            background: #fff;
+            border-bottom: 1px solid #dadce0;
+            padding: 1.25rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .modal-header.bg-info {
+            background: #1a73e8 !important;
+            border-bottom: none;
+        }
+
+        .modal-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #202124;
+        }
+
+        .bg-info .modal-title {
+            color: #fff !important;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            color: #202124;
+        }
+
+        .modal-footer {
+            background: #f8f9fa;
+            border-top: 1px solid #dadce0;
+            padding: 1rem 1.5rem;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .modal-body .alert {
+            background: #e8f0fe;
+            border: 1px solid #d2e3fc;
+            border-radius: 8px;
+            color: #1967d2;
+            padding: 1rem;
+        }
+
+        .modal-body .alert-warning {
+            background: #fef7e0;
+            border-color: #fde293;
+            color: #7c4a03;
+        }
+
+        .modal-body .form-label {
+            font-weight: 500;
+            color: #202124;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-body .form-control {
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            padding: 0.625rem 0.875rem;
+            font-size: 0.875rem;
+        }
+
+        .modal-body .form-control:focus {
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+            outline: none;
+        }
+
+        .modal-body .table {
+            margin-bottom: 0;
+        }
+
+        .modal-body .table thead th {
+            background: #f8f9fa;
+            color: #5f6368;
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid #dadce0;
+        }
+
+        .modal-body .table tbody td {
+            padding: 0.875rem 1rem;
+            color: #202124;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            border: 1px solid #dadce0;
+            color: #5f6368;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+            border-color: #dadce0;
+            color: #202124;
+        }
+
+        .btn-success {
+            background: #34a853;
+            border: none;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .btn-success:hover {
+            background: #2d9348;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="header-icon">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <div>
+                        <h1>Sipariş Takip</h1>
+                        <p class="user-info">
+                            <i class="bi bi-list-check"></i> Sipariş listelerini görüntüle ve kısmi teslimat işaretleme
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <a href="/order_system/" class="back-btn">
+                        <i class="bi bi-arrow-left"></i> Sipariş Sistemi
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <!-- İstatistikler -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Toplam Liste</div>
+                <div class="stat-value" id="totalOrderLists">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Toplam Parça</div>
+                <div class="stat-value" id="totalParts">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Tamamlanan</div>
+                <div class="stat-value" id="completedParts">0</div>
+            </div>
+        </div>
+
+        <!-- Arama Bölümü -->
+        <div style="
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            border-top: 4px solid #dc2626;
+        ">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                <div style="
+                    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+                    color: white;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.25rem;
+                ">
+                    <i class="bi bi-search"></i>
+                </div>
+                <h3 style="font-size: 1.15rem; font-weight: 700; color: #1f2937; margin: 0;">
+                    Parça Kodundan Ara
+                </h3>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <input 
+                        type="text" 
+                        id="searchPartCode" 
+                        class="form-control" 
+                        placeholder="Parça kodunu girin... (Örn: 15511-01300)" 
+                        style="
+                            border-radius: 10px;
+                            border: 2px solid #e5e7eb;
+                            padding: 0.875rem 1.25rem;
+                            font-size: 0.95rem;
+                            transition: all 0.3s ease;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+                        "
+                        onfocus="this.style.borderColor='#dc2626'; this.style.boxShadow='0 1px 3px rgba(220,38,38,0.1)'"
+                        onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.05)'"
+                        onkeypress="if(event.key==='Enter') searchByPartCode()">
+                </div>
+                <button 
+                    onclick="searchByPartCode()" 
+                    style="
+                        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+                        color: white;
+                        border: none;
+                        padding: 0.875rem 2rem;
+                        border-radius: 10px;
+                        font-weight: 600;
+                        font-size: 0.95rem;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+                        white-space: nowrap;
+                    "
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(220, 38, 38, 0.3)'"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(220, 38, 38, 0.2)'">
+                    <i class="bi bi-search"></i> Ara
+                </button>
+            </div>
+
+            <div id="searchResults" style="
+                display: none;
+                margin-top: 1.5rem;
+                padding: 1.5rem;
+                background: linear-gradient(135deg, #fef2f2 0%, #fde8e8 100%);
+                border-radius: 10px;
+                border-left: 5px solid #dc2626;
+                border-top: 1px solid rgba(220, 38, 38, 0.2);
+                position: relative;
+            ">
+                <button 
+                    onclick="clearSearch()" 
+                    style="
+                        position: absolute;
+                        top: 1rem;
+                        right: 1rem;
+                        background: none;
+                        border: none;
+                        color: #dc2626;
+                        cursor: pointer;
+                        font-size: 1.5rem;
+                        opacity: 0.7;
+                        transition: all 0.2s ease;
+                        padding: 0;
+                        width: 32px;
+                        height: 32px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    "
+                    onmouseover="this.style.opacity='1'; this.style.transform='rotate(90deg)'"
+                    onmouseout="this.style.opacity='0.7'; this.style.transform='rotate(0)'"
+                    title="Aramayı Temizle">
+                    ✕
+                </button>
+                <div id="searchResultsContent"></div>
+            </div>
+        </div>
+
+        <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="font-size: 1.25rem; font-weight: 600; color: #333; margin: 0;">
+                    <i class="bi bi-list-ul" style="color: #dc2626;"></i> Sipariş Listeleri
+                </h2>
+                <button class="btn-action" onclick="loadOrderLists()">
+                    <i class="bi bi-arrow-clockwise"></i> Yenile
+                </button>
+            </div>
+
+            <div id="loadingDiv" style="text-align: center; padding: 3rem 0;">
+                <div style="width: 50px; height: 50px; border: 4px solid #f5f5f5; border-top: 4px solid #dc2626; border-radius: 50%; margin: 0 auto 1rem; animation: spin 1s linear infinite;"></div>
+                <p style="color: #666; font-size: 0.95rem;">Yükleniyor...</p>
+            </div>
+
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+            </div>
+
+            <div id="orderListsContainer" style="display: none;">
+                <!-- Sipariş listeleri buraya dinamik olarak eklenecek -->
+            </div>
+
+            <div id="noOrdersAlert" class="no-orders-card" style="display: none;">
+                <div class="no-orders-icon">
+                    <i class="bi bi-inbox" style="font-size: 2rem; color: #5f6368;"></i>
+                </div>
+                <h3 style="font-size: 1.125rem; font-weight: 500; color: #202124; margin: 1rem 0 0.5rem;">Henüz sipariş yok</h3>
+                <p style="color: #5f6368; margin: 0;">Sipariş oluşturduğunuzda burada görünecektir.</p>
+            </div>
+
+            <div style="margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn-action info" onclick="window.location.href='/order_system/'">
+                    <i class="bi bi-arrow-left"></i> Ana Menü
+                </button>
+                <button class="btn-action info" onclick="window.location.href='/'">
+                    <i class="bi bi-grid-3x3-gap"></i> Portala Dön
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Durum Güncelle Modal (Arama İçin) -->
+    <div class="modal fade" id="updateStatusSearchModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #dc2626; color: white;">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil-square"></i> Sipariş Durum Güncelle
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Parça Kodu:</strong></label>
+                        <div style="background: #f5f5f5; padding: 0.75rem; border-radius: 6px; font-family: monospace;">
+                            <span id="searchModalPartCode"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Parça Adı:</strong></label>
+                        <div style="background: #f5f5f5; padding: 0.75rem; border-radius: 6px;">
+                            <span id="searchModalPartName"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Sipariş Edilen Miktar</label>
+                                <div style="background: #e3f2fd; padding: 0.75rem; border-radius: 6px; border-left: 3px solid #2196f3;">
+                                    <span id="searchModalOrderedQty" style="font-weight: bold; font-size: 1.1rem; color: #1565c0;"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Gelen Miktar</label>
+                                <div style="background: #c8e6c9; padding: 0.75rem; border-radius: 6px; border-left: 3px solid #4caf50;">
+                                    <span id="searchModalArrivedQty" style="font-weight: bold; font-size: 1.1rem; color: #2e7d32;"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Durum</label>
+                        <select class="form-control" id="searchModalStatus" style="border-radius: 8px; border: 2px solid #e5e5e5;">
+                            <option value="">- Seçin -</option>
+                            <option value="Gelmedi">🔴 Gelmedi</option>
+                            <option value="Kısmi">🟡 Kısmi Teslimat</option>
+                            <option value="Geldi">🟢 Geldi</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Gelen Miktar</label>
+                        <input type="number" class="form-control" id="searchModalReceivedQty" min="0" value="0" style="border-radius: 8px; border: 2px solid #e5e5e5;">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Notlar</label>
+                        <textarea class="form-control" id="searchModalNotes" rows="3" placeholder="Ek notlar yazın..." style="border-radius: 8px; border: 2px solid #e5e5e5;"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn-action" onclick="saveSearchResultUpdate()">
+                        <i class="bi bi-save"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kısmi Teslimat Modal -->
+    <div class="modal fade" id="partialReceiveModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-box-arrow-in-down"></i> Kısmi Teslimat</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong id="modalPartCode"></strong> - <span id="modalPartName"></span></p>
+                    <div class="alert alert-info">
+                        <strong>Sipariş Edilen:</strong> <span id="modalOrderedQty"></span><br>
+                        <strong>Kalan:</strong> <span id="modalRemainingQty"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Gelen Miktar:</label>
+                        <input type="number" class="form-control" id="receivedQtyInput" min="1" value="1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-success" onclick="confirmPartialReceive()">
+                        <i class="bi bi-check-circle"></i> Onayla
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teslimat Geçmişi Modal -->
+    <div class="modal fade" id="deliveryHistoryModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title"><i class="bi bi-clock-history"></i> Teslimat Geçmişi - <span id="historyPartCode"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="historyLoading" class="text-center py-4">
+                        <div class="spinner-border text-info"></div>
+                        <p class="mt-2">Yükleniyor...</p>
+                    </div>
+                    <div id="historyContent" style="display: none;">
+                        <table class="table table-hover table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tarih/Saat</th>
+                                    <th>Gelen Miktar</th>
+                                    <th>Teslim Alan</th>
+                                    <th>Not</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="noHistoryAlert" class="alert alert-warning" style="display: none;">
+                        <i class="bi bi-info-circle"></i> Henüz teslimat kaydı yok.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let orderListsData = {};
+        let userRole = null;
+        let currentPartialOrder = null;
+
+        async function loadOrderLists() {
+            document.getElementById('loadingDiv').style.display = 'block';
+            document.getElementById('orderListsContainer').style.display = 'none';
+            document.getElementById('noOrdersAlert').style.display = 'none';
+
+            try {
+                console.log('API çağrısı yapılıyor...');
+                const response = await fetch('/order_system/api/get_order_lists');
+                console.log('Response:', response);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('HTTP Error:', response.status, errorText);
+                    alert('HTTP Hatası: ' + response.status + '\n' + errorText);
+                    return;
+                }
+                
+                const data = await response.json();
+                console.log('Data:', data);
+
+                if (data.success) {
+                    orderListsData = data.order_lists;
+                    userRole = data.user_role;
+                    console.log('Order Lists:', orderListsData);
+                    updateStats();
+                    displayOrderLists();
+                } else {
+                    alert('Hata: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Catch Error:', error);
+                alert('Hata: ' + error.message);
+            }
+
+            document.getElementById('loadingDiv').style.display = 'none';
+        }
+
+        function updateStats() {
+            let totalLists = 0;
+            let totalParts = 0;
+            let completedParts = 0;
+
+            Object.keys(orderListsData).forEach(supplier => {
+                Object.keys(orderListsData[supplier]).forEach(listName => {
+                    totalLists++;
+                    const listData = orderListsData[supplier][listName];
+                    const orders = listData.orders || listData; // Eski format desteği
+                    
+                    totalParts += orders.length;
+                    completedParts += orders.filter(o => o.received_quantity >= o.ordered_quantity).length;
+                });
+            });
+
+            document.getElementById('totalOrderLists').textContent = totalLists;
+            document.getElementById('totalParts').textContent = totalParts;
+            document.getElementById('completedParts').textContent = completedParts;
+        }
+
+        function displayOrderLists() {
+            const container = document.getElementById('orderListsContainer');
+            const noOrdersAlert = document.getElementById('noOrdersAlert');
+            const suppliers = Object.keys(orderListsData);
+
+            console.log('displayOrderLists çağrıldı, tedarikçi sayısı:', suppliers.length);
+
+            if (suppliers.length === 0) {
+                container.style.display = 'none';
+                noOrdersAlert.style.display = 'block';
+                return;
+            }
+
+            container.style.display = 'block';
+            noOrdersAlert.style.display = 'none';
+            
+            container.innerHTML = suppliers.map(supplier => {
+                const supplierLists = orderListsData[supplier];
+                const listNames = Object.keys(supplierLists);
+                
+                return `
+                    <div class="supplier-group">
+                        <div class="supplier-header">
+                            <div class="supplier-icon">
+                                <i class="bi bi-building"></i>
+                            </div>
+                            <div class="supplier-info">
+                                <h3 class="supplier-name">${supplier}</h3>
+                                <div class="supplier-stats">${listNames.length} Sipariş Listesi</div>
+                            </div>
+                        </div>
+                        ${listNames.map(listName => {
+                            const listData = supplierLists[listName];
+                            
+                            // Eski format desteği: eğer array ise direkt orders
+                            const orders = Array.isArray(listData) ? listData : (listData.orders || []);
+                            const orderDate = !Array.isArray(listData) ? listData.order_date : null;
+                            const totalAmount = !Array.isArray(listData) ? listData.total_amount : 0;
+                            
+                            const totalParts = orders.length;
+                            const completedParts = orders.filter(o => o.received_quantity >= o.ordered_quantity).length;
+                            const pendingParts = totalParts - completedParts;
+                            
+                            let status = 'pending';
+                            if (completedParts === totalParts) status = 'completed';
+                            else if (completedParts > 0) status = 'partial';
+
+                            const statusClass = status === 'completed' ? 'status-completed' : 
+                                               status === 'partial' ? 'status-partial' : 'status-pending';
+                            const statusText = status === 'completed' ? 'Tamamlandı' :
+                                              status === 'partial' ? 'Kısmi Geldi' : 'Beklemede';
+                            const cardId = `${supplier}_${listName}`.replace(/[^a-zA-Z0-9]/g, '_');
+                            
+                            // String escape için
+                            const supplierEscaped = supplier.replace(/'/g, "\\'");
+                            const listNameEscaped = listName.replace(/'/g, "\\'");
+
+                            return `
+                                <div class="order-card">
+                                    <div class="order-header" onclick="toggleOrderList('${cardId}')">
+                                        <div style="display: flex; align-items: center; gap: 1.5rem; flex: 1;">
+                                            <div class="order-icon">
+                                                <i class="bi bi-file-earmark-text"></i>
+                                            </div>
+                                            <div style="flex: 1;">
+                                                <div class="order-name">${listName || 'İsimsiz Liste'}</div>
+                                                <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                                                    <span class="${statusClass}">${statusText}</span>
+                                                    ${orderDate ? `<span style="color: #666; font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem;"><i class="bi bi-calendar3"></i> ${orderDate}</span>` : ''}
+                                                    ${totalAmount > 0 ? `<span style="color: #dc2626; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 0.35rem;"><i class="bi bi-currency-euro"></i> ${totalAmount.toFixed(2)}</span>` : ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="order-stats">
+                                            <span style="color: #666;">
+                                                <i class="bi bi-box-seam"></i> ${totalParts} Parça
+                                            </span>
+                                            <span style="color: #10b981;">
+                                                <i class="bi bi-check-circle-fill"></i> ${completedParts} Geldi
+                                            </span>
+                                            <span style="color: #dc2626;">
+                                                <i class="bi bi-clock-fill"></i> ${pendingParts} Bekliyor
+                                            </span>
+                                            <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); exportToExcel('${supplierEscaped}', '${listNameEscaped}')" style="margin-left: 1rem;">
+                                                <i class="bi bi-file-earmark-excel"></i> Excel
+                                            </button>
+                                            ${userRole === 'admin' ? `
+                                            <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deleteOrderList('${supplierEscaped}', '${listNameEscaped}')" style="margin-left: 0.5rem;">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            ` : ''}
+                                            <i class="bi bi-chevron-down expand-icon" id="icon-${cardId}"></i>
+                                        </div>
+                                    </div>
+                                    <div class="order-content" id="content-${cardId}">
+                                        <table class="parts-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 120px;"><i class="bi bi-upc-scan"></i> KOD</th>
+                                                    <th style="width: 180px;"><i class="bi bi-tag"></i> PARÇA ADI</th>
+                                                    <th style="text-align: center; width: 70px;"><i class="bi bi-cart"></i> SİP.</th>
+                                                    <th style="text-align: center; width: 70px;"><i class="bi bi-check-circle"></i> GEL.</th>
+                                                    <th style="text-align: center; width: 70px;"><i class="bi bi-hourglass-split"></i> KAL.</th>
+                                                    <th style="text-align: right; width: 80px;"><i class="bi bi-currency-euro"></i> BİRİM</th>
+                                                    <th style="text-align: right; width: 90px;"><i class="bi bi-calculator"></i> TOP.</th>
+                                                    <th style="text-align: center; width: 90px;"><i class="bi bi-clock-history"></i> GEÇ.</th>
+                                                    <th style="text-align: center; width: 110px;"><i class="bi bi-gear"></i> İŞLEM</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${orders.map(order => {
+                                                    const remaining = order.ordered_quantity - (order.received_quantity || 0);
+                                                    const isCompleted = remaining <= 0;
+                                                    
+                                                    return `
+                                                        <tr>
+                                                            <td><strong style="color: #202124;">${order.part_code}</strong></td>
+                                                            <td style="color: #5f6368;">${order.part_name || '-'}</td>
+                                                            <td style="text-align: center;">
+                                                                <span class="badge-quantity">${order.ordered_quantity}</span>
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                <span class="badge-received">${order.received_quantity || 0}</span>
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                <span class="badge-remaining">${remaining}</span>
+                                                            </td>
+                                                            <td style="text-align: right; color: #5f6368;">${parseFloat(order.unit_price || 0).toFixed(2)}</td>
+                                                            <td style="text-align: right;"><strong style="color: #202124;">${parseFloat(order.total_price || 0).toFixed(2)}</strong></td>
+                                                            <td style="text-align: center;">
+                                                                ${(order.received_quantity || 0) > 0 ? `
+                                                                    <button class="btn-action info" onclick="showDeliveryHistory(${order.id}, '${order.part_code}')">
+                                                                        <i class="bi bi-clock-history"></i> Geçmiş
+                                                                    </button>
+                                                                ` : '<span style="color: #dadce0;">—</span>'}
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                ${!isCompleted ? `
+                                                                    <button class="btn-action" onclick="showPartialReceiveModal(${order.id}, '${order.part_code}', '${order.part_name || ''}', ${order.ordered_quantity}, ${order.received_quantity || 0})">
+                                                                        <i class="bi bi-box-arrow-in-down"></i> Teslim Al
+                                                                    </button>
+                                                                ` : `
+                                                                    <span class="btn-completed">
+                                                                        <i class="bi bi-check-circle-fill"></i> Tamam
+                                                                    </span>
+                                                                `}
+                                                            </td>
+                                                        </tr>
+                                                    `;
+                                                }).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleOrderList(listName) {
+            const content = document.getElementById('content-' + listName);
+            const icon = document.getElementById('icon-' + listName);
+            const header = icon.closest('.order-header');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                icon.classList.remove('rotated');
+            } else {
+                content.classList.add('show');
+                icon.classList.add('rotated');
+            }
+        }
+
+        function showPartialReceiveModal(orderId, partCode, partName, orderedQty, receivedQty) {
+            const remaining = orderedQty - receivedQty;
+            
+            currentPartialOrder = {
+                id: orderId,
+                part_code: partCode,
+                ordered_qty: orderedQty,
+                received_qty: receivedQty,
+                remaining: remaining
+            };
+
+            document.getElementById('modalPartCode').textContent = partCode;
+            document.getElementById('modalPartName').textContent = partName;
+            document.getElementById('modalOrderedQty').textContent = orderedQty;
+            document.getElementById('modalRemainingQty').textContent = remaining;
+            document.getElementById('receivedQtyInput').value = remaining;
+            document.getElementById('receivedQtyInput').max = remaining;
+
+            const modal = new bootstrap.Modal(document.getElementById('partialReceiveModal'));
+            modal.show();
+        }
+
+        async function confirmPartialReceive() {
+            if (!currentPartialOrder) return;
+
+            const receivedQty = parseInt(document.getElementById('receivedQtyInput').value);
+            
+            if (!receivedQty || receivedQty <= 0) {
+                alert('❌ Lütfen geçerli bir miktar girin!');
+                return;
+            }
+
+            if (receivedQty > currentPartialOrder.remaining) {
+                alert('❌ Gelen miktar, kalan miktardan fazla olamaz!');
+                return;
+            }
+
+            try {
+                const response = await fetch('/order_system/api/partial_receive', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        order_id: currentPartialOrder.id,
+                        received_quantity: receivedQty
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const newTotal = currentPartialOrder.received_qty + receivedQty;
+                    const newRemaining = currentPartialOrder.ordered_qty - newTotal;
+                    
+                    if (newRemaining === 0) {
+                        alert(`✅ Sipariş tamamlandı!\n\n${receivedQty} adet stoka eklendi.`);
+                    } else {
+                        alert(`✅ Kısmi teslimat kaydedildi!\n\nGelen: ${receivedQty} adet\nToplam Gelen: ${newTotal}\nKalan: ${newRemaining}`);
+                    }
+
+                    bootstrap.Modal.getInstance(document.getElementById('partialReceiveModal')).hide();
+                    loadOrderLists();
+                } else {
+                    alert('❌ Hata: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Bağlantı hatası: ' + error.message);
+            }
+        }
+
+        async function showDeliveryHistory(orderId, partCode) {
+            // Modal başlığını güncelle
+            document.getElementById('historyPartCode').textContent = partCode;
+            
+            // Loading göster
+            document.getElementById('historyLoading').style.display = 'block';
+            document.getElementById('historyContent').style.display = 'none';
+            document.getElementById('noHistoryAlert').style.display = 'none';
+            
+            // Modal'ı aç
+            const modal = new bootstrap.Modal(document.getElementById('deliveryHistoryModal'));
+            modal.show();
+            
+            try {
+                const response = await fetch(`/order_system/api/get_delivery_history/${orderId}`);
+                const data = await response.json();
+                
+                document.getElementById('historyLoading').style.display = 'none';
+                
+                if (data.success && data.history && data.history.length > 0) {
+                    // Geçmiş var, tabloyu göster
+                    document.getElementById('historyContent').style.display = 'block';
+                    
+                    const tbody = document.getElementById('historyTableBody');
+                    tbody.innerHTML = data.history.map(record => `
+                        <tr>
+                            <td>${new Date(record.delivery_date).toLocaleString('tr-TR', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}</td>
+                            <td><strong>${record.received_quantity}</strong> adet</td>
+                            <td><i class="bi bi-person-fill"></i> ${record.received_by || 'Bilinmiyor'}</td>
+                            <td>${record.notes || '-'}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    // Geçmiş yok
+                    document.getElementById('noHistoryAlert').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('historyLoading').style.display = 'none';
+                document.getElementById('noHistoryAlert').style.display = 'block';
+                document.getElementById('noHistoryAlert').innerHTML = `
+                    <i class="bi bi-exclamation-triangle"></i> 
+                    Geçmiş yüklenirken hata oluştu: ${error.message}
+                `;
+            }
+        }
+
+        // Excel'e aktar
+        async function exportToExcel(supplier, listName) {
+            try {
+                const response = await fetch('/order_system/api/export_order_to_excel', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        supplier: supplier,
+                        list_name: listName
+                    })
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${supplier}_${listName}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    alert('✅ Excel dosyası indirildi ve sunucuya kaydedildi!');
+                } else {
+                    const data = await response.json();
+                    alert('❌ Hata: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Bağlantı hatası: ' + error.message);
+            }
+        }
+
+        // Parça kodundan arama
+        async function searchByPartCode() {
+            const partCode = document.getElementById('searchPartCode').value.trim();
+            
+            if (!partCode) {
+                alert('⚠️ Lütfen parça kodu girin');
+                return;
+            }
+
+            console.log('Arama başladı:', partCode);
+
+            try {
+                const response = await fetch(`/order_system/api/search_orders?part_code=${encodeURIComponent(partCode)}`);
+                const data = await response.json();
+
+                console.log('API Yanıtı:', data);
+
+                const resultsDiv = document.getElementById('searchResults');
+                const contentDiv = document.getElementById('searchResultsContent');
+
+                if (data.orders && data.orders.length > 0) {
+                    let html = `
+                        <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+                            <h4 style="color: #dc2626; margin: 0; font-size: 1.1rem; font-weight: 600;">
+                                <i class="bi bi-search"></i> Bulunan Siparişler
+                            </h4>
+                            <span style="background: #dc2626; color: white; margin-left: 0.75rem; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">
+                                ${data.orders.length}
+                            </span>
+                        </div>
+                    `;
+                    
+                    data.orders.forEach(order => {
+                        const statusColor = order.status === 'Geldi' ? '#22c55e' : 
+                                          order.status === 'Kısmi' ? '#f59e0b' : 
+                                          order.status === 'Gelmedi' ? '#ef4444' : '#9ca3af';
+                        
+                        const statusIcon = order.status === 'Geldi' ? '✓' : 
+                                         order.status === 'Kısmi' ? '⚠' : '✕';
+                        
+                        console.log('Sipariş işleniyor:', order.id, order.part_code);
+                        
+                        html += `
+                            <div style="
+                                background: white; 
+                                padding: 1.25rem; 
+                                margin-bottom: 1.25rem; 
+                                border-radius: 12px; 
+                                border-left: 5px solid ${statusColor};
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                                transition: all 0.3s ease;
+                            " 
+                            data-order-id="${order.id}" 
+                            data-ordered-qty="${order.ordered_quantity}" 
+                            data-arrived-qty="${order.arrived_quantity || 0}"
+                            onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.12)'"
+                            onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'">
+                                
+                                <!-- Başlık Satırı -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                                    <div style="flex: 1;">
+                                        <div style="display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 0.5rem;">
+                                            <strong style="font-size: 1.15rem; color: #1f2937; font-family: monospace;" data-part-code>${order.part_code}</strong>
+                                            <span style="background: #f3f4f6; color: #6b7280; padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 500;">
+                                                ID: ${order.id}
+                                            </span>
+                                        </div>
+                                        <div style="color: #6b7280; font-size: 0.95rem; font-weight: 500;" data-part-name>${order.part_name}</div>
+                                    </div>
+                                    <span style="
+                                        background: ${statusColor}; 
+                                        color: white; 
+                                        padding: 0.5rem 1rem; 
+                                        border-radius: 8px; 
+                                        font-size: 0.9rem; 
+                                        font-weight: 600;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 0.5rem;
+                                        white-space: nowrap;
+                                    ">
+                                        <span>${statusIcon}</span> ${order.status}
+                                    </span>
+                                </div>
+                                
+                                <!-- Miktarlar Grid -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #e5e7eb;">
+                                    <div style="background: #f0f9ff; padding: 0.75rem; border-radius: 8px; border-left: 3px solid #3b82f6;">
+                                        <div style="color: #7c3aed; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Sipariş Edilen</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-top: 0.25rem;">${order.ordered_quantity}</div>
+                                        <div style="color: #9ca3af; font-size: 0.75rem; margin-top: 0.25rem;">adet</div>
+                                    </div>
+                                    <div style="background: #f0fdf4; padding: 0.75rem; border-radius: 8px; border-left: 3px solid #10b981;">
+                                        <div style="color: #059669; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Gelen Miktar</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-top: 0.25rem;">${order.arrived_quantity || 0}</div>
+                                        <div style="color: #9ca3af; font-size: 0.75rem; margin-top: 0.25rem;">adet</div>
+                                    </div>
+                                    <div style="background: #fef3c7; padding: 0.75rem; border-radius: 8px; border-left: 3px solid #f59e0b;">
+                                        <div style="color: #b45309; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Birim Fiyat</div>
+                                        <div style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-top: 0.25rem;">€${parseFloat(order.unit_price).toFixed(2)}</div>
+                                        <div style="color: #9ca3af; font-size: 0.75rem; margin-top: 0.25rem;">EUR</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Tedarikçi ve Buton -->
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; color: #6b7280;">
+                                        <i class="bi bi-shop"></i>
+                                        <span style="font-weight: 500;">${order.supplier}</span>
+                                    </div>
+                                    <button 
+                                        style="
+                                            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+                                            color: white;
+                                            border: none;
+                                            padding: 0.6rem 1.5rem;
+                                            border-radius: 8px;
+                                            font-weight: 600;
+                                            font-size: 0.95rem;
+                                            cursor: pointer;
+                                            transition: all 0.3s ease;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 0.5rem;
+                                            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+                                        "
+                                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(220, 38, 38, 0.4)'"
+                                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(220, 38, 38, 0.3)'"
+                                        onclick="editSearchResult(${order.id})">
+                                        <i class="bi bi-pencil-square"></i> Durum Güncelle
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    contentDiv.innerHTML = html;
+                    resultsDiv.style.display = 'block';
+                    console.log('Sonuçlar gösterildi');
+                } else {
+                    contentDiv.innerHTML = '<div style="color: #666;"><i class="bi bi-exclamation-circle"></i> Parça kodu "<strong>' + partCode + '</strong>" bulunamadı.</div>';
+                    resultsDiv.style.display = 'block';
+                    console.log('Sonuç bulunamadı');
+                }
+            } catch (error) {
+                console.error('Arama hatası:', error);
+                alert('❌ Arama hatası: ' + error.message);
+            }
+        }
+
+        // Enter tuşu ile arama
+        document.getElementById('searchPartCode')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchByPartCode();
+            }
+        });
+
+        // Araması temizle
+        function clearSearch() {
+            document.getElementById('searchPartCode').value = '';
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('searchResultsContent').innerHTML = '';
+        }
+
+        // Arama sonucundan sipariş düzenle
+        function editSearchResult(orderId) {
+            console.log('editSearchResult çağrıldı, orderId:', orderId);
+            
+            // Arama sonuçlarından siparişi bul
+            const searchResults = document.querySelectorAll('[data-order-id]');
+            console.log('Bulunan sonuçlar:', searchResults.length);
+            
+            for (const result of searchResults) {
+                const dataOrderId = parseInt(result.getAttribute('data-order-id'));
+                console.log('Kontrol ediliyor - dataOrderId:', dataOrderId, 'orderId:', orderId, 'eşit mi?:', dataOrderId === orderId);
+                
+                if (dataOrderId === orderId) {
+                    // Modal verilerini doldur
+                    const partCode = result.querySelector('[data-part-code]').textContent;
+                    const partName = result.querySelector('[data-part-name]').textContent;
+                    const orderedQty = parseInt(result.getAttribute('data-ordered-qty'));
+                    const arrivedQty = parseInt(result.getAttribute('data-arrived-qty'));
+                    
+                    console.log('Verileri buldum:', { partCode, partName, orderedQty, arrivedQty });
+                    
+                    document.getElementById('searchModalPartCode').textContent = partCode;
+                    document.getElementById('searchModalPartName').textContent = partName;
+                    document.getElementById('searchModalOrderedQty').textContent = orderedQty + ' adet';
+                    document.getElementById('searchModalArrivedQty').textContent = arrivedQty + ' adet';
+                    document.getElementById('searchModalReceivedQty').value = arrivedQty;
+                    document.getElementById('searchModalStatus').value = '';
+                    document.getElementById('searchModalNotes').value = '';
+                    
+                    // Verileri global variable'da sakla
+                    window.currentSearchOrderId = orderId;
+                    
+                    // Modalı aç
+                    console.log('Modal açılıyor...');
+                    const modal = new bootstrap.Modal(document.getElementById('updateStatusSearchModal'));
+                    modal.show();
+                    console.log('Modal açıldı');
+                    return;
+                }
+            }
+            alert('❌ Sipariş verileri bulunamadı');
+        }
+
+        // Arama sonucu güncellemeyi kaydet
+        async function saveSearchResultUpdate() {
+            console.log('saveSearchResultUpdate çağrıldı');
+            
+            const orderId = window.currentSearchOrderId;
+            const status = document.getElementById('searchModalStatus').value;
+            const arrivedQty = parseInt(document.getElementById('searchModalReceivedQty').value) || 0;
+            const notes = document.getElementById('searchModalNotes').value;
+
+            console.log('Veriler:', { orderId, status, arrivedQty, notes });
+
+            if (!orderId) {
+                alert('❌ Sipariş ID bulunamadı');
+                return;
+            }
+
+            if (!status) {
+                alert('⚠️ Lütfen durum seçin');
+                return;
+            }
+
+            try {
+                console.log('API çağrısı yapılıyor...');
+                const response = await fetch('/order_system/api/update_order_status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        order_id: orderId,
+                        status: status,
+                        arrived_quantity: arrivedQty,
+                        notes: notes
+                    })
+                });
+
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                if (data.success) {
+                    alert('✅ ' + (data.message || 'Güncelleme başarılı'));
+                    // Modalı kapat
+                    try {
+                        const modalInstance = bootstrap.Modal.getInstance(document.getElementById('updateStatusSearchModal'));
+                        if (modalInstance) {
+                            modalInstance.hide();
+                        }
+                    } catch (e) {
+                        console.log('Modal kapatma hatası:', e);
+                    }
+                    // Arama sonuçlarını güncelle
+                    searchByPartCode();
+                } else {
+                    alert('❌ Hata: ' + (data.error || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                console.error('Bağlantı hatası:', error);
+                alert('❌ Bağlantı hatası: ' + error.message);
+            }
+        }
+
+        // Sipariş listesini sil
+        async function deleteOrderList(supplier, listName) {
+            console.log('deleteOrderList çağrıldı:', supplier, listName);
+            
+            if (!confirm(`${listName} listesini silmek istediğinizden emin misiniz?\n\nTedarikcişi: ${supplier}\n\nBu işlem geri alınamaz!`)) {
+                console.log('Silme işlemi iptal edildi');
+                return;
+            }
+
+            try {
+                console.log('Delete API çağrısı yapılıyor...');
+                const response = await fetch('/order_system/api/delete_order_list', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        supplier: supplier,
+                        list_name: listName
+                    })
+                });
+
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                if (data.success) {
+                    alert(`✅ ${listName} listesi başarıyla silindi! (${data.deleted_count} sipariş)`);
+                    loadOrderLists();
+                } else {
+                    alert('❌ Hata: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                alert('❌ Bağlantı hatası: ' + error.message);
+            }
+        }
+
+        loadOrderLists();
+    </script>
+</body>
+</html>

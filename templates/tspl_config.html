@@ -1,0 +1,363 @@
+<!-- TSPL Barcode Printer Configuration Panel -->
+<!-- templates/tspl_config.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}TSPL Barcode Printer Configuration{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 class="mb-4">
+                <i class="fas fa-print"></i> TSPL Barcode Printer Configuration
+            </h1>
+
+            <!-- Status Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-circle"></i> Printer Status
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="status-container">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cog"></i> Settings
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="tspl-config-form">
+                        <div class="mb-3">
+                            <label class="form-label">Printer Host</label>
+                            <input type="text" class="form-control" id="printer-host" 
+                                   placeholder="localhost or 192.168.x.x" required>
+                            <small class="form-text text-muted">
+                                localhost = USB printer, IP address = Network printer
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Printer Port</label>
+                            <input type="number" class="form-control" id="printer-port" 
+                                   value="9100" min="1" max="65535" required>
+                            <small class="form-text text-muted">
+                                Standard TSPL port is 9100
+                            </small>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="tspl-enabled">
+                            <label class="form-check-label" for="tspl-enabled">
+                                Enable TSPL Printer Support
+                            </label>
+                            <small class="d-block mt-2 text-muted">
+                                When enabled, QR codes will be sent to the thermal printer
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Configuration
+                            </button>
+                            <button type="button" class="btn btn-secondary ms-2" id="test-connection-btn">
+                                <i class="fas fa-network-wired"></i> Test Connection
+                            </button>
+                            <button type="button" class="btn btn-info ms-2" id="test-print-btn">
+                                <i class="fas fa-print"></i> Test Print
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Test Print Card -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-vial"></i> Test Print
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="test-print-form">
+                        <div class="mb-3">
+                            <label class="form-label">QR ID</label>
+                            <input type="text" class="form-control" id="test-qr-id" 
+                                   value="TEST_QR_001" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Part Code</label>
+                            <input type="text" class="form-control" id="test-part-code" 
+                                   value="TEST_CODE" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Part Name</label>
+                            <input type="text" class="form-control" id="test-part-name" 
+                                   value="Test Part" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-print"></i> Print Test Label
+                        </button>
+                    </form>
+
+                    <div id="test-result" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Sidebar -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question-circle"></i> Help
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6>Setup Steps:</h6>
+                    <ol>
+                        <li>Connect your TSPL barcode printer</li>
+                        <li>Note down the IP address and port</li>
+                        <li>Configure host and port below</li>
+                        <li>Click "Test Connection"</li>
+                        <li>Click "Test Print" to verify</li>
+                        <li>Enable and save configuration</li>
+                    </ol>
+
+                    <hr>
+
+                    <h6>Printer Info:</h6>
+                    <ul>
+                        <li><strong>Default Port:</strong> 9100</li>
+                        <li><strong>Protocol:</strong> TSPL (Thermal)</li>
+                        <li><strong>Format:</strong> 100mm x 150mm labels</li>
+                        <li><strong>Supports:</strong> UTF-8 (Turkish chars)</li>
+                    </ul>
+
+                    <hr>
+
+                    <h6>Troubleshooting:</h6>
+                    <ul>
+                        <li>USB: Use <code>localhost</code></li>
+                        <li>Network: Use printer IP</li>
+                        <li>Windows: Install manufacturer driver</li>
+                        <li>Linux: Check <code>/dev/usb/*</code></li>
+                    </ul>
+
+                    <hr>
+
+                    <div class="alert alert-info">
+                        <strong>Note:</strong> PNG files are always generated. TSPL is optional.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Info -->
+            <div class="card mt-3">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-graduation-cap"></i> Usage
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>When generating QR codes:</p>
+                    <ol>
+                        <li>Go to Parts → Generate QR</li>
+                        <li>Enter quantity</li>
+                        <li>Check "Print to TSPL" (if enabled)</li>
+                        <li>Click Generate</li>
+                        <li>Labels will print automatically</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-left: 4px solid #007bff;
+    }
+    
+    .card-header {
+        font-weight: 600;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+    
+    .status-connected {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .status-disconnected {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+</style>
+
+<script>
+// Load status
+async function loadStatus() {
+    try {
+        const response = await fetch('/api/tspl/status');
+        const data = await response.json();
+        
+        const statusClass = data.connected ? 'status-connected' : 'status-disconnected';
+        const statusText = data.connected ? 'CONNECTED' : 'DISCONNECTED';
+        
+        document.getElementById('status-container').innerHTML = `
+            <div class="mb-3">
+                <span class="status-badge ${statusClass}">
+                    <i class="fas fa-${data.connected ? 'check-circle' : 'times-circle'}"></i>
+                    ${statusText}
+                </span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Status:</strong> ${data.enabled ? 'Enabled' : 'Disabled'}</p>
+                    <p><strong>Host:</strong> <code>${data.printer_host}</code></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Port:</strong> <code>${data.printer_port}</code></p>
+                    <p><strong>Connected:</strong> <code>${data.connected ? 'Yes' : 'No'}</code></p>
+                </div>
+            </div>
+        `;
+        
+        // Load into form
+        document.getElementById('printer-host').value = data.printer_host;
+        document.getElementById('printer-port').value = data.printer_port;
+        document.getElementById('tspl-enabled').checked = data.enabled;
+        
+    } catch (error) {
+        document.getElementById('status-container').innerHTML = 
+            `<div class="alert alert-danger">Error loading status: ${error.message}</div>`;
+    }
+}
+
+// Test connection
+document.getElementById('test-connection-btn').addEventListener('click', async () => {
+    const btn = event.target;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Testing...';
+    
+    try {
+        const response = await fetch('/api/tspl/status');
+        const data = await response.json();
+        
+        if (data.connected) {
+            alert('✓ Printer is connected and ready!');
+        } else {
+            alert('✗ Printer is not connected. Check:\n- IP address\n- Port number\n- Network connection\n- Printer power');
+        }
+    } catch (error) {
+        alert('✗ Error: ' + error.message);
+    }
+    
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-network-wired"></i> Test Connection';
+});
+
+// Test print
+document.getElementById('test-print-btn').addEventListener('click', async () => {
+    const form = document.getElementById('test-print-form');
+    const btn = event.target;
+    const qrId = document.getElementById('test-qr-id').value;
+    const partCode = document.getElementById('test-part-code').value;
+    const partName = document.getElementById('test-part-name').value;
+    
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Printing...';
+    
+    try {
+        const response = await fetch('/api/tspl/test-print', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                qr_id: qrId,
+                part_code: partCode,
+                part_name: partName
+            })
+        });
+        
+        const data = await response.json();
+        const resultDiv = document.getElementById('test-result');
+        
+        if (data.success) {
+            resultDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> ${data.message}
+                </div>
+            `;
+        } else {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-times-circle"></i> ${data.error || 'Print failed'}
+                </div>
+            `;
+        }
+    } catch (error) {
+        document.getElementById('test-result').innerHTML = 
+            `<div class="alert alert-danger"><i class="fas fa-times-circle"></i> Error: ${error.message}</div>`;
+    }
+    
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-print"></i> Print Test Label';
+});
+
+// Save configuration
+document.getElementById('tspl-config-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const host = document.getElementById('printer-host').value;
+    const port = document.getElementById('printer-port').value;
+    const enabled = document.getElementById('tspl-enabled').checked;
+    
+    try {
+        const response = await fetch('/api/tspl/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                host: host,
+                port: parseInt(port),
+                enabled: enabled
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('✓ Configuration saved!\n' + data.note);
+            loadStatus();
+        } else {
+            alert('✗ Error: ' + data.error);
+        }
+    } catch (error) {
+        alert('✗ Error: ' + error.message);
+    }
+});
+
+// Load status on page load
+loadStatus();
+</script>
+
+{% endblock %}

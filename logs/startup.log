@@ -1,0 +1,75 @@
+2025-11-26 10:58:25,147 - STARTUP - INFO - === ENVANTERQR STARTUP ===
+2025-11-26 10:58:25,147 - STARTUP - INFO - [SYNC] Backblaze B2 senkronizasyonu başlıyor
+2025-11-26 10:58:26,618 - STARTUP - INFO - [OK] B2 Authentication successful
+2025-11-26 10:58:26,843 - STARTUP - INFO - [OK] Connected to bucket: Envanter
+2025-11-26 10:58:26,843 - STARTUP - INFO - 
+============================================================
+2025-11-26 10:58:26,843 - STARTUP - INFO - FULL SYNC START - ALL CATEGORIES
+2025-11-26 10:58:26,843 - STARTUP - INFO - ============================================================
+
+2025-11-26 10:58:26,843 - STARTUP - INFO - 
+============================================================
+2025-11-26 10:58:26,843 - STARTUP - INFO - SYNC START: qr_codes (direction: both)
+2025-11-26 10:58:26,850 - STARTUP - INFO - ============================================================
+2025-11-26 10:58:26,850 - STARTUP - WARNING - Local path not found: static\qr_codes
+2025-11-26 10:58:27,450 - STARTUP - INFO - [qr_codes] Found 1502 B2 files
+2025-11-26 10:58:27,450 - STARTUP - INFO - [UPLOAD] No files to upload
+2025-11-26 10:58:27,450 - STARTUP - INFO - 
+[DOWNLOAD] 1502 files missing locally
+2025-11-26 10:58:27,450 - STARTUP - INFO - [DOWNLOAD] qr_codes/19111-12002-M/19111-12002-M_41.png -> static\qr_codes\19111-12002-M\19111-12002-M_41.png
+2025-11-26 10:58:27,577 - STARTUP - INFO - Pausing thread for 1 seconds because that is what the default exponential backoff is
+2025-11-26 10:58:28,661 - STARTUP - INFO - Pausing thread for 1 seconds because that is what the default exponential backoff is
+2025-11-26 10:58:30,218 - STARTUP - INFO - Pausing thread for 2 seconds because that is what the default exponential backoff is
+2025-11-26 10:58:32,551 - STARTUP - INFO - Pausing thread for 3 seconds because that is what the default exponential backoff is
+2025-11-26 10:58:35,995 - STARTUP - INFO - Pausing thread for 5 seconds because that is what the default exponential backoff is
+2025-11-26 10:58:41,113 - STARTUP - INFO - Pausing thread for 7 seconds because that is what the default exponential backoff is
+2025-11-26 10:58:48,781 - STARTUP - INFO - Pausing thread for 11 seconds because that is what the default exponential backoff is
+2025-11-26 10:59:26,623 - STARTUP - INFO - === ENVANTERQR STARTUP ===
+2025-11-26 10:59:26,623 - STARTUP - INFO - [SYNC] Backblaze B2 senkronizasyonu başlıyor
+2025-11-26 10:59:27,778 - STARTUP - INFO - [OK] B2 Authentication successful
+2025-11-26 10:59:27,929 - STARTUP - INFO - [OK] Connected to bucket: Envanter
+2025-11-26 10:59:27,929 - STARTUP - INFO - 
+============================================================
+2025-11-26 10:59:27,929 - STARTUP - INFO - FULL SYNC START - ALL CATEGORIES
+2025-11-26 10:59:27,929 - STARTUP - INFO - ============================================================
+
+2025-11-26 10:59:27,929 - STARTUP - INFO - 
+============================================================
+2025-11-26 10:59:27,929 - STARTUP - INFO - SYNC START: qr_codes (direction: both)
+2025-11-26 10:59:27,929 - STARTUP - INFO - ============================================================
+2025-11-26 10:59:27,929 - STARTUP - INFO - [qr_codes] Found 0 local files
+2025-11-26 10:59:28,471 - STARTUP - INFO - [qr_codes] Found 1502 B2 files
+2025-11-26 10:59:28,472 - STARTUP - INFO - [UPLOAD] No files to upload
+2025-11-26 10:59:28,472 - STARTUP - INFO - 
+[DOWNLOAD] 1502 files missing locally
+2025-11-26 10:59:28,472 - STARTUP - INFO - [DOWNLOAD] qr_codes/Y129120-01780/Y129120-01780_25.png -> static\qr_codes\Y129120-01780\Y129120-01780_25.png
+2025-11-26 10:59:28,575 - STARTUP - INFO - Pausing thread for 1 seconds because that is what the default exponential backoff is
+2025-11-26 11:00:43,029 - STARTUP - INFO - === ENVANTERQR STARTUP ===
+2025-11-26 11:00:43,029 - STARTUP - INFO - [SYNC] Backblaze B2 senkronizasyonu başlıyor
+2025-11-26 11:00:44,532 - STARTUP - INFO - [OK] B2 Authentication successful
+2025-11-26 11:00:44,708 - STARTUP - INFO - [OK] Connected to bucket: Envanter
+2025-11-26 11:00:44,708 - STARTUP - INFO - 
+============================================================
+2025-11-26 11:00:44,712 - STARTUP - INFO - FULL SYNC START - ALL CATEGORIES
+2025-11-26 11:00:44,712 - STARTUP - INFO - ============================================================
+
+2025-11-26 11:00:44,712 - STARTUP - INFO - 
+============================================================
+2025-11-26 11:00:44,712 - STARTUP - INFO - SYNC START: qr_codes (direction: both)
+2025-11-26 11:00:44,712 - STARTUP - INFO - ============================================================
+2025-11-26 11:00:44,712 - STARTUP - INFO - [qr_codes] Found 0 local files
+2025-11-26 11:00:45,717 - STARTUP - INFO - [qr_codes] Found 1502 B2 files
+2025-11-26 11:00:45,717 - STARTUP - INFO - [UPLOAD] No files to upload
+2025-11-26 11:00:45,717 - STARTUP - INFO - 
+[DOWNLOAD] 1502 files missing locally
+2025-11-26 11:00:45,717 - STARTUP - INFO - [DOWNLOAD] qr_codes/00023-30040/00023-30040_5.png -> static\qr_codes\00023-30040\00023-30040_5.png
+2025-11-26 11:00:45,844 - STARTUP - INFO - Pausing thread for 1 seconds because that is what the default exponential backoff is
+2025-11-26 11:00:46,896 - STARTUP - INFO - Pausing thread for 1 seconds because that is what the default exponential backoff is
+2025-11-26 11:00:48,457 - STARTUP - INFO - Pausing thread for 2 seconds because that is what the default exponential backoff is
+2025-11-26 11:00:50,759 - STARTUP - INFO - Pausing thread for 3 seconds because that is what the default exponential backoff is
+2025-11-26 11:00:54,204 - STARTUP - INFO - Pausing thread for 5 seconds because that is what the default exponential backoff is
+2025-11-26 11:00:59,320 - STARTUP - INFO - Pausing thread for 7 seconds because that is what the default exponential backoff is
+2025-11-26 11:01:06,966 - STARTUP - INFO - Pausing thread for 11 seconds because that is what the default exponential backoff is
+2025-11-26 11:01:18,418 - STARTUP - INFO - Pausing thread for 17 seconds because that is what the default exponential backoff is
+2025-11-26 11:01:35,562 - STARTUP - INFO - Pausing thread for 25 seconds because that is what the default exponential backoff is
+2025-11-26 11:02:01,297 - STARTUP - INFO - Pausing thread for 38 seconds because that is what the default exponential backoff is

@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Parça Bilgisi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            color: #1d1d1f;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            max-width: 1200px;
+            margin: 0 auto;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        /* Header Buttons */
+        .header-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e5e5e7;
+            gap: 12px;
+        }
+
+        .header-buttons-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-header {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #f5f5f7;
+            border: 1px solid #e5e5e7;
+            border-radius: 10px;
+            color: #1d1d1f;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-header:hover {
+            background: #efefef;
+            border-color: #d0d0d2;
+            color: #1d1d1f;
+        }
+
+        /* Photo Section */
+        .photo-section {
+            background: linear-gradient(135deg, #fef8f8 0%, #fff5f5 100%);
+            padding: 40px 30px;
+            text-align: center;
+            border-right: 1px solid #e5e5e7;
+        }
+
+        .part-photo {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 16px;
+            box-shadow: 0 12px 32px rgba(215, 0, 21, 0.15);
+            margin-bottom: 24px;
+            border: 1.5px solid rgba(215, 0, 21, 0.1);
+        }
+
+        .catalog-photo {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 14px;
+            border: 2px solid #d70015;
+            box-shadow: 0 8px 20px rgba(215, 0, 21, 0.12);
+        }
+
+        .catalog-label {
+            color: #86868b;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        /* Pulse Animation for Stock Location */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 20px rgba(215, 0, 21, 0.3);
+            }
+            50% {
+                transform: scale(1.01);
+                box-shadow: 0 8px 35px rgba(215, 0, 21, 0.5);
+            }
+        }
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        /* Details Section */
+        .details-section {
+            padding: 40px;
+            position: relative;
+            overflow: auto;
+        }
+
+        .part-code-header {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        /* Modern Gradient Header Cards */
+        .part-name-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 3px solid #d70015;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .part-name-card:hover {
+            box-shadow: 0 8px 30px rgba(215, 0, 21, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .header-info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 3px solid #d70015;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .header-info-card:hover {
+            box-shadow: 0 8px 30px rgba(215, 0, 21, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .part-code-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #d70015;
+            margin-bottom: 12px;
+        }
+
+        .part-code-badge i {
+            font-size: 16px;
+        }
+
+        .part-code-display {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1d1d1f;
+            letter-spacing: -0.5px;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+        }
+
+        .part-name-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #d70015;
+            margin-bottom: 12px;
+        }
+
+        .part-name-label i {
+            font-size: 16px;
+        }
+
+        .part-name-display {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0;
+            color: #1d1d1f;
+        }
+
+        .description {
+            font-size: 16px;
+            color: #1d1d1f;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Spec Grid */
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .spec-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .spec-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 16px;
+            padding: 2px;
+            background: linear-gradient(135deg, #d70015 0%, #ff1744 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.6;
+        }
+
+        .spec-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(215, 0, 21, 0.15);
+        }
+
+        .spec-item:hover::before {
+            opacity: 1;
+        }
+
+        .spec-label {
+            font-weight: 700;
+            background: linear-gradient(135deg, #d70015 0%, #ff1744 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 11px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .spec-label i {
+            font-size: 16px;
+            color: #d70015;
+            -webkit-text-fill-color: initial;
+        }
+
+        .spec-value {
+            font-size: 16px;
+            color: #1d1d1f;
+            font-weight: 600;
+        }
+
+        /* Machines Section */
+        .machines-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(90deg, #d70015 0%, #ff1744 50%, transparent 100%) 1;
+        }
+
+        .section-title i {
+            background: linear-gradient(135deg, #d70015 0%, #ff1744 100%);
+            color: white;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(215, 0, 21, 0.2);
+        }
+
+        .machine-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #fff 0%, #ffe5e8 100%);
+            color: #d70015;
+            padding: 10px 18px;
+            border-radius: 20px;
+            margin: 6px 6px 6px 0;
+            font-weight: 600;
+            font-size: 13px;
+            border: 2px solid #d70015;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(215, 0, 21, 0.1);
+        }
+
+        .machine-tag i {
+            font-size: 15px;
+        }
+
+        .machine-tag:hover {
+            background: linear-gradient(135deg, #d70015 0%, #ff1744 100%);
+            color: white;
+            border-color: #d70015;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(215, 0, 21, 0.25);
+        }
+
+        /* Specifications Section */
+        .specifications-section {
+            margin-bottom: 32px;
+        }
+
+        /* Notes Box */
+        .notes-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+            border-left: 3px solid #d70015;
+            padding: 18px;
+            border-radius: 14px;
+            margin-top: 0;
+            box-shadow: 0 4px 12px rgba(215, 0, 21, 0.08);
+        }
+
+        .notes-box strong {
+            color: #d70015;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .notes-box p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* No Photo */
+        .no-photo {
+            color: #d70015;
+            font-size: 4rem;
+            margin: 50px 0;
+            opacity: 0.2;
+        }
+
+        .no-photo-text {
+            color: #86868b;
+            font-size: 14px;
+        }
+
+        /* Edit Button */
+        .edit-btn {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #d70015 0%, #a00010 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(215, 0, 21, 0.2);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(215, 0, 21, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .info-card {
+                border-radius: 20px;
+            }
+
+            .photo-section {
+                border-right: none;
+                border-bottom: 1px solid #e5e5e7;
+                padding: 30px 20px;
+            }
+
+            .details-section {
+                padding: 30px 20px;
+            }
+
+            .part-code-header {
+                font-size: 2rem;
+            }
+
+            .header-buttons {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .header-buttons-group {
+                width: 100%;
+            }
+
+            .btn-header {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .edit-btn {
+                position: static;
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            /* Make two-column layouts single column on mobile */
+            .details-section > div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .photo-section {
+                padding: 20px 15px;
+            }
+
+            .details-section {
+                padding: 20px 15px;
+            }
+
+            .part-code-header {
+                font-size: 1.5rem;
+            }
+
+            .spec-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .description {
+                font-size: 14px;
+                margin-bottom: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="info-card">
+        <!-- Header with buttons -->
+        <div class="header-buttons">
+            <div class="header-buttons-group">
+                <a href="/inventory" class="btn-header">
+                    <i class="bi bi-house"></i> Ana Sayfa
+                </a>
+                <a href="/part_advanced_search" class="btn-header">
+                    <i class="bi bi-search"></i> Aramaya Dön
+                </a>
+                <a href="/" class="btn-header" style="background: #6c757d;">
+                    <i class="bi bi-grid-3x3-gap"></i> Portala Dön
+                </a>
+            </div>
+            <button class="edit-btn" id="editBtn" style="display: none;">
+                <i class="bi bi-pencil"></i> Düzenle
+            </button>
+        </div>
+
+        <div class="row g-0">
+            <!-- Detaylar (Tam Genişlik) -->
+            <div class="col-12 details-section">
+                <!-- PARÇA KODU KARTI -->
+                <div class="header-info-card">
+                    <div class="part-code-badge">
+                        <i class="bi bi-upc-scan"></i>
+                        <span>PARÇA KODU</span>
+                    </div>
+                    <div class="part-code-display" id="partCodeHeader">{{ part_code }}</div>
+                </div>
+
+                <!-- İKİ SÜTUNLU ÜST KARTLAR -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                    <!-- PARÇA ADI KARTI -->
+                    <div class="part-name-card" style="min-height: 140px; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="part-name-label">
+                            <i class="bi bi-box-seam"></i>
+                            <span>PARÇA ADI</span>
+                        </div>
+                        <div class="part-name-display" id="partNameText">Parça adı yükleniyor...</div>
+                    </div>
+
+                    <!-- STOK LOKASYONU KARTI -->
+                    <div style="background: linear-gradient(135deg, #d70015 0%, #ff1744 100%); padding: 28px 32px; border-radius: 16px; box-shadow: 0 4px 20px rgba(215, 0, 21, 0.3); border: 3px solid #b00012; animation: pulse 2s infinite; transition: all 0.3s ease; min-height: 140px; display: flex; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                            <div style="background: rgba(255,255,255,0.25); padding: 15px; border-radius: 12px; backdrop-filter: blur(10px);">
+                                <i class="bi bi-geo-alt-fill" style="font-size: 2.2rem; color: white;"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="color: rgba(255,255,255,0.95); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px;">STOK LOKASYONU</div>
+                                <div id="stockLocationDisplay" style="color: white; font-size: 1.8rem; font-weight: 800; font-family: 'Courier New', monospace; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">Yükleniyor...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FOTOĞRAF VE AÇIKLAMA YAN YANA -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                    <!-- FOTOĞRAF YÜKLEME BÖLÜMÜ -->
+                    <div style="background: white; padding: 28px 32px; border-radius: 16px; border: 3px solid #e5e5e7; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease;" onmouseover="this.style.borderColor='#d70015'; this.style.boxShadow='0 8px 30px rgba(215, 0, 21, 0.15)'" onmouseout="this.style.borderColor='#e5e5e7'; this.style.boxShadow='0 4px 20px rgba(0, 0, 0, 0.08)'">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                            <strong style="color: #d70015; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                                <i class="bi bi-camera" style="font-size: 18px;"></i> PARÇA FOTOĞRAFI
+                            </strong>
+                            <button id="photoUploadBtn" style="display: none; background: linear-gradient(135deg, #d70015 0%, #ff1744 100%); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 13px; transition: all 0.2s;" onclick="document.getElementById('photoUploadInput').click()" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(215, 0, 21, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                <i class="bi bi-upload"></i> Yükle
+                            </button>
+                        </div>
+                        <input type="file" id="photoUploadInput" accept="image/*" style="display: none;" onchange="uploadPartPhoto(this)">
+                        <div id="photoPreview" style="text-align: center; min-height: 280px; display: flex; align-items: center; justify-content: center; border: 3px dashed #d70015; border-radius: 12px; background: #fef5f5;">
+                            <span style="color: #d70015; font-weight: 600; font-size: 14px;">📷 Fotoğraf Yok</span>
+                        </div>
+                    </div>
+
+                    <!-- AÇIKLAMA -->
+                    <div style="background: white; padding: 28px 32px; border-radius: 16px; border: 3px solid #e5e5e7; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease;" onmouseover="this.style.borderColor='#d70015'; this.style.boxShadow='0 8px 30px rgba(215, 0, 21, 0.15)'" onmouseout="this.style.borderColor='#e5e5e7'; this.style.boxShadow='0 4px 20px rgba(0, 0, 0, 0.08)'">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                            <div style="color: #d70015; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                                <i class="bi bi-info-circle" style="font-size: 18px;"></i> AÇIKLAMA
+                            </div>
+                            <button id="editDescriptionBtn" style="display: none; background: linear-gradient(135deg, #d70015 0%, #ff1744 100%); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 12px;" onclick="editDescription()">
+                                <i class="bi bi-pencil"></i> Düzenle
+                            </button>
+                        </div>
+                        <div id="descriptionDisplay" style="color: #1d1d1f; font-size: 15px; line-height: 1.7; min-height: 280px; white-space: pre-wrap;">Açıklama yükleniyor...</div>
+                        <textarea id="descriptionEdit" style="display: none; width: 100%; min-height: 280px; padding: 15px; border: 2px solid #d70015; border-radius: 8px; font-size: 15px; line-height: 1.7; font-family: inherit;" placeholder="Açıklama girin..."></textarea>
+                        <div id="descriptionEditActions" style="display: none; margin-top: 12px; gap: 10px;">
+                            <button style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="saveDescription()">
+                                <i class="bi bi-check-lg"></i> Kaydet
+                            </button>
+                            <button style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: 10px;" onclick="cancelDescriptionEdit()">
+                                <i class="bi bi-x-lg"></i> İptal
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TEDARİKÇİ -->
+                <div style="background: white; padding: 28px 32px; border-radius: 16px; border: 3px solid #e5e5e7; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease;" onmouseover="this.style.borderColor='#d70015'; this.style.boxShadow='0 8px 30px rgba(215, 0, 21, 0.15)'" onmouseout="this.style.borderColor='#e5e5e7'; this.style.boxShadow='0 4px 20px rgba(0, 0, 0, 0.08)'">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div style="color: #d70015; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                            <i class="bi bi-truck" style="font-size: 18px;"></i> TEDARİKÇİ
+                        </div>
+                        <button id="editSupplierBtn" style="display: none; background: linear-gradient(135deg, #d70015 0%, #ff1744 100%); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 12px;" onclick="editSupplier()">
+                            <i class="bi bi-pencil"></i> Düzenle
+                        </button>
+                    </div>
+                    <div id="supplierDisplay" style="color: #1d1d1f; font-size: 1.3rem; font-weight: 700;">-</div>
+                    <input type="text" id="supplierEdit" style="display: none; width: 100%; padding: 12px; border: 2px solid #d70015; border-radius: 8px; font-size: 1.1rem; font-weight: 600;" placeholder="Tedarikçi adı girin...">
+                    <div id="supplierEditActions" style="display: none; margin-top: 12px; gap: 10px;">
+                        <button style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="saveSupplier()">
+                            <i class="bi bi-check-lg"></i> Kaydet
+                        </button>
+                        <button style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: 10px;" onclick="cancelSupplierEdit()">
+                            <i class="bi bi-x-lg"></i> İptal
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const partCode = String({{ part_code|tojson }}) || '';
+    
+    // CRITICAL FIX: Ensure partCode is properly handled
+    if (!partCode || partCode === 'undefined' || partCode === 'null' || typeof partCode !== 'string') {
+        console.error('Invalid part code:', partCode);
+        alert('Hata: Geçersiz parça kodu');
+        window.location.href = '/';
+    }
+
+        // Edit button event listener
+        document.getElementById('editBtn').addEventListener('click', function() {
+            window.location.href = `/edit_part/${encodeURIComponent(partCode)}`;
+        });
+
+        // Sanitize function to remove any suspicious patterns
+        function sanitizeValue(value) {
+            if (typeof value !== 'string') return value;
+            // Remove any suspicious JavaScript-like patterns
+            return value.replace(/<script|javascript:|on\w+=/gi, '');
+        }
+
+        async function loadPartDetails() {
+            try {
+                const response = await fetch(`/api/part_details/${encodeURIComponent(partCode)}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                
+                // Sanitize all string data before rendering
+                data.description = sanitizeValue(data.description);
+                data.part_name = sanitizeValue(data.part_name);
+                data.stock_location = sanitizeValue(data.stock_location);
+                data.supplier = sanitizeValue(data.supplier);
+                data.notes = sanitizeValue(data.notes);
+                if (data.used_in_machines) {
+                    data.used_in_machines = data.used_in_machines.map(m => sanitizeValue(m));
+                }
+                if (data.specifications) {
+                    const sanitized = {};
+                    for (const [k, v] of Object.entries(data.specifications)) {
+                        sanitized[sanitizeValue(k)] = sanitizeValue(v);
+                    }
+                    data.specifications = sanitized;
+                }
+
+                // Fotoğraf (varsa göster, yoksa gizle)
+                const photoContainer = document.getElementById('photoContainer');
+                if (photoContainer && data.photo_path) {
+                    const photoImg = document.createElement('img');
+                    photoImg.className = 'part-photo';
+                    photoImg.alt = 'Parça Fotoğrafı';
+                    // Path'in folder kısmını koruyup sadece dosya adını encode et
+                    const photoPath = data.photo_path.replace('part_photos/', '');
+                    photoImg.src = `/static/part_photos/${encodeURIComponent(photoPath)}`;
+                    photoContainer.innerHTML = '';
+                    photoContainer.appendChild(photoImg);
+                }
+
+                // Katalog (varsa göster, yoksa gizle)
+                const catalogContainer = document.getElementById('catalogContainer');
+                if (catalogContainer && data.catalog_image) {
+                    catalogContainer.innerHTML = '';
+                    
+                    const label = document.createElement('p');
+                    label.className = 'text-muted mb-2';
+                    label.textContent = 'Katalog Görseli';
+                    
+                    const catalogImg = document.createElement('img');
+                    catalogImg.className = 'catalog-photo';
+                    catalogImg.alt = 'Katalog';
+                    // Path'in folder kısmını koruyup sadece dosya adını encode et
+                    const catalogPath = data.catalog_image.replace('part_photos/', '');
+                    catalogImg.src = `/static/part_photos/${encodeURIComponent(catalogPath)}`;
+                    
+                    catalogContainer.appendChild(label);
+                    catalogContainer.appendChild(catalogImg);
+                }
+
+                // Parça Adı
+                const partNameElement = document.getElementById('partNameText');
+                if (partNameElement) {
+                    partNameElement.textContent = data.part_name || 'Parça adı girilmemiş';
+                }
+
+                // Fotoğraf önizleme
+                const photoPreview = document.getElementById('photoPreview');
+                if (photoPreview && data.photo_path) {
+                    const photoPath = data.photo_path.replace('part_photos/', '');
+                    photoPreview.innerHTML = `<img src="/static/part_photos/${encodeURIComponent(photoPath)}" style="max-width: 100%; max-height: 280px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">`;
+                } else if (photoPreview) {
+                    photoPreview.innerHTML = `<span style="color: #d70015; font-weight: 600; font-size: 14px;">📷 Fotoğraf Yok</span>`;
+                }
+
+                // Açıklama
+                const descriptionDisplay = document.getElementById('descriptionDisplay');
+                if (descriptionDisplay) {
+                    descriptionDisplay.textContent = data.description || 'Açıklama girilmemiş';
+                }
+
+                // Tedarikçi
+                const supplierDisplay = document.getElementById('supplierDisplay');
+                if (supplierDisplay) {
+                    supplierDisplay.textContent = data.supplier || '-';
+                }
+
+                // Stok Lokasyonu - Üstteki belirgin kart
+                const stockLocationDisplay = document.getElementById('stockLocationDisplay');
+                if (stockLocationDisplay) {
+                    stockLocationDisplay.textContent = data.stock_location || 'Belirlenmemiş';
+                }
+
+                // Yetki kontrolü - Admin ise düzenle butonlarını göster
+                console.log('User Role:', data.user_role);
+                console.log('Session Role:', '{{ session.get("role") }}');
+                
+                if (data.user_role === 'admin') {
+                    console.log('Admin butonları gösteriliyor...');
+                    const editDescBtn = document.getElementById('editDescriptionBtn');
+                    const editSupBtn = document.getElementById('editSupplierBtn');
+                    const photoBtn = document.getElementById('photoUploadBtn');
+                    
+                    if (editDescBtn) editDescBtn.style.display = 'inline-block';
+                    if (editSupBtn) editSupBtn.style.display = 'inline-block';
+                    if (photoBtn) photoBtn.style.display = 'inline-block';
+                    
+                    console.log('Edit Description Btn:', editDescBtn);
+                    console.log('Edit Supplier Btn:', editSupBtn);
+                    console.log('Photo Upload Btn:', photoBtn);
+                } else {
+                    console.log('Admin değil, butonlar gizli kalacak');
+                }
+
+            } catch (error) {
+                console.error('Hata:', error);
+                alert('Parça bilgileri yüklenirken hata oluştu');
+            }
+        }
+
+        loadPartDetails();
+
+        // Düzenleme fonksiyonları
+        function editDescription() {
+            const display = document.getElementById('descriptionDisplay');
+            const edit = document.getElementById('descriptionEdit');
+            const actions = document.getElementById('descriptionEditActions');
+            const btn = document.getElementById('editDescriptionBtn');
+            
+            edit.value = display.textContent === 'Açıklama girilmemiş' ? '' : display.textContent;
+            display.style.display = 'none';
+            edit.style.display = 'block';
+            actions.style.display = 'flex';
+            btn.style.display = 'none';
+        }
+
+        function cancelDescriptionEdit() {
+            document.getElementById('descriptionDisplay').style.display = 'block';
+            document.getElementById('descriptionEdit').style.display = 'none';
+            document.getElementById('descriptionEditActions').style.display = 'none';
+            document.getElementById('editDescriptionBtn').style.display = 'inline-block';
+        }
+
+        async function saveDescription() {
+            const value = document.getElementById('descriptionEdit').value;
+            
+            try {
+                const response = await fetch('/api/parts_info/update_field', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        part_code: partCode,
+                        field: 'description',
+                        value: value
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('descriptionDisplay').textContent = value || 'Açıklama girilmemiş';
+                    cancelDescriptionEdit();
+                    alert('✓ Açıklama güncellendi');
+                } else {
+                    alert('Hata: ' + (result.error || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Kaydetme hatası');
+            }
+        }
+
+        function editSupplier() {
+            const display = document.getElementById('supplierDisplay');
+            const edit = document.getElementById('supplierEdit');
+            const actions = document.getElementById('supplierEditActions');
+            const btn = document.getElementById('editSupplierBtn');
+            
+            edit.value = display.textContent === '-' ? '' : display.textContent;
+            display.style.display = 'none';
+            edit.style.display = 'block';
+            actions.style.display = 'flex';
+            btn.style.display = 'none';
+        }
+
+        function cancelSupplierEdit() {
+            document.getElementById('supplierDisplay').style.display = 'block';
+            document.getElementById('supplierEdit').style.display = 'none';
+            document.getElementById('supplierEditActions').style.display = 'none';
+            document.getElementById('editSupplierBtn').style.display = 'inline-block';
+        }
+
+        async function saveSupplier() {
+            const value = document.getElementById('supplierEdit').value;
+            
+            try {
+                const response = await fetch('/api/parts_info/update_field', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        part_code: partCode,
+                        field: 'supplier',
+                        value: value
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('supplierDisplay').textContent = value || '-';
+                    cancelSupplierEdit();
+                    alert('✓ Tedarikçi güncellendi');
+                } else {
+                    alert('Hata: ' + (result.error || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Kaydetme hatası');
+            }
+        }
+
+        // Fotoğraf yükleme fonksiyonu
+        async function uploadPartPhoto(input) {
+            if (!input.files || !input.files[0]) return;
+            
+            const file = input.files[0];
+            const formData = new FormData();
+            formData.append('photo', file);
+            
+            try {
+                const response = await fetch(`/api/parts_info/upload_photo/${encodeURIComponent(partCode)}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✓ Fotoğraf başarıyla yüklendi!');
+                    // Sayfayı yenile
+                    loadPartDetails();
+                } else {
+                    alert('Hata: ' + (result.error || 'Fotoğraf yüklenemedi'));
+                }
+            } catch (error) {
+                console.error('Yükleme hatası:', error);
+                alert('Fotoğraf yüklenirken hata oluştu');
+            }
+        }
+    </script>
+    
+    <script>
+    // === QR / Barkod Tarama Sistemi ===
+    // Detay sayfasında yeni bir QR okutulduğunda o parçanın sayfasına yönlendir
+    
+    function normalizePartCode(raw) {
+        if (!raw) return '';
+        let code = raw.trim().toUpperCase();
+        
+        // Türkçe karakterleri İngilizce'ye çevir (scanner İ, Ş, Ç gibi karakterleri atlayabiliyor)
+        const trMap = {
+            'Ç':'C', 'Ğ':'G', 'İ':'I', 'Ö':'O', 'Ş':'S', 'Ü':'U',
+            'ç':'C', 'ğ':'G', 'ı':'I', 'i':'I', 'ö':'O', 'ş':'S', 'ü':'U'
+        };
+        for (const [tr, en] of Object.entries(trMap)) {
+            code = code.replace(new RegExp(tr, 'g'), en);
+        }
+        
+        // Scanner hataları: * ? _ → -
+        code = code.replace(/[*?_]/g, '-');
+        
+        // Sondaki kopya numarasını kaldır (örn: PART-3 → PART)
+        code = code.replace(/-\d+$/, '');
+        
+        return code;
+    }
+    
+    async function redirectToScannedPart(scannedCode) {
+        const normalized = normalizePartCode(scannedCode);
+        if (!normalized) return;
+        
+        console.log('[SCAN] Okundu:', scannedCode, '→ Normalize:', normalized);
+        
+        try {
+            const response = await fetch(`/api/search_parts?q=${encodeURIComponent(normalized)}`);
+            const data = await response.json();
+            
+            if (data && data.length > 0) {
+                const targetCode = data[0].part_code;
+                console.log('[SCAN] Yönlendiriliyor:', targetCode);
+                window.location.href = `/part_info/${encodeURIComponent(targetCode)}`;
+            } else {
+                showScanToast('Parça bulunamadı: ' + normalized);
+            }
+        } catch (error) {
+            console.error('[SCAN] Hata:', error);
+            showScanToast('Arama hatası');
+        }
+    }
+    
+    // Scanner buffer (barkod okuyucular hızlı tuş basımı yapar)
+    let scanBuffer = '';
+    let scanTimeout = null;
+    
+    document.addEventListener('keypress', function(e) {
+        // Input/textarea içindeyse ignore et
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        
+        // Enter = tarama tamamlandı
+        if (e.which === 13) {
+            if (scanBuffer.length > 0) {
+                redirectToScannedPart(scanBuffer);
+                scanBuffer = '';
+            }
+            e.preventDefault();
+            return;
+        }
+        
+        // Karakteri buffer'a ekle
+        scanBuffer += String.fromCharCode(e.which);
+        
+        // Timeout: 250ms içinde yeni tuş gelmezse otomatik tamamla
+        clearTimeout(scanTimeout);
+        scanTimeout = setTimeout(() => {
+            if (scanBuffer.length >= 5) { // Minimum 5 karakter
+                redirectToScannedPart(scanBuffer);
+            }
+            scanBuffer = '';
+        }, 250);
+    });
+    
+    function showScanToast(message) {
+        let toast = document.getElementById('scanToast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'scanToast';
+            Object.assign(toast.style, {
+                position: 'fixed',
+                bottom: '20px',
+                right: '20px',
+                background: 'rgba(215, 0, 21, 0.95)',
+                color: 'white',
+                padding: '12px 18px',
+                borderRadius: '12px',
+                fontWeight: '600',
+                zIndex: '9999',
+                transition: 'opacity 0.3s',
+                opacity: '0'
+            });
+            document.body.appendChild(toast);
+        }
+        toast.textContent = message;
+        toast.style.opacity = '1';
+        setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+    }
+    
+    // Test için simülasyon fonksiyonu (fiziksel scanner olmadan test)
+    window.simulateScan = function(code) {
+        if (!code) return;
+        console.log('[SIMULATE] Başlatılıyor:', code);
+        
+        // Her karakteri keypress olarak gönder
+        for (const char of code) {
+            const event = new KeyboardEvent('keypress', {
+                bubbles: true,
+                cancelable: true,
+                key: char,
+                which: char.charCodeAt(0),
+                charCode: char.charCodeAt(0),
+                keyCode: char.charCodeAt(0)
+            });
+            document.dispatchEvent(event);
+        }
+        
+        // Enter gönder
+        const enterEvent = new KeyboardEvent('keypress', {
+            bubbles: true,
+            cancelable: true,
+            key: 'Enter',
+            which: 13,
+            charCode: 13,
+            keyCode: 13
+        });
+        document.dispatchEvent(enterEvent);
+        
+        console.log('[SIMULATE] Tamamlandı');
+    };
+    
+    console.log('[SCAN] QR Tarama sistemi hazır - simulateScan("PARTCODE") ile test edebilirsiniz');
+    </script>
+</body>
+</html>

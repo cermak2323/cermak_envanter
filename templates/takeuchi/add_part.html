@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Takeuchi - Parça Ekle</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cermak-primary: #dc3545;
+            --cermak-primary-dark: #c82333;
+            --cermak-bg: #f8f9fa;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --shadow-soft: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-medium: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-strong: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        body {
+            background: var(--cermak-bg);
+            color: var(--text-primary);
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--cermak-primary) 0%, var(--cermak-primary-dark) 100%);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white !important;
+            margin-right: auto;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+        
+        /* Main Content */
+        .main-container {
+            padding: 2rem 1rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--cermak-primary) 0%, var(--cermak-primary-dark) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-header p {
+            opacity: 0.95;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+        
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            border-top: 3px solid var(--cermak-primary);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .card-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-control {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--cermak-primary);
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.1);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--cermak-primary);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--cermak-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-outline-secondary {
+            font-weight: 600;
+        }
+
+        /* Messages */
+        .alert {
+            border: none;
+            border-radius: 10px;
+            border-left: 4px solid;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #155724;
+            border-color: #28a745;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #721c24;
+            border-color: #dc3545;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .page-header {
+                padding: 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card-title {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid" style="padding: 0 1.5rem;">
+            <a class="navbar-brand" href="/takeuchi">
+                <i class="bi bi-wrench-adjustable"></i> TAKEUCHI PARÇA YÖNETİMİ
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/takeuchi"><i class="bi bi-house"></i> Ana Menü</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/takeuchi/add"><i class="bi bi-plus-circle"></i> Parça Ekle</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/takeuchi/check"><i class="bi bi-check-circle"></i> Parça Kontrol</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/takeuchi/admin"><i class="bi bi-gear"></i> Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Çıkış</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1><i class="bi bi-plus-circle"></i> Parça Ekle</h1>
+            <p>Yeni Takeuchi parçasını siparişinize ekleyin</p>
+        </div>
+
+        <!-- Messages -->
+        <div id="successMessage" class="alert alert-success d-none" role="alert">
+            <i class="bi bi-check-circle"></i> <span id="successText"></span>
+        </div>
+        <div id="errorMessage" class="alert alert-danger d-none" role="alert">
+            <i class="bi bi-exclamation-circle"></i> <span id="errorText"></span>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-plus"></i> Yeni Parça Ekle</h5>
+
+                <form id="addPartForm">
+                    <div class="form-group">
+                        <label for="partCode" class="form-label">
+                            <i class="bi bi-hash"></i> Parça Kodu
+                        </label>
+                        <input type="text" class="form-control" id="partCode" placeholder="Parça kodunu girin" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="partName" class="form-label">
+                            <i class="bi bi-tag"></i> Parça Adı
+                        </label>
+                        <input type="text" class="form-control" id="partName" placeholder="Parça kodunu girin, parça adı otomatik doldurulacak" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity" class="form-label">
+                            <i class="bi bi-box"></i> Adet
+                        </label>
+                        <input type="number" class="form-control" id="quantity" placeholder="Adet girin" min="1" value="1" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="buildOut" class="form-label">
+                                    <i class="bi bi-diagram-2"></i> Build Out
+                                </label>
+                                <input type="text" class="form-control" id="buildOut" placeholder="Otomatik doldurulacak" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="alternativeCode" class="form-label">
+                                    <i class="bi bi-shuffle"></i> Değişen Kod
+                                </label>
+                                <input type="text" class="form-control" id="alternativeCode" placeholder="Otomatik doldurulacak" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="form-label">
+                            <i class="bi bi-chat-quote"></i> Açıklama
+                        </label>
+                        <textarea class="form-control" id="description" placeholder="Otomatik doldurulacak" rows="3" readonly></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Parçayı Ekle
+                        </button>
+                        <a href="/takeuchi" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Geri Dön
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Parça kodu girildiğinde otomatik bilgi çek
+        document.getElementById('partCode').addEventListener('blur', function() {
+            const partCode = this.value.trim();
+            if (partCode.length > 0) {
+                searchPartInfo(partCode);
+            }
+        });
+
+        // Parça bilgisi ara ve doldur
+        async function searchPartInfo(partCode) {
+            try {
+                const response = await fetch(`/api/takeuchi/search-part?code=${encodeURIComponent(partCode)}`);
+                const data = await response.json();
+
+                if (data.success && data.part) {
+                    const part = data.part;
+                    // Otomatik olarak alanları doldur
+                    document.getElementById('partName').value = part.part_name || '';
+                    document.getElementById('buildOut').value = part.build_out || '';
+                    document.getElementById('alternativeCode').value = part.alternative_code || '';
+                    document.getElementById('description').value = part.description || '';
+                    
+                    // Adet alanına focus et
+                    document.getElementById('quantity').focus();
+                    
+                    showSuccess(`✅ ${part.part_name} bulundu!`);
+                } else if (!data.success) {
+                    // Parça bulunamadı, uyarı göster
+                    showError('⚠️ Parça kodu bulunamadı. Manuel olarak bilgi girin.');
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                // Hata durumunda kullanıcı devam edebilir
+            }
+        }
+
+        document.getElementById('addPartForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const data = {
+                part_code: document.getElementById('partCode').value,
+                part_name: document.getElementById('partName').value,
+                quantity: parseInt(document.getElementById('quantity').value),
+                build_out: document.getElementById('buildOut').value || null,
+                alternative_code: document.getElementById('alternativeCode').value || null,
+                description: document.getElementById('description').value || null
+            };
+
+            fetch('/api/takeuchi/add-to-temp-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccess('✅ Parça siparişe başarıyla eklendi!');
+                    document.getElementById('addPartForm').reset();
+                    setTimeout(() => {
+                        window.location.href = '/takeuchi';
+                    }, 2000);
+                } else {
+                    showError(data.error || 'Parça eklenirken hata oluştu');
+                }
+            })
+            .catch(error => {
+                showError('Hata: ' + error.message);
+            });
+        });
+
+        function showSuccess(message) {
+            const elem = document.getElementById('successMessage');
+            const text = document.getElementById('successText');
+            text.textContent = message;
+            elem.classList.remove('d-none');
+            setTimeout(() => { elem.classList.add('d-none'); }, 4000);
+        }
+
+        function showError(message) {
+            const elem = document.getElementById('errorMessage');
+            const text = document.getElementById('errorText');
+            text.textContent = message;
+            elem.classList.remove('d-none');
+            setTimeout(() => { elem.classList.add('d-none'); }, 4000);
+        }
+    </script>
+</body>
+</html>

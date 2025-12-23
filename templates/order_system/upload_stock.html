@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Stok Güncelleme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
+        }
+
+        .upload-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            margin-top: 2rem;
+        }
+
+        .upload-zone {
+            border: 3px dashed #cbd5e0;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .upload-zone:hover {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .upload-zone.dragover {
+            border-color: #10b981;
+            background: #dcfce7;
+            transform: scale(1.02);
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .format-info {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .progress-custom {
+            height: 8px;
+            border-radius: 8px;
+            background: #e5e7eb;
+        }
+
+        .progress-bar-custom {
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1><i class="bi bi-file-earmark-excel"></i> Excel Stok Güncelleme</h1>
+            <p style="opacity: 0.9; margin: 0.5rem 0 0 0;">Toplu stok güncelleme ve otomatik sipariş kontrolü</p>
+        </div>
+    </div>
+
+    <div class="container" style="padding: 2rem 1rem;">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="upload-card">
+                    <h3><i class="bi bi-cloud-upload"></i> Excel Dosyası Yükle</h3>
+                    
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="bi bi-file-earmark-arrow-up" style="font-size: 4rem; color: #10b981; margin-bottom: 1rem;"></i>
+                        <h5>Dosyayı buraya sürükleyin veya tıklayın</h5>
+                        <p style="color: #6b7280; margin-top: 0.5rem;">Excel (.xlsx, .xls) dosyası</p>
+                        <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+                        <button class="btn-upload mt-3" onclick="document.getElementById('fileInput').click()">
+                            <i class="bi bi-folder2-open"></i> Dosya Seç
+                        </button>
+                    </div>
+
+                    <div class="format-info">
+                        <h6><i class="bi bi-info-circle"></i> Excel Formatı</h6>
+                        <table class="table table-sm table-bordered mt-2" style="background: white;">
+                            <thead>
+                                <tr class="table-primary">
+                                    <th>Parça Kodu</th>
+                                    <th>Parça Adı</th>
+                                    <th>Stok</th>
+                                    <th>Kritik stok</th>
+                                    <th>Beklenen stok</th>
+                                    <th>Tedarikçi</th>
+                                    <th>Geliş (Euro)</th>
+                                    <th>BUILD OUT</th>
+                                    <th>Değişen Parça Kodu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>129657-51590</td>
+                                    <td>RULMAN KAPAĞI</td>
+                                    <td>25</td>
+                                    <td>50</td>
+                                    <td>100</td>
+                                    <td>ABC Tedarik</td>
+                                    <td>12.5</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>Y129150-49811</td>
+                                    <td>YAĞ FİLTRESİ</td>
+                                    <td>0</td>
+                                    <td>20</td>
+                                    <td>50</td>
+                                    <td>XYZ Dış Tic.</td>
+                                    <td>5.9</td>
+                                    <td>✓ BUILD OUT</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success"></i> İlk satır başlık olmalıdır<br>
+                            <i class="bi bi-check-circle text-success"></i> Zorunlu: Parça Kodu, Stok<br>
+                            <i class="bi bi-check-circle text-success"></i> Diğer sütunlar boşsa mevcut değer korunur
+                        </small>
+                    </div>
+
+                    <div id="resultCard" class="result-card" style="display: none;">
+                        <h5 id="resultTitle"></h5>
+                        <div id="resultContent"></div>
+                    </div>
+
+                    <div id="partsTableCard" class="result-card" style="display: none;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5><i class="bi bi-table"></i> Yüklenen Parçalar</h5>
+                            <div class="input-group" style="max-width: 300px;">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="searchInput" placeholder="Parça kodu veya adı ara...">
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered align-middle">
+                                <thead class="table-success">
+                                    <tr>
+                                        <th>Tarih</th>
+                                        <th>Parça Kodu</th>
+                                        <th>Parça Adı</th>
+                                        <th>Tedarikçi</th>
+                                        <th>Stok</th>
+                                        <th>Kritik Stok</th>
+                                        <th>Beklenen Stok</th>
+                                        <th>Birim Fiyat</th>
+                                        <th>BUILD OUT</th>
+                                        <th>Değişen Kod</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="partsTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="text-muted small mt-2">
+                            <i class="bi bi-info-circle"></i> Toplam <strong id="totalPartsCount">0</strong> parça yüklendi
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <button class="btn btn-secondary" onclick="window.location.href='/order_system/'">
+                            <i class="bi bi-arrow-left"></i> Geri Dön
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        let uploadedParts = [];
+
+        // Drag & Drop
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                uploadFile();
+            }
+        });
+
+        fileInput.addEventListener('change', uploadFile);
+
+        async function uploadFile() {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const resultCard = document.getElementById('resultCard');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultContent = document.getElementById('resultContent');
+            const partsTableCard = document.getElementById('partsTableCard');
+
+            resultCard.style.display = 'block';
+            partsTableCard.style.display = 'none';
+            resultTitle.innerHTML = '<i class="bi bi-hourglass-split"></i> İşleniyor...';
+            resultContent.innerHTML = '<div class="progress-custom"><div class="progress-bar-custom" style="width: 50%; animation: pulse 1s infinite;"></div></div>';
+
+            try {
+                const response = await fetch('/order_system/api/upload_stock', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    uploadedParts = data.uploaded_parts || [];
+                    
+                    resultTitle.innerHTML = '<i class="bi bi-check-circle text-success"></i> İşlem Tamamlandı!';
+                    
+                    let summaryHtml = `
+                        <div class="alert alert-success">
+                            <h6>Özet:</h6>
+                            <ul class="mb-0">
+                                <li><strong>${data.updated_count}</strong> parça stoğu güncellendi</li>
+                                <li><strong>${data.arrived_orders_processed}</strong> gelen sipariş stoklara eklendi</li>
+                                ${data.build_out_count > 0 ? `<li class="text-warning"><strong>${data.build_out_count}</strong> parça BUILD OUT (sipariş etmeme)</li>` : ''}
+                                ${data.replacement_orders_created > 0 ? `<li class="text-info"><strong>${data.replacement_orders_created}</strong> otomatik sipariş değişen kodlarla oluşturuldu</li>` : ''}
+                                ${data.error_count > 0 ? `<li class="text-danger">${data.error_count} hata</li>` : ''}
+                            </ul>
+                        </div>
+                    `;
+                    
+                    // BUILD OUT parçalarını göster
+                    if (data.build_out_parts && data.build_out_parts.length > 0) {
+                        summaryHtml += `
+                            <div class="alert alert-warning mt-3">
+                                <h6><i class="bi bi-exclamation-triangle"></i> BUILD OUT Parçalar (SİPARİŞ ETMEYİN):</h6>
+                                <ul class="mb-0">
+                                    ${data.build_out_parts.map(p => `<li><strong>${p.part_code}</strong> - ${p.part_name} - ${p.status}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                    }
+                    
+                    // Değişen kod siparişlerini göster
+                    if (data.replacement_orders && data.replacement_orders.length > 0) {
+                        summaryHtml += `
+                            <div class="alert alert-info mt-3">
+                                <h6><i class="bi bi-arrow-left-right"></i> Değişen Kodla Oluşturulan Siparişler:</h6>
+                                <table class="table table-sm table-bordered mb-0" style="background: white;">
+                                    <thead>
+                                        <tr>
+                                            <th>Orijinal Kod</th>
+                                            <th>→</th>
+                                            <th>Değişen Kod</th>
+                                            <th>Sipariş Miktarı</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${data.replacement_orders.map(r => `
+                                            <tr>
+                                                <td><small>${r.original_code}</small></td>
+                                                <td style="text-align: center;"><i class="bi bi-arrow-right"></i></td>
+                                                <td><small>${r.replacement_code}</small></td>
+                                                <td class="text-center"><strong>${r.quantity}</strong></td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                    }
+                    
+                    summaryHtml += `
+                        <div class="mt-3">
+                            <button class="btn btn-primary me-2" onclick="window.location.href='/order_system/create_orders'">
+                                <i class="bi bi-cart-plus"></i> Sipariş Oluştur
+                            </button>
+                            <button class="btn btn-secondary me-2" onclick="window.location.href='/order_system/'">
+                                <i class="bi bi-house"></i> Ana Menü
+                            </button>
+                            <button class="btn btn-secondary" onclick="window.location.href='/'" style="background: #6c757d; border-color: #6c757d;">
+                                <i class="bi bi-grid-3x3-gap"></i> Portala Dön
+                            </button>
+                        </div>
+                    `;
+                    
+                    resultContent.innerHTML = summaryHtml;
+                    // Tabloyu göster
+                    if (uploadedParts.length > 0) {
+                        displayPartsTable();
+                        partsTableCard.style.display = 'block';
+                    }
+                } else {
+                    resultTitle.innerHTML = '<i class="bi bi-x-circle text-danger"></i> Hata!';
+                    resultContent.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                }
+            } catch (error) {
+                resultTitle.innerHTML = '<i class="bi bi-x-circle text-danger"></i> Bağlantı Hatası!';
+                resultContent.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+            }
+        }
+
+        function displayPartsTable(filter = '') {
+            const tbody = document.getElementById('partsTableBody');
+            const today = new Date().toLocaleDateString('tr-TR');
+            
+            let filteredParts = uploadedParts;
+            if (filter) {
+                filteredParts = uploadedParts.filter(p => 
+                    p.part_code.toLowerCase().includes(filter.toLowerCase()) ||
+                    (p.part_name && p.part_name.toLowerCase().includes(filter.toLowerCase()))
+                );
+            }
+            
+            tbody.innerHTML = filteredParts.map(part => {
+                let buildOutBadge = part.build_out ? '<span class="badge bg-danger">🔴 BUILD OUT</span>' : '-';
+                let replacementCode = part.replacement_code ? `<code>${part.replacement_code}</code>` : '-';
+                
+                return `
+                <tr>
+                    <td class="text-nowrap">${today}</td>
+                    <td><strong>${part.part_code}</strong></td>
+                    <td>${part.part_name || '-'}</td>
+                    <td>${part.supplier || '-'}</td>
+                    <td class="text-center"><span class="badge bg-primary">${part.stock_quantity !== null && part.stock_quantity !== undefined ? part.stock_quantity : '-'}</span></td>
+                    <td class="text-center">${part.critical_stock_level || '-'}</td>
+                    <td class="text-center">${part.expected_stock || '-'}</td>
+                    <td class="text-end">${part.unit_price !== null && part.unit_price !== undefined ? parseFloat(part.unit_price).toFixed(2) + ' €' : '-'}</td>
+                    <td class="text-center">${buildOutBadge}</td>
+                    <td class="text-center">${replacementCode}</td>
+                </tr>
+            `;
+            }).join('');
+            
+            document.getElementById('totalPartsCount').textContent = filteredParts.length;
+        }
+
+        // Arama
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    displayPartsTable(e.target.value);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parça Sorgulama - Cermak Envanter</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --cermak-red: #dc3545; --cermak-red-dark: #c82333; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f5f7fa; min-height: 100vh; padding: 2rem 1rem; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .back-button { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: white; border: 2px solid #e9ecef; border-radius: 12px; color: #495057; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.3s; margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .back-button:hover { background: var(--cermak-red); border-color: var(--cermak-red); color: white; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(220,53,69,0.2); }
+        .search-card { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); border-radius: 20px; padding: 3rem 2rem; color: white; position: relative; overflow: hidden; border: 3px solid #dc3545; margin-bottom: 2rem; }
+        .search-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%; pointer-events: none; }
+        .search-card::after { content: ''; position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(255,255,255,0.08); border-radius: 50%; pointer-events: none; }
+        .search-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; position: relative; z-index: 1; }
+        .search-icon { background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 16px; font-size: 2rem; display: flex; align-items: center; justify-content: center; }
+        .search-header h2 { margin: 0; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.5px; }
+        .search-header p { margin: 0.5rem 0 0 0; font-size: 0.95rem; opacity: 0.95; }
+        .search-input-area { background: rgba(255,255,255,0.95); border-radius: 16px; padding: 2rem; margin-top: 1.5rem; position: relative; z-index: 1; }
+        .input-label { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .input-label i { font-size: 1.5rem; color: #dc3545; }
+        .input-label label { margin: 0; font-weight: 600; color: #1a202c; font-size: 1rem; }
+        .search-input { width: 100%; padding: 1rem 1.25rem; border: 2px solid #e9ecef; border-radius: 12px; font-size: 1.05rem; font-family: 'Courier New', monospace; font-weight: 600; color: #1a202c; transition: all 0.3s; }
+        .search-input:focus { outline: none; border-color: #dc3545; box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1); background-color: white; }
+        .search-input::placeholder { color: #adb5bd; }
+        .search-hint { display: block; margin-top: 0.75rem; color: #6c757d; font-size: 0.9rem; }
+        .results-section { display: none; margin-top: 2rem; }
+        .results-header { background: white; padding: 1.5rem 2rem; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e9ecef; }
+        .results-title { font-size: 1.3rem; font-weight: 700; color: #1a202c; margin: 0; }
+        .results-count { background: linear-gradient(135deg, var(--cermak-red) 0%, var(--cermak-red-dark) 100%); color: white; padding: 0.5rem 1rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem; }
+        .results-table { background: white; border-radius: 0 0 16px 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.07); }
+        .results-table table { width: 100%; border-collapse: collapse; margin: 0; }
+        .results-table thead { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); }
+        .results-table th { padding: 1rem 1.5rem; text-align: left; font-weight: 700; color: #495057; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #dee2e6; }
+        .results-table tbody tr { transition: all 0.2s; cursor: pointer; border-bottom: 1px solid #f8f9fa; }
+        .results-table tbody tr:hover { background: linear-gradient(90deg, rgba(220,53,69,0.03) 0%, rgba(220,53,69,0.01) 100%); transform: scale(1.01); box-shadow: 0 2px 8px rgba(220,53,69,0.1); }
+        .results-table td { padding: 1.25rem 1.5rem; color: #1a202c; font-size: 1.05rem; font-weight: 600; }
+        .part-code-cell { font-family: 'Courier New', monospace; font-weight: 800; color: var(--cermak-red); font-size: 1.15rem; }
+        .part-name-cell { font-weight: 700; color: #1a202c; font-size: 1.05rem; }
+        .stock-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem; }
+        .stock-badge.in-stock { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); color: #155724; }
+        .stock-badge.out-of-stock { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <a href="/inventory" class="back-button"><i class="bi bi-arrow-left"></i> Ana Sayfa</a>
+            <a href="/" class="back-button" style="background: #6c757d; margin-left: 0.5rem;"><i class="bi bi-grid-3x3-gap"></i> Portala Dön</a>
+        </div>
+        <div class="search-card">
+            <div class="search-header">
+                <div class="search-icon"><i class="bi bi-search"></i></div>
+                <div><h2>Yedek Parça Sorgulama</h2><p>Parça kodunu tarayıcı ile okuyun veya el ile yazın</p></div>
+            </div>
+            <div class="search-input-area">
+                <div class="input-label"><i class="bi bi-barcode"></i><label>Parça Kodunu Tarayın veya Yazın</label></div>
+                <input type="text" id="searchInput" class="search-input" placeholder="Y129150-49811 gibi parça kodunu yazın..." autofocus>
+                <small class="search-hint"><i class="bi bi-info-circle"></i> Enter tuşuna basın veya tarayıcı ile kod okuyun - otomatik aranacaktır</small>
+            </div>
+        </div>
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2 class="results-title">Arama Sonuçları</h2>
+                <div class="results-count" id="resultsCount">0 Sonuç</div>
+            </div>
+            <div class="results-table">
+                <table>
+                    <thead><tr><th style="width:18%;">PARÇA KODU</th><th style="width:32%;">PARÇA ADI</th><th style="width:20%;">KONUM</th><th style="width:12%;">MİKTAR</th><th style="width:18%;">DURUM</th></tr></thead>
+                    <tbody id="resultsContainer"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const query = e.target.value.trim();
+            clearTimeout(searchTimeout);
+            if (query.length < 2) { document.getElementById('resultsSection').style.display = 'none'; return; }
+            searchTimeout = setTimeout(() => { performSearch(query); }, 500);
+        });
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = e.target.value.trim();
+                if (query.length >= 2) { clearTimeout(searchTimeout); performSearch(query); }
+            }
+        });
+        async function performSearch(query) {
+            try {
+                const response = await fetch(`/api/search_parts_advanced?q=${encodeURIComponent(query)}`);
+                const results = await response.json();
+                const resultsSection = document.getElementById('resultsSection');
+                const resultsCount = document.getElementById('resultsCount');
+                const resultsContainer = document.getElementById('resultsContainer');
+                if (results && results.length > 0) {
+                    resultsSection.style.display = 'block';
+                    resultsCount.textContent = `${results.length} Sonuç`;
+                    resultsContainer.innerHTML = '';
+                    results.forEach(part => {
+                        const row = document.createElement('tr');
+                        row.onclick = () => window.location.href = `/part_info/${part.part_code}`;
+                        const stockBadge = part.quantity > 0 
+                            ? '<span class="stock-badge in-stock"><i class="bi bi-check-circle-fill"></i> Stokta</span>'
+                            : '<span class="stock-badge out-of-stock"><i class="bi bi-x-circle-fill"></i> Yok</span>';
+                        
+                        // Parça adı yoksa sadece tire göster
+                        const partName = (part.part_name && part.part_name.trim()) ? part.part_name : '-';
+                        
+                        row.innerHTML = `
+                            <td class="part-code-cell">${part.part_code}</td>
+                            <td class="part-name-cell">${partName}</td>
+                            <td style="font-weight: 600;">${part.location || '-'}</td>
+                            <td><strong>${part.quantity || '0'}</strong></td>
+                            <td>${stockBadge}</td>
+                        `;
+                        resultsContainer.appendChild(row);
+                    });
+                } else {
+                    resultsSection.style.display = 'block';
+                    resultsCount.textContent = '0 Sonuç';
+                    resultsContainer.innerHTML = '<tr><td colspan="5" style="padding:3rem;text-align:center;"><i class="bi bi-search" style="font-size:4rem;color:#cbd5e0;margin-bottom:1rem;display:block;"></i><h3 style="color:#4a5568;">Sonuç Bulunamadı</h3><p style="color:#718096;">Arama kriterlerinize uygun parça bulunamadı.</p></td></tr>';
+                }
+            } catch (error) {
+                console.error('Arama hatası:', error);
+            }
+        }
+    </script>
+</body>
+</html>

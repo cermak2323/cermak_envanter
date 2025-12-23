@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parça Yönetimi - Cermak Envanter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --cermak-primary: #dc3545;
+            --cermak-primary-dark: #c82333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(180deg, #f5f5f7 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 50%, #bd2130 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--cermak-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: #6c757d;
+            margin: 0;
+        }
+
+        .parts-table-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--cermak-primary) 0%, var(--cermak-primary-dark) 100%);
+            color: white;
+        }
+
+        .search-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .search-box-wrapper {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+            gap: 0;
+        }
+
+        .search-box {
+            background: white;
+            border: none;
+            color: #333;
+            padding: 1rem 1rem 1rem 3.5rem;
+            border-radius: 16px 0 0 16px;
+            flex: 1;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+        }
+
+        .search-button {
+            background: var(--cermak-primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0 16px 16px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+
+        .search-button:hover {
+            background: var(--cermak-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(220, 53, 69, 0.3);
+        }
+
+        .search-box:focus {
+            outline: none;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+        }
+
+        .search-box::placeholder {
+            color: #999;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: var(--cermak-primary);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .search-hint {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .parts-table {
+            width: 100%;
+        }
+
+        .parts-table thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .parts-table th {
+            padding: 1rem;
+            font-weight: 600;
+            color: #495057;
+            text-align: left;
+        }
+
+        .parts-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .parts-table tbody tr {
+            transition: all 0.2s;
+        }
+
+        .parts-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge-qr-count {
+            background: var(--cermak-primary);
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-view-detail {
+            background: var(--cermak-primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-view-detail:hover {
+            background: var(--cermak-primary-dark);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-back {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 0.65rem 1.25rem;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.25);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div>
+                <h1 style="margin: 0; font-size: 1.75rem; font-weight: 700;">
+                    <i class="bi bi-box-seam me-2"></i>
+                    Parça Yönetimi
+                </h1>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="/inventory" class="btn-back">
+                    <i class="bi bi-arrow-left"></i>
+                    Ana Sayfa
+                </a>
+                <a href="/" class="btn-back" style="background: #6c757d;">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                    Portala Dön
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Parts Table -->
+        <div class="parts-table-container">
+            <div class="table-header">
+                <div class="search-container">
+                    <div class="search-box-wrapper" style="position: relative;">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" id="searchInput" class="search-box" placeholder="Parça kodu veya adı yazın..." autocomplete="off">
+                        <button id="searchButton" class="search-button">
+                            <i class="bi bi-search me-1"></i>
+                            ARA
+                        </button>
+                    </div>
+                    <p class="search-hint" style="margin-top: 1rem;">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Parça kodu veya adı yazıp "ARA" butonuna tıklayın
+                    </p>
+                </div>
+            </div>
+
+            <table class="parts-table" id="partsTable">
+                <thead>
+                    <tr>
+                        <th>Parça Kodu</th>
+                        <th>Parça Adı</th>
+                        <th>Açıklama</th>
+                        <th>QR Kod Sayısı</th>
+                        <th>Oluşturulma</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="partsTableBody">
+                    <!-- Başlangıç mesajı -->
+                    <tr id="initialMessage">
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <i class="bi bi-search"></i>
+                                <h5>Parça Aramaya Başlayın</h5>
+                                <p>Yukarıdaki arama kutusuna parça kodu veya adı yazarak arama yapabilirsiniz</p>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    {% if parts %}
+                        {% for part in parts %}
+                        <tr data-part-code="{{ part.part_code }}" data-part-name="{{ part.part_name }}" style="display: none;">
+                            <td><strong>{{ part.part_code }}</strong></td>
+                            <td>{{ part.part_name }}</td>
+                            <td>{{ part.description or '-' }}</td>
+                            <td>
+                                <span class="badge-qr-count">
+                                    <i class="bi bi-qr-code me-1"></i>
+                                    {{ part.qr_count }}
+                                </span>
+                            </td>
+                            <td>{{ part.created_at.strftime('%Y-%m-%d') if part.created_at else '-' }}</td>
+                            <td>
+                                <a href="/parts/{{ part.part_code | replace('/', '%2F') }}" class="btn-view-detail">
+                                    <i class="bi bi-eye"></i>
+                                    Detay
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr id="emptyRow">
+                            <td colspan="6">
+                                <div class="empty-state">
+                                    <i class="bi bi-inbox"></i>
+                                    <h5>Henüz parça eklenmemiş</h5>
+                                    <p>Admin panelinden Excel dosyası yükleyerek parça ekleyebilirsiniz</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Arama fonksiyonu - sadece ARA butonuna tıklandığında çalışır
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const rows = document.querySelectorAll('#partsTableBody tr[data-part-code]');
+        const initialMessage = document.getElementById('initialMessage');
+        const emptyRow = document.getElementById('emptyRow');
+        
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            if (searchTerm.length === 0) {
+                // Arama boşsa başlangıç mesajını göster
+                rows.forEach(row => row.style.display = 'none');
+                if (initialMessage) initialMessage.style.display = '';
+                if (emptyRow) emptyRow.style.display = 'none';
+                return;
+            }
+            
+            // Başlangıç mesajını gizle
+            if (initialMessage) initialMessage.style.display = 'none';
+            
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const partCode = row.getAttribute('data-part-code')?.toLowerCase() || '';
+                const partName = row.getAttribute('data-part-name')?.toLowerCase() || '';
+                
+                if (partCode.includes(searchTerm) || partName.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Hiç sonuç yoksa bilgi mesajı göster
+            if (visibleCount === 0) {
+                if (!emptyRow) {
+                    const tbody = document.getElementById('partsTableBody');
+                    const noResultRow = document.createElement('tr');
+                    noResultRow.id = 'noResultRow';
+                    noResultRow.innerHTML = `
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <i class="bi bi-search"></i>
+                                <h5>Sonuç bulunamadı</h5>
+                                <p>"${searchTerm}" için eşleşen parça bulunamadı</p>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(noResultRow);
+                } else {
+                    emptyRow.style.display = '';
+                    emptyRow.querySelector('.empty-state').innerHTML = `
+                        <i class="bi bi-search"></i>
+                        <h5>Sonuç bulunamadı</h5>
+                        <p>"${searchTerm}" için eşleşen parça bulunamadı</p>
+                    `;
+                }
+            } else {
+                if (emptyRow) emptyRow.style.display = 'none';
+                const noResultRow = document.getElementById('noResultRow');
+                if (noResultRow) noResultRow.remove();
+            }
+        }
+        
+        // ARA butonuna tıklama
+        searchButton.addEventListener('click', performSearch);
+        
+        // Enter tuşu ile arama
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+        
+        // Sayfa yüklendiğinde arama kutusuna focus
+        searchInput.focus();
+
+        // QR File Check Functions
+        async function checkQRFiles() {
+            const checkBtn = document.getElementById('checkQRBtn');
+            const messageDiv = document.getElementById('qrCheckMessage');
+            
+            checkBtn.disabled = true;
+            checkBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Kontrol Ediliyor...';
+            messageDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/check_qr_files', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('localQRCount').textContent = data.local_count;
+                    const sharedEl = document.getElementById('sharedQRCount');
+                    if (sharedEl) sharedEl.textContent = data.shared_count || '-';
+                    
+                    let message = `<div style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; border-radius: 4px; color: #1565c0;">
+                        <i class="bi bi-info-circle"></i> <strong>Lokal:</strong> ${data.local_count} | 
+                        <strong>Sunucu:</strong> ${data.shared_count || '-'}
+                    </div>`;
+                    
+                    messageDiv.innerHTML = message;
+                    messageDiv.style.display = 'block';
+                } else {
+                    messageDiv.innerHTML = `<div style="background: #ffebee; border-left: 4px solid #f44336; padding: 1rem; border-radius: 4px; color: #c62828;">
+                        <i class="bi bi-exclamation-circle"></i> Hata: ${data.error}
+                    </div>`;
+                    messageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `<div style="background: #ffebee; border-left: 4px solid #f44336; padding: 1rem; border-radius: 4px; color: #c62828;">
+                    <i class="bi bi-exclamation-circle"></i> Hata: ${error.message}
+                </div>`;
+                messageDiv.style.display = 'block';
+            } finally {
+                checkBtn.disabled = false;
+                checkBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Kontrol Et';
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

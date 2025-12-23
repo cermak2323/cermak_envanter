@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parça Detay - {{ part_code }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cermak-primary: #dc3545;
+            --cermak-primary-dark: #c82333;
+            --gradient-primary: linear-gradient(135deg, #dc3545 0%, #c82333 50%, #bd2130 100%);
+            --gradient-bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            --shadow-soft: 0 2px 20px rgba(0,0,0,0.08);
+            --shadow-medium: 0 4px 30px rgba(0,0,0,0.12);
+            --border-radius: 20px;
+            --border-radius-lg: 25px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gradient-bg);
+            min-height: 100vh;
+            color: #2d3748;
+        }
+
+        .app-header {
+            background: var(--gradient-primary);
+            padding: 1.25rem 0;
+            box-shadow: var(--shadow-medium);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .logo-icon {
+            font-size: 2.25rem;
+            margin-right: 1rem;
+            background: rgba(255,255,255,0.15);
+            padding: 0.65rem;
+            border-radius: 14px;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            border: none;
+            padding: 0.65rem 1.25rem;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .detail-card {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .card-header-custom {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1.5rem 2rem;
+        }
+
+        .card-body-custom {
+            padding: 2rem;
+        }
+
+        .photo-section {
+            text-align: center;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .part-photo {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .no-photo {
+            padding: 4rem 2rem;
+            color: #94a3b8;
+        }
+
+        .info-row {
+            display: flex;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #475569;
+            width: 200px;
+            flex-shrink: 0;
+        }
+
+        .info-value {
+            color: #1a202c;
+            flex-grow: 1;
+        }
+
+        .price-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        .price-eur {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .price-try {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .stock-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .stock-ok {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .stock-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .stock-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .specs-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .spec-item {
+            background: #f8f9fa;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--cermak-primary);
+        }
+
+        .spec-item strong {
+            color: var(--cermak-primary);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .btn-edit {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <i class="bi bi-box-seam logo-icon"></i>
+                <span>Parça Detay</span>
+            </div>
+            <a href="/parts_info/" class="nav-btn">
+                <i class="bi bi-arrow-left"></i>
+                Listeye Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="detail-card">
+            <div class="card-header-custom">
+                <h4 class="mb-0">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <span id="partCode">{{ part_code }}</span>
+                </h4>
+            </div>
+            <div class="card-body-custom">
+                <!-- Fotoğraf Bölümü -->
+                <div class="photo-section">
+                    <div id="photoContainer">
+                        <div class="no-photo">
+                            <i class="bi bi-image" style="font-size: 4rem; opacity: 0.3;"></i>
+                            <p class="mt-3">Fotoğraf bekleniyor...</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-primary mt-3" onclick="document.getElementById('photoUpload').click()">
+                        <i class="bi bi-camera me-2"></i>Fotoğraf Yükle
+                    </button>
+                    <input type="file" id="photoUpload" accept="image/*" style="display: none;" onchange="uploadPhoto()">
+                </div>
+
+                <!-- Bilgiler -->
+                <div id="partInfo">
+                    <p class="text-center text-muted">Yükleniyor...</p>
+                </div>
+
+                <!-- Düzenle Butonu -->
+                <div class="text-end mt-4" id="editButtonContainer" style="display: none;">
+                    <button class="btn btn-edit" onclick="showEditModal()">
+                        <i class="bi bi-pencil me-2"></i>Bilgileri Düzenle
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Düzenleme Modalı -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background: var(--gradient-primary); color: white;">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil me-2"></i>Parça Bilgilerini Düzenle
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <div class="row g-3">
+                            <!-- Kullanıldığı Makineler -->
+                            <div class="col-12">
+                                <label class="form-label fw-bold"><i class="bi bi-gear me-2"></i>Kullanıldığı Makineler</label>
+                                <div class="alert alert-light border mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="editAllMachines" onchange="toggleAllMachines()">
+                                        <label class="form-check-label fw-bold text-primary" for="editAllMachines">
+                                            Tüm makinelerde kullanılıyor
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="machinesCheckboxList" class="row row-cols-2 row-cols-md-4 g-2">
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB016" id="machine_TB016"><label class="form-check-label" for="machine_TB016">TB016</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB215R" id="machine_TB215R"><label class="form-check-label" for="machine_TB215R">TB215R</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB217R" id="machine_TB217R"><label class="form-check-label" for="machine_TB217R">TB217R</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB325R" id="machine_TB325R"><label class="form-check-label" for="machine_TB325R">TB325R</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB138FR" id="machine_TB138FR"><label class="form-check-label" for="machine_TB138FR">TB138FR</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB240" id="machine_TB240"><label class="form-check-label" for="machine_TB240">TB240</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB240-2" id="machine_TB240-2"><label class="form-check-label" for="machine_TB240-2">TB240-2</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB250" id="machine_TB250"><label class="form-check-label" for="machine_TB250">TB250</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB153FR" id="machine_TB153FR"><label class="form-check-label" for="machine_TB153FR">TB153FR</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB260" id="machine_TB260"><label class="form-check-label" for="machine_TB260">TB260</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB260-2" id="machine_TB260-2"><label class="form-check-label" for="machine_TB260-2">TB260-2</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB225" id="machine_TB225"><label class="form-check-label" for="machine_TB225">TB225</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB228" id="machine_TB228"><label class="form-check-label" for="machine_TB228">TB228</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB230" id="machine_TB230"><label class="form-check-label" for="machine_TB230">TB230</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB235" id="machine_TB235"><label class="form-check-label" for="machine_TB235">TB235</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB235-2" id="machine_TB235-2"><label class="form-check-label" for="machine_TB235-2">TB235-2</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB285" id="machine_TB285"><label class="form-check-label" for="machine_TB285">TB285</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB290-2" id="machine_TB290-2"><label class="form-check-label" for="machine_TB290-2">TB290-2</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TB1140" id="machine_TB1140"><label class="form-check-label" for="machine_TB1140">TB1140</label></div></div>
+                                    <div class="col"><div class="form-check"><input class="form-check-input machine-checkbox" type="checkbox" value="TL8R-2" id="machine_TL8R-2"><label class="form-check-label" for="machine_TL8R-2">TL8R-2</label></div></div>
+                                </div>
+                                <small class="text-muted mt-2 d-block">Birden fazla makine seçebilirsiniz</small>
+                            </div>
+
+                            <!-- Teknik Özellikler -->
+                            <div class="col-12">
+                                <label class="form-label fw-bold"><i class="bi bi-list-ul me-2"></i>Teknik Özellikler</label>
+                                <div id="specBuilder" class="mb-3">
+                                    <!-- Dinamik özellik satırları buraya eklenecek -->
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="addSpecRow()">
+                                    <i class="bi bi-plus-lg me-1"></i>Özellik Ekle
+                                </button>
+                            </div>
+
+                            <!-- Tanım/Açıklama -->
+                            <div class="col-12">
+                                <label class="form-label fw-bold"><i class="bi bi-info-circle me-2"></i>Tanım / Açıklama</label>
+                                <textarea class="form-control" id="editDescription" rows="4" placeholder="Parça hakkında açıklama ekleyin..."></textarea>
+                                <small class="text-muted">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                    Not: Stok, fiyat ve tedarikçi bilgileri sadece Excel yüklemesi ile güncellenebilir.
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-edit" onclick="savePartInfo()">
+                        <i class="bi bi-check-lg me-2"></i>Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const partCode = '{{ part_code }}';
+        let editModal = null;
+        let partData = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            editModal = new bootstrap.Modal(document.getElementById('editModal'));
+            loadPartDetails();
+        });
+
+        function loadPartDetails() {
+            fetch(`/api/parts_info/detail/${encodeURIComponent(partCode)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Parça bulunamadı: ' + data.error);
+                        window.location.href = '/parts_info/';
+                        return;
+                    }
+                    
+                    partData = data;
+                    displayPartInfo(data);
+                    displayPhoto(data.photo_path);
+                    
+                    // Düzenleme yetkisi varsa butonu göster
+                    if (data.can_edit) {
+                        document.getElementById('editButtonContainer').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Detay yükleme hatası:', error);
+                    alert('Parça detayları yüklenemedi');
+                });
+        }
+
+        function displayPartInfo(part) {
+            const stockClass = part.stock <= part.critical_stock ? 'stock-critical' : 
+                              part.stock <= part.critical_stock * 1.5 ? 'stock-warning' : 'stock-ok';
+            
+            // Uyarı banner HTML
+            let warningBanner = '';
+            if (part.replacement_code) {
+                warningBanner += `
+                    <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 1.5rem; color: #d97706;"></i>
+                        <div>
+                            <strong style="color: #92400e;">⚠️ Bu parçanın değişen kodu var!</strong>
+                            <p style="color: #b45309; margin: 0.25rem 0 0 0; font-size: 0.9rem;">Yeni parça kodu: <strong>${part.replacement_code}</strong></p>
+                        </div>
+                    </div>
+                `;
+            }
+            if (part.build_out) {
+                warningBanner += `
+                    <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-left: 4px solid #ef4444; padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                        <i class="bi bi-exclamation-circle" style="font-size: 1.5rem; color: #dc2626;"></i>
+                        <div>
+                            <strong style="color: #991b1b;">🔴 BUILD OUT - SİPARİŞ ETMEYİN!</strong>
+                            <p style="color: #b91c1c; margin: 0.25rem 0 0 0; font-size: 0.9rem;">Bu parça artık satın alınamaz veya kullanılamaz.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            let infoHtml = warningBanner + `
+                <div class="info-row">
+                    <div class="info-label"><i class="bi bi-tag me-2"></i>Parça Kodu</div>
+                    <div class="info-value"><strong>${part.part_code}</strong></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label"><i class="bi bi-box me-2"></i>Parça Adı</div>
+                    <div class="info-value">${part.part_name}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label"><i class="bi bi-building me-2"></i>Tedarikçi</div>
+                    <div class="info-value">${part.supplier || '-'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label"><i class="bi bi-stack me-2"></i>Stok</div>
+                    <div class="info-value">
+                        <span class="stock-badge ${stockClass}">${part.stock}</span>
+                    </div>
+                </div>
+                ${part.stock_location ? `
+                <div class="info-row">
+                    <div class="info-label"><i class="bi bi-geo-alt me-2"></i>Stok Lokasyonu</div>
+                    <div class="info-value">${part.stock_location}</div>
+                </div>
+                ` : ''}
+            `;
+
+            if (part.can_view_purchase && part.purchase_price_eur !== null) {
+                infoHtml += `
+                    <div class="info-row">
+                        <div class="info-label"><i class="bi bi-currency-euro me-2"></i>Geliş Fiyatı</div>
+                        <div class="info-value">
+                            <span class="price-badge price-eur">${part.purchase_price_eur.toFixed(2)} EUR</span>
+                            <span class="price-badge price-try">${part.purchase_price_try.toFixed(2)} TRY</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            infoHtml += `
+                <div class="info-row">
+                    <div class="info-label"><i class="bi bi-cash me-2"></i>Satış Fiyatı</div>
+                    <div class="info-value">
+                        <span class="price-badge price-eur">${part.sale_price_eur.toFixed(2)} EUR</span>
+                        <span class="price-badge price-try">${part.sale_price_try.toFixed(2)} TRY</span>
+                    </div>
+                </div>
+            `;
+
+            // Makine bilgileri
+            if (part.machines) {
+                const machines = part.machines.split(',').map(m => m.trim()).filter(m => m);
+                if (machines.length > 0) {
+                    const machineList = machines.map(m => `<span class="badge bg-primary me-1 mb-1">${m}</span>`).join('');
+                    infoHtml += `
+                        <div class="info-row">
+                            <div class="info-label"><i class="bi bi-gear me-2"></i>Kullanıldığı Makineler</div>
+                            <div class="info-value">${machineList}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Teknik Özellikler
+            if (part.specifications) {
+                try {
+                    const specs = JSON.parse(part.specifications);
+                    if (Object.keys(specs).length > 0) {
+                        let specsHtml = '<div class="specs-list">';
+                        for (const [key, value] of Object.entries(specs)) {
+                            specsHtml += `
+                                <div class="spec-item">
+                                    <strong>${key}:</strong> ${value}
+                                </div>
+                            `;
+                        }
+                        specsHtml += '</div>';
+                        infoHtml += `
+                            <div class="info-row">
+                                <div class="info-label"><i class="bi bi-list-ul me-2"></i>Teknik Özellikler</div>
+                                <div class="info-value">${specsHtml}</div>
+                            </div>
+                        `;
+                    }
+                } catch (e) {
+                    console.log('Specifications parse error:', e);
+                }
+            }
+
+            infoHtml += `
+                <div class="info-row">
+                    <div class="info-label"><i class="bi bi-info-circle me-2"></i>Tanım</div>
+                    <div class="info-value">${part.description || '-'}</div>
+                </div>
+            `;
+
+            document.getElementById('partInfo').innerHTML = infoHtml;
+        }
+
+        function displayPhoto(photoPath) {
+            const container = document.getElementById('photoContainer');
+            
+            if (photoPath) {
+                // Eğer yol zaten /static/ ile başlamıyorsa ekle
+                const fullPath = photoPath.startsWith('/static/') ? photoPath : `/static/${photoPath}`;
+                container.innerHTML = `<img src="${fullPath}" class="part-photo" alt="Parça Fotoğrafı">`;
+            } else {
+                container.innerHTML = `
+                    <div class="no-photo">
+                        <i class="bi bi-image" style="font-size: 4rem; opacity: 0.3;"></i>
+                        <p class="mt-3">Henüz fotoğraf yüklenmemiş</p>
+                    </div>
+                `;
+            }
+        }
+
+        function showEditModal() {
+            if (!partData) return;
+            
+            document.getElementById('editDescription').value = partData.description || '';
+            
+            // Makineleri yükle
+            const allMachinesCheckbox = document.getElementById('editAllMachines');
+            const machineCheckboxes = document.querySelectorAll('.machine-checkbox');
+            
+            // Önce hepsini temizle
+            allMachinesCheckbox.checked = false;
+            machineCheckboxes.forEach(cb => cb.checked = false);
+            
+            if (partData.machines) {
+                const machines = partData.machines.split(',').map(m => m.trim()).filter(m => m);
+                
+                // "Tüm makineler" kontrolü
+                if (machines.includes('*') || machines.includes('Tüm makinelerde kullanılıyor')) {
+                    allMachinesCheckbox.checked = true;
+                    machineCheckboxes.forEach(cb => {
+                        cb.checked = true;
+                        cb.disabled = true;
+                    });
+                } else {
+                    // Seçili makineleri işaretle
+                    machines.forEach(machine => {
+                        const checkbox = document.getElementById('machine_' + machine);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                }
+            }
+            
+            // Teknik özellikleri yükle
+            const specBuilder = document.getElementById('specBuilder');
+            specBuilder.innerHTML = '';
+            
+            if (partData.specifications) {
+                try {
+                    const specs = JSON.parse(partData.specifications);
+                    let index = 0;
+                    for (const [key, value] of Object.entries(specs)) {
+                        addSpecRow(key, value, index);
+                        index++;
+                    }
+                } catch (e) {
+                    console.log('Specs parse error:', e);
+                }
+            }
+            
+            // En az 1 boş satır olsun
+            if (specBuilder.children.length === 0) {
+                addSpecRow('', '', 0);
+            }
+            
+            editModal.show();
+        }
+
+        function toggleAllMachines() {
+            const allMachinesCheckbox = document.getElementById('editAllMachines');
+            const machineCheckboxes = document.querySelectorAll('.machine-checkbox');
+            
+            machineCheckboxes.forEach(cb => {
+                if (allMachinesCheckbox.checked) {
+                    cb.checked = true;
+                    cb.disabled = true;
+                } else {
+                    cb.disabled = false;
+                }
+            });
+        }
+
+        function addSpecRow(key = '', value = '', index = null) {
+            const specBuilder = document.getElementById('specBuilder');
+            if (index === null) {
+                index = specBuilder.children.length;
+            }
+            
+            const row = document.createElement('div');
+            row.className = 'spec-row mb-2';
+            row.style.display = 'flex';
+            row.style.gap = '0.5rem';
+            
+            row.innerHTML = `
+                <input type="text" class="form-control" placeholder="Özellik Adı (Ör: Malzeme)" 
+                       value="${key}" data-spec-key="${index}">
+                <input type="text" class="form-control" placeholder="Değer (Ör: Paslanmaz Çelik)" 
+                       value="${value}" data-spec-value="${index}">
+                <button type="button" class="btn btn-sm btn-danger" onclick="removeSpecRow(this)" 
+                        ${index === 0 && specBuilder.children.length === 0 ? 'style="visibility: hidden;"' : ''}>
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+            
+            specBuilder.appendChild(row);
+        }
+
+        function removeSpecRow(button) {
+            button.closest('.spec-row').remove();
+        }
+
+        function savePartInfo() {
+            // Makineleri topla
+            let machines = [];
+            const allMachinesCheckbox = document.getElementById('editAllMachines');
+            
+            if (allMachinesCheckbox.checked) {
+                machines.push('*');
+            } else {
+                const machineCheckboxes = document.querySelectorAll('.machine-checkbox:checked');
+                machineCheckboxes.forEach(cb => machines.push(cb.value));
+            }
+            
+            // Teknik özellikleri topla
+            const specs = {};
+            const specRows = document.querySelectorAll('.spec-row');
+            specRows.forEach(row => {
+                const keyInput = row.querySelector('[data-spec-key]');
+                const valueInput = row.querySelector('[data-spec-value]');
+                const key = keyInput.value.trim();
+                const value = valueInput.value.trim();
+                
+                if (key && value) {
+                    specs[key] = value;
+                }
+            });
+            
+            const updatedData = {
+                description: document.getElementById('editDescription').value,
+                machines: machines.join(', '),
+                specifications: JSON.stringify(specs)
+            };
+
+            fetch(`/api/parts_info/update/${encodeURIComponent(partCode)}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Parça bilgileri güncellendi!');
+                    editModal.hide();
+                    loadPartDetails();
+                } else {
+                    alert('Hata: ' + (data.error || 'Bilinmeyen hata'));
+                }
+            })
+            .catch(error => {
+                console.error('Güncelleme hatası:', error);
+                alert('Bilgiler güncellenirken bir hata oluştu');
+            });
+        }
+
+        function uploadPhoto() {
+            const file = document.getElementById('photoUpload').files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('photo', file);
+            formData.append('part_code', partCode);
+
+            fetch('/api/parts_info/upload_photo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Fotoğraf yüklendi!');
+                    loadPartDetails();
+                } else {
+                    alert('Hata: ' + (data.error || 'Bilinmeyen hata'));
+                }
+            })
+            .catch(error => {
+                console.error('Fotoğraf yükleme hatası:', error);
+                alert('Fotoğraf yüklenirken bir hata oluştu');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Cermak Envanter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --cermak-primary: #dc3545;
+            --cermak-primary-dark: #c82333;
+            --gradient-primary: linear-gradient(135deg, #dc3545 0%, #c82333 50%, #bd2130 100%);
+            --gradient-bg: linear-gradient(180deg, #f5f5f7 0%, #e9ecef 100%);
+            --shadow-soft: 0 2px 12px rgba(0,0,0,0.06);
+            --shadow-medium: 0 6px 24px rgba(0,0,0,0.10);
+            --shadow-hover: 0 12px 32px rgba(0,0,0,0.14);
+            --border-radius: 24px;
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--gradient-bg);
+            min-height: 100vh;
+            color: #1d1d1f;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow-medium);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            background: rgba(255,255,255,0.15);
+            padding: 0.5rem;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(15px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.65rem 1.25rem;
+            border-radius: 14px;
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Tunnel Link Kutusu Hover Efekti */
+        #tunnelUrlDisplay .tunnel-link-box {
+            cursor: pointer;
+            padding: 1.5rem;
+            background: white;
+            border: 3px dashed var(--cermak-primary);
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        #tunnelUrlDisplay .tunnel-link-box:hover {
+            background: #f8f9fa;
+            border-color: #28a745;
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(220, 53, 69, 0.15);
+        }
+
+        #tunnelUrlDisplay .tunnel-link-box:active {
+            transform: scale(0.98);
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 2.5rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #6e6e73;
+            font-size: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+            align-items: stretch;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(0,0,0,0.04);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 260px;
+        }
+
+        .admin-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px);
+        }
+
+        .card-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 16px rgba(220, 53, 69, 0.25);
+        }
+
+        .card-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-description {
+            color: #6e6e73;
+            margin-bottom: auto;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            flex-grow: 1;
+        }
+
+        .card-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .btn-primary-custom {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 14px;
+            font-weight: 600;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+        }
+
+        .btn-primary-custom:hover {
+            background: var(--cermak-primary-dark);
+            transform: translateY(-1px);
+            color: white;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-secondary-custom {
+            background: #f5f5f7;
+            color: #1d1d1f;
+            border: 1px solid #d2d2d7;
+        }
+
+        .btn-secondary-custom:hover {
+            background: #e8e8ed;
+            color: #1d1d1f;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ff9500 0%, #ff8a00 100%) !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(255, 149, 0, 0.25) !important;
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #ff8a00 0%, #e67e00 100%) !important;
+            box-shadow: 0 4px 12px rgba(255, 149, 0, 0.35) !important;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 0.85rem;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 1024px) {
+            .admin-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .admin-container {
+                padding: 0 1rem;
+                margin: 1.5rem auto;
+            }
+            
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-card {
+                padding: 1.5rem;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+
+            .btn-primary-custom {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <i class="bi bi-qr-code-scan logo-icon"></i>
+                <div>
+                    <div style="font-size: 1.5rem; font-weight: 700;">Admin Panel</div>
+                    <small style="opacity: 0.8;">Cermak Envanter Sistemi</small>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="/inventory" class="header-btn">
+                    <i class="bi bi-arrow-left"></i> Ana Sayfa
+                </a>
+                <a href="/" class="header-btn" style="background: #6c757d;">
+                    <i class="bi bi-grid-3x3-gap"></i> Portala Dön
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <h1 class="page-title">Yönetim Paneli</h1>
+        <p class="page-subtitle">Sistem ayarlarını yönetin ve envanter işlemlerini kontrol edin</p>
+
+        <div class="admin-grid">
+            <!-- QR Scanner Sayım -->
+            <div class="admin-card" id="countCard">
+                <div class="card-icon">
+                    <i class="bi bi-qr-code-scan"></i>
+                </div>
+                <div class="card-title">QR Scanner Sayım</div>
+                <div class="card-description" id="countDescription">
+                    QR Scanner ile hızlı sayım yapın ve Excel karşılaştırması
+                </div>
+                <div class="card-actions" id="countActions">
+                    <button class="btn-primary-custom" onclick="checkActiveCountSession()">
+                        <i class="bi bi-qr-code-scan"></i> Sayım Kontrol Et
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kullanıcı Yönetimi -->
+            <div class="admin-card">
+                <div class="card-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="card-title">Kullanıcı Yönetimi</div>
+                <div class="card-description">
+                    Kullanıcıları ekleyin, düzenleyin ve yetkilendirin
+                </div>
+                <div class="card-actions">
+                    <a href="/admin/users" class="btn-primary-custom">
+                        <i class="bi bi-person-plus"></i> Kullanıcıları Yönet
+                    </a>
+                </div>
+            </div>
+
+            <!-- Raporlar -->
+            <div class="admin-card">
+                <div class="card-icon">
+                    <i class="bi bi-file-earmark-bar-graph"></i>
+                </div>
+                <div class="card-title">Raporlar</div>
+                <div class="card-description">
+                    Sayım raporlarını görüntüleyin ve indirin
+                </div>
+                <div class="card-actions">
+                    <a href="/reports" class="btn-primary-custom">
+                        <i class="bi bi-graph-up"></i> Raporları Görüntüle
+                    </a>
+                </div>
+            </div>
+
+            <!-- Parça Yönetimi -->
+            <div class="admin-card">
+                <div class="card-icon">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+                <div class="card-title">Parça Yönetimi</div>
+                <div class="card-description">
+                    Parçaları yönetin ve QR kodları oluşturun
+                </div>
+                <div class="card-actions">
+                    <a href="/parts" class="btn-primary-custom">
+                        <i class="bi bi-box-seam"></i> Parçalar
+                    </a>
+                    <button class="btn-primary-custom btn-secondary-custom btn-sm" onclick="showSmartUploadModal()">
+                        <i class="bi bi-file-earmark-excel"></i> Excel Yükle
+                    </button>
+                    <button class="btn-primary-custom btn-secondary-custom btn-sm" onclick="showLocationUploadModal()">
+                        <i class="bi bi-geo-alt"></i> Lokasyon Yükle
+                    </button>
+                </div>
+            </div>
+
+            <!-- QR Kodları -->
+            <div class="admin-card">
+                <div class="card-icon">
+                    <i class="bi bi-qr-code"></i>
+                </div>
+                <div class="card-title">QR Kod Listesi</div>
+                <div class="card-description">
+                    Tüm QR kodlarını görüntüleyin ve yönetin
+                </div>
+                <div class="card-actions">
+                    <a href="/parts" class="btn-primary-custom">
+                        <i class="bi bi-qr-code-scan"></i> QR Kodları
+                    </a>
+                </div>
+            </div>
+
+            <!-- Paket/Koli Yönetimi -->
+            <div class="admin-card">
+                <div class="card-icon">
+                    <i class="bi bi-box-seam-fill"></i>
+                </div>
+                <div class="card-title">📦 Paket/Koli Yönetimi</div>
+                <div class="card-description">
+                    Birden fazla parçayı tek QR ile grupla
+                </div>
+                <div class="card-actions">
+                    <button class="btn-primary-custom" onclick="showCreatePackageModal()">
+                        <i class="bi bi-plus-circle"></i> Paket Oluştur
+                    </button>
+                    <button class="btn-primary-custom btn-secondary-custom btn-sm" onclick="showPackageListModal()">
+                        <i class="bi bi-list-ul"></i> Paket Listesi
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sistem Ayarları -->
+            <div class="admin-card">
+                <div class="card-icon">
+                    <i class="bi bi-gear-fill"></i>
+                </div>
+                <div class="card-title">Sistem Ayarları</div>
+                <div class="card-description">
+                    Sistem bakım işlemlerini gerçekleştirin
+                </div>
+                <div class="card-actions">
+                    <button class="btn-primary-custom" onclick="resetActiveSessions()">
+                        <i class="bi bi-arrow-clockwise"></i> Oturumları Sıfırla
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cloudflare Tunnel -->
+            <div class="admin-card">
+                <div class="card-icon">
+                    <i class="bi bi-cloud-fill"></i>
+                </div>
+                <div class="card-title">İnternet Paylaşımı</div>
+                <div class="card-description">
+                    Sistemi internetten erişilebilir yapın
+                </div>
+                <div class="card-actions" id="tunnelActions">
+                    <button class="btn-primary-custom" onclick="startTunnel()" id="startTunnelBtn">
+                        <i class="bi bi-globe"></i> Yayını Başlat
+                    </button>
+                    <button class="btn-primary-custom" onclick="stopTunnel()" id="stopTunnelBtn" style="display: none; background: #dc3545;">
+                        <i class="bi bi-stop-circle"></i> Yayını Durdur
+                    </button>
+                </div>
+                <div id="tunnelUrlDisplay" style="display: none; margin-top: 1rem;">
+                    <!-- Başarı Mesajı -->
+                    <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 12px; margin-bottom: 1rem;">
+                        <i class="bi bi-check-circle" style="font-size: 2.5rem; margin-bottom: 0.5rem;"></i>
+                        <h5 style="margin: 0; font-weight: 600;">✅ İnternet Yayını Aktif!</h5>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; opacity: 0.9;">
+                            Sisteminiz artık internetten erişilebilir
+                        </p>
+                    </div>
+                    
+                    <!-- Link Kutusu - Tek Tıkla Kopyalanabilir -->
+                    <div onclick="copyTunnelUrlQuick()" class="tunnel-link-box">
+                        <small style="color: #6c757d; display: block; margin-bottom: 0.75rem; font-weight: 600;">
+                            <i class="bi bi-link-45deg"></i> PAYLAŞIM LİNKİ (TIKLAYIN - KOPYALANIR)
+                        </small>
+                        <div id="tunnelUrl" style="font-size: 1.2rem; font-weight: 600; color: var(--cermak-primary); word-break: break-all; padding: 0.75rem; background: #f8f9fa; border-radius: 8px;">
+                            <!-- URL buraya gelecek -->
+                        </div>
+                        <small style="color: #6c757d; display: block; margin-top: 0.75rem;">
+                            <i class="bi bi-info-circle"></i> Bu linki mobil cihazlarla paylaşabilirsiniz
+                        </small>
+                    </div>
+                    
+                    <!-- Ek Butonlar -->
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem; justify-content: center;">
+                        <button onclick="openTunnelUrl(event)" class="btn-primary-custom" style="padding: 0.65rem 1.25rem; background: #17a2b8;">
+                            <i class="bi bi-box-arrow-up-right"></i> Linki Aç
+                        </button>
+                        <button onclick="showTunnelDebug()" class="btn-primary-custom" style="padding: 0.65rem 1.25rem; background: #6c757d;">
+                            <i class="bi bi-bug"></i> Debug
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Veritabanı -->
+            <div class="admin-card">
+                <div class="card-icon">
+                    <i class="bi bi-database-fill"></i>
+                </div>
+                <div class="card-title">Veritabanı</div>
+                <div class="card-description">
+                    Veritabanı durumunu kontrol edin
+                </div>
+                <div class="card-actions">
+                    <button class="btn-primary-custom btn-secondary-custom" onclick="showDatabaseInfo()">
+                        <i class="bi bi-info-circle"></i> Durum Görüntüle
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bildirim Modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: var(--border-radius);">
+                <div class="modal-header border-0" style="background: var(--gradient-primary); color: white; border-radius: var(--border-radius) var(--border-radius) 0 0;">
+                    <h5 class="modal-title">
+                        <i class="bi bi-info-circle me-2"></i>Sistem Bildirimi
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <p id="notificationMessage"></p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-primary-custom" data-bs-dismiss="modal">Tamam</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Akıllı QR Yükleme Modal -->
+    <div class="modal fade" id="smartUploadModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: var(--border-radius);">
+                <div class="modal-header border-0" style="background: var(--gradient-primary); color: white; border-radius: var(--border-radius) var(--border-radius) 0 0;">
+                    <h5 class="modal-title">
+                        <i class="bi bi-file-earmark-excel me-2"></i>📦 Parça Listesi Yükle
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> <strong>ℹ️ Sadece parça bilgileri yüklenir</strong>
+                    </div>
+                    <div class="mb-4">
+                        <i class="bi bi-file-earmark-excel text-primary" style="font-size: 4rem;"></i>
+                    </div>
+                    <div class="text-start mb-4">
+                        <h6>📦 Yükleme Özellikleri:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-check-circle text-success"></i> Yeni parçalar sisteme eklenir</li>
+                            <li><i class="bi bi-check-circle text-success"></i> Mevcut parçaların bilgileri güncellenir</li>
+                            <li><i class="bi bi-check-circle text-success"></i> QR kodları parça detay sayfasından manuel üretilir</li>
+                        </ul>
+                    </div>
+                    <div class="mb-3">
+                        <input type="file" class="form-control" id="smartPartsFile" accept=".xlsx,.xls,.csv" style="border-radius: 12px;">
+                        <small class="text-muted">Excel dosyanız <strong>part_code</strong> ve <strong>part_name</strong> sütunlarını içermelidir. QR kodları parça detay sayfasından üretilecektir.</small>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 12px;">
+                        <i class="bi bi-x"></i> İptal
+                    </button>
+                    <button type="button" class="btn btn-primary-custom" onclick="uploadSmartParts()">
+                        <i class="bi bi-upload"></i> Parça Listesi Yükle
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Excel İşlemleri için SheetJS Kütüphanesi -->
+    <script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showNotification(message, type = 'info') {
+            document.getElementById('notificationMessage').textContent = message;
+            const modal = new bootstrap.Modal(document.getElementById('notificationModal'));
+            modal.show();
+        }
+
+        async function resetActiveSessions() {
+            try {
+                const response = await fetch('/admin/reset_active_sessions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showNotification(data.message, 'success');
+                } else {
+                    showNotification('Hata: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showNotification('Bağlantı hatası oluştu.', 'error');
+            }
+        }
+
+        async function showDatabaseInfo() {
+            showNotification('Veritabanı durumu: Aktif\nToplam tablolar: 5\nSon güncelleme: ' + new Date().toLocaleString('tr-TR'), 'info');
+        }
+
+        // QR Kod Yönetimi Fonksiyonları
+        function showSmartUploadModal() {
+            const modal = new bootstrap.Modal(document.getElementById('smartUploadModal'));
+            modal.show();
+        }
+
+        async function uploadSmartParts() {
+            const fileInput = document.getElementById('smartPartsFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showNotification('Lütfen bir Excel veya CSV dosyası seçin', 'error');
+                return;
+            }
+
+            const uploadBtn = event.target;
+            const originalText = uploadBtn.innerHTML;
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Akıllı Sistem Çalışıyor...';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/upload_parts', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('✅ Akıllı QR sistemi tamamlandı!\n\n' + data.message, 'success');
+                    // Modal'ı kapat
+                    bootstrap.Modal.getInstance(document.getElementById('smartUploadModal')).hide();
+                    // Dosya input'unu temizle
+                    fileInput.value = '';
+                } else {
+                    showNotification('❌ Hata: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showNotification('💥 Sistem hatası: ' + error.message, 'error');
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = originalText;
+            }
+        }
+
+        function downloadAllQRCodes() {
+            showNotification('QR kodları indiriliyor...', 'info');
+            window.location.href = '/download_all_qr';
+        }
+
+        async function confirmClearAllQRs() {
+            if (confirm('⚠️ TÜM QR kodlarını silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz ve tüm QR kodları kalıcı olarak silinecektir.')) {
+                try {
+                    const response = await fetch('/clear_all_qrs', {
+                        method: 'POST'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showNotification('✅ ' + data.message, 'success');
+                    } else {
+                        showNotification('❌ Hata: ' + data.error, 'error');
+                    }
+                } catch (error) {
+                    showNotification('💥 Sistem hatası: ' + error.message, 'error');
+                }
+            }
+        }
+
+        // ==================== CLOUDFLARE TUNNEL YÖNETİMİ ====================
+        let tunnelCheckInterval = null;
+
+        async function startTunnel() {
+            const startBtn = document.getElementById('startTunnelBtn');
+            const stopBtn = document.getElementById('stopTunnelBtn');
+            
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Başlatılıyor...';
+            
+            try {
+                const response = await fetch('/tunnel/start', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    startBtn.style.display = 'none';
+                    stopBtn.style.display = 'inline-block';
+                    
+                    if (data.url) {
+                        showTunnelUrl(data.url);
+                        showNotification('✅ İnternet yayını başlatıldı!\n\nLink: ' + data.url, 'success');
+                    } else {
+                        // URL henüz hazır değilse, hemen kontrol etmeye başla
+                        showNotification('🔄 Yayın başlatılıyor, link hazırlanıyor...', 'info');
+                        
+                        // İlk kontrolü hemen yap
+                        setTimeout(checkTunnelStatus, 1000);
+                        
+                        // Her 1 saniyede bir kontrol et (daha hızlı)
+                        tunnelCheckInterval = setInterval(checkTunnelStatus, 1000);
+                        
+                        // 15 saniye sonra hala bulunamadıysa uyar
+                        setTimeout(() => {
+                            if (!document.getElementById('tunnelUrl').value) {
+                                showNotification('⚠️ Link alınamadı. Lütfen sayfayı yenileyin veya yayını yeniden başlatın.', 'error');
+                                if (tunnelCheckInterval) {
+                                    clearInterval(tunnelCheckInterval);
+                                    tunnelCheckInterval = null;
+                                }
+                            }
+                        }, 15000);
+                    }
+                } else {
+                    showNotification('❌ Hata: ' + data.message, 'error');
+                    startBtn.disabled = false;
+                    startBtn.innerHTML = '<i class="bi bi-globe"></i> Yayını Başlat';
+                }
+            } catch (error) {
+                showNotification('💥 Sistem hatası: ' + error.message, 'error');
+                startBtn.disabled = false;
+                startBtn.innerHTML = '<i class="bi bi-globe"></i> Yayını Başlat';
+            }
+        }
+
+        async function stopTunnel() {
+            const startBtn = document.getElementById('startTunnelBtn');
+            const stopBtn = document.getElementById('stopTunnelBtn');
+            
+            stopBtn.disabled = true;
+            stopBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Durduruluyor...';
+            
+            try {
+                const response = await fetch('/tunnel/stop', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    stopBtn.style.display = 'none';
+                    startBtn.style.display = 'inline-block';
+                    startBtn.disabled = false;
+                    
+                    document.getElementById('tunnelUrlDisplay').style.display = 'none';
+                    
+                    // Otomatik kontrol varsa durdur
+                    if (tunnelCheckInterval) {
+                        clearInterval(tunnelCheckInterval);
+                        tunnelCheckInterval = null;
+                    }
+                    
+                    showNotification('✅ ' + data.message, 'success');
+                } else {
+                    showNotification('❌ Hata: ' + data.message, 'error');
+                    stopBtn.disabled = false;
+                    stopBtn.innerHTML = '<i class="bi bi-stop-circle"></i> Yayını Durdur';
+                }
+            } catch (error) {
+                showNotification('💥 Sistem hatası: ' + error.message, 'error');
+                stopBtn.disabled = false;
+                stopBtn.innerHTML = '<i class="bi bi-stop-circle"></i> Yayını Durdur';
+            }
+        }
+
+        async function checkTunnelStatus() {
+            try {
+                const response = await fetch('/tunnel/status');
+                const data = await response.json();
+                
+                if (data.running && data.url) {
+                    showTunnelUrl(data.url);
+                    showNotification('✅ İnternet yayını hazır!\n\nLink: ' + data.url, 'success');
+                    
+                    // URL bulundu, otomatik kontrolü durdur
+                    if (tunnelCheckInterval) {
+                        clearInterval(tunnelCheckInterval);
+                        tunnelCheckInterval = null;
+                    }
+                }
+            } catch (error) {
+                console.error('Tunnel status kontrol hatası:', error);
+            }
+        }
+
+        function showTunnelUrl(url) {
+            const display = document.getElementById('tunnelUrlDisplay');
+            const urlElement = document.getElementById('tunnelUrl');
+            
+            display.style.display = 'block';
+            urlElement.textContent = url;
+            urlElement.dataset.url = url; // URL'yi data attribute'a kaydet
+            
+            // Butonları güncelle
+            document.getElementById('startTunnelBtn').style.display = 'none';
+            document.getElementById('stopTunnelBtn').style.display = 'inline-block';
+        }
+
+        // Tek tıkla kopyalama - tüm kutuya tıklanınca
+        function copyTunnelUrlQuick() {
+            const urlElement = document.getElementById('tunnelUrl');
+            const url = urlElement.dataset.url || urlElement.textContent;
+            
+            if (!url) return;
+            
+            // Clipboard API ile kopyala
+            navigator.clipboard.writeText(url).then(() => {
+                // Görsel feedback - yeşil yanıp sönme
+                const linkBox = document.querySelector('.tunnel-link-box');
+                const originalBg = linkBox.style.background;
+                const originalBorder = linkBox.style.borderColor;
+                
+                linkBox.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+                linkBox.style.borderColor = '#28a745';
+                linkBox.style.borderStyle = 'solid';
+                urlElement.style.color = 'white';
+                urlElement.style.background = 'rgba(255,255,255,0.2)';
+                
+                // Kopyalandı mesajı göster
+                const copyMessage = document.createElement('div');
+                copyMessage.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); color: white; padding: 2rem 3rem; border-radius: 16px; font-size: 1.5rem; font-weight: 600; z-index: 9999; box-shadow: 0 12px 48px rgba(0,0,0,0.3);';
+                copyMessage.innerHTML = '<i class="bi bi-check-circle-fill" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>Link Kopyalandı!';
+                document.body.appendChild(copyMessage);
+                
+                // 1.5 saniye sonra eski renge dön ve mesajı kaldır
+                setTimeout(() => {
+                    linkBox.style.background = originalBg || 'white';
+                    linkBox.style.borderColor = originalBorder || 'var(--cermak-primary)';
+                    linkBox.style.borderStyle = 'dashed';
+                    urlElement.style.color = 'var(--cermak-primary)';
+                    urlElement.style.background = '#f8f9fa';
+                    copyMessage.remove();
+                }, 1500);
+                
+                showNotification('✅ Link kopyalandı!\n\n' + url, 'success');
+            }).catch(() => {
+                // Fallback - manuel seçim
+                const range = document.createRange();
+                range.selectNodeContents(urlElement);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                
+                try {
+                    document.execCommand('copy');
+                    showNotification('✅ Link kopyalandı!', 'success');
+                } catch (err) {
+                    showNotification('⚠️ Lütfen linki manuel olarak kopyalayın', 'error');
+                }
+            });
+        }
+
+        // Linki yeni sekmede aç
+        function openTunnelUrl(event) {
+            event.stopPropagation(); // Parent onclick'i tetikleme
+            const urlElement = document.getElementById('tunnelUrl');
+            const url = urlElement.dataset.url || urlElement.textContent;
+            
+            if (url) {
+                window.open(url, '_blank');
+            }
+        }
+
+        function copyTunnelUrl() {
+            const urlElement = document.getElementById('tunnelUrl');
+            const url = urlElement.dataset.url || urlElement.textContent;
+            
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification('✅ Link kopyalandı: ' + url, 'success');
+            }).catch(() => {
+                // Fallback
+                const range = document.createRange();
+                range.selectNodeContents(urlElement);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand('copy');
+                showNotification('✅ Link kopyalandı', 'success');
+            });
+        }
+
+        async function showTunnelDebug() {
+            try {
+                const response = await fetch('/tunnel/status');
+                const data = await response.json();
+                
+                const debugInfo = `
+🔍 TUNNEL DEBUG BİLGİSİ:
+
+• Durum: ${data.running ? '✅ Çalışıyor' : '❌ Durdurulmuş'}
+• URL: ${data.url || '⚠️ Henüz alınamadı'}
+• Process Alive: ${data.debug.process_alive ? '✅' : '❌'}
+• Process Exists: ${data.debug.process_exists ? '✅' : '❌'}
+
+${!data.url && data.running ? '\n⚠️ Process çalışıyor ama URL alınamadı!\nCloudflared console çıktısını kontrol edin.' : ''}
+                `.trim();
+                
+                alert(debugInfo);
+            } catch (error) {
+                alert('Debug bilgisi alınamadı: ' + error.message);
+            }
+        }
+
+        // Sayfa yüklendiğinde tunnel durumunu kontrol et
+        document.addEventListener('DOMContentLoaded', function() {
+            checkTunnelStatus();
+        });
+
+        // ========================================
+        // 📦 PAKET YÖNETİMİ FONKSİYONLARI
+        // ========================================
+        
+        function showCreatePackageModal() {
+            const modalHtml = `
+                <div class="modal fade" id="createPackageModal" tabindex="-1">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white;">
+                                <h5 class="modal-title"><i class="bi bi-box-seam-fill"></i> 📦 Yeni Paket Oluştur</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-info">
+                                    <strong>💡 Paket Sistemi:</strong> Tek bir QR kod okutarak birden fazla parçanın adetini otomatik kaydedin!<br>
+                                    Örnek: KOLI-001 içinde 500 adet ABC123 varsa, tek QR ile hepsini say!
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label"><strong>Paket Adı (QR Kodu)</strong></label>
+                                        <input type="text" class="form-control" id="packageName" placeholder="Örn: KOLI-001">
+                                        <small class="text-muted">Bu isimle yeni QR kodu oluşturulacak</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label"><strong>Paket Açıklaması</strong></label>
+                                        <input type="text" class="form-control" id="packageDesc" placeholder="Örn: Motor Montaj Paketi">
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <h6><i class="bi bi-list-check"></i> Paket İçeriği (Hangi parçalar girecek?)</h6>
+                                
+                                <!-- Excel Yükleme Alanı -->
+                                <div class="mb-3 p-3 bg-light rounded">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <label class="form-label mb-0">
+                                                <i class="bi bi-file-earmark-excel"></i> 
+                                                <strong>Excel ile Toplu Yükleme</strong>
+                                            </label>
+                                            <br>
+                                            <small class="text-muted">
+                                                Excel formatı: 1. sütun <strong>Parça Kodu</strong>, 2. sütun <strong>Adet</strong> (başlık satırı ile)
+                                            </small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="file" 
+                                                   class="form-control form-control-sm" 
+                                                   id="packageExcelFile" 
+                                                   accept=".xlsx,.xls"
+                                                   onchange="loadPackageFromExcel(this)">
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <a href="#" onclick="downloadPackageTemplate(); return false;" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-download"></i> Örnek Excel Şablonu İndir
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Manuel Ekleme Tablosu -->
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Parça Kodu</th>
+                                                <th>Parça Adı</th>
+                                                <th>Adet</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="packageItemsTable">
+                                            <!-- Buraya dinamik satırlar eklenecek -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <button class="btn btn-sm btn-success" onclick="addPackageRow()">
+                                        <i class="bi bi-plus-circle"></i> Manuel Parça Ekle
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="clearPackageTable()">
+                                        <i class="bi bi-trash"></i> Tabloyu Temizle
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                <button type="button" class="btn btn-primary" onclick="savePackage()">
+                                    <i class="bi bi-save"></i> Paketi Kaydet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('createPackageModal'));
+            modal.show();
+            
+            // Modal kapandığında DOM'dan kaldır
+            document.getElementById('createPackageModal').addEventListener('hidden.bs.modal', function() {
+                this.remove();
+            });
+            
+            // İlk satırı ekle
+            addPackageRow();
+        }
+
+        function addPackageRow() {
+            const table = document.getElementById('packageItemsTable');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="form-control form-control-sm part-code-input" placeholder="ABC123"></td>
+                <td><input type="text" class="form-control form-control-sm" readonly placeholder="Otomatik"></td>
+                <td><input type="number" class="form-control form-control-sm qty-input" value="1" min="1"></td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="this.closest('tr').remove()">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+            table.appendChild(row);
+        }
+
+        function clearPackageTable() {
+            if (confirm('Tablodaki tüm parçaları silmek istediğinizden emin misiniz?')) {
+                document.getElementById('packageItemsTable').innerHTML = '';
+            }
+        }
+
+        // Excel Template İndirme
+        function downloadPackageTemplate() {
+            // SheetJS ile gerçek Excel dosyası oluştur
+            const wb = XLSX.utils.book_new();
+            const wsData = [
+                ['Parça Kodu', 'Adet'],  // Başlık
+                ['ABC123', 500],
+                ['XYZ456', 250],
+                ['DEF789', 100],
+                ['GHI012', 75]
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            
+            // Sütun genişliklerini ayarla
+            ws['!cols'] = [
+                { wch: 15 },  // Parça Kodu
+                { wch: 10 }   // Adet
+            ];
+            
+            XLSX.utils.book_append_sheet(wb, ws, 'Paket İçeriği');
+            
+            // Excel dosyasını indir
+            XLSX.writeFile(wb, 'Paket_Sablonu.xlsx');
+            
+            alert('📥 Excel Şablonu İndirildi!\\n\\nDosyayı açıp parça kodlarını ve adetleri girin.\\n\\nFormat:\\n• 1. Sütun: Parça Kodu\\n• 2. Sütun: Adet\\n\\nBaşlık satırını silmeyin!');
+        }
+
+        function downloadExpectedTemplate() {
+            // SheetJS ile beklenen parça listesi şablonu
+            const wb = XLSX.utils.book_new();
+            const wsData = [
+                ['Parça Kodu', 'Beklenen Adet'],  // Başlık
+                ['ABC123', 100],
+                ['XYZ456', 50],
+                ['DEF789', 25]
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            
+            ws['!cols'] = [
+                { wch: 15 },  // Parça Kodu
+                { wch: 15 }   // Beklenen Adet
+            ];
+            
+            XLSX.utils.book_append_sheet(wb, ws, 'Beklenen Parçalar');
+            XLSX.writeFile(wb, 'Beklenen_Parcalar_Sablonu.xlsx');
+            
+            alert('📥 Beklenen Parçalar Şablonu İndirildi!\\n\\nDosyayı açıp beklediğiniz parça kodlarını ve adetleri girin.\\n\\nSayım bittiğinde gerçek sayım ile karşılaştırma yapılacaktır.');
+        }
+
+        // Excel Dosyasından Paket Yükleme
+        async function loadPackageFromExcel(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+                    // İlk satır başlık, atla
+                    const rows = jsonData.slice(1);
+                    
+                    // Mevcut tabloyu temizle
+                    document.getElementById('packageItemsTable').innerHTML = '';
+
+                    let addedCount = 0;
+                    for (const row of rows) {
+                        const partCode = row[0] ? String(row[0]).trim() : '';
+                        const quantity = row[1] ? parseInt(row[1]) : 1;
+
+                        if (partCode) {
+                            const table = document.getElementById('packageItemsTable');
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td><input type="text" class="form-control form-control-sm part-code-input" value="${partCode}"></td>
+                                <td><input type="text" class="form-control form-control-sm" readonly placeholder="Otomatik"></td>
+                                <td><input type="number" class="form-control form-control-sm qty-input" value="${quantity}" min="1"></td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger" onclick="this.closest('tr').remove()">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            `;
+                            table.appendChild(tr);
+                            addedCount++;
+                        }
+                    }
+
+                    if (addedCount > 0) {
+                        alert(`✅ Excel Yüklendi!\\n\\n${addedCount} parça tabloya eklendi.\\nKontrol edip kaydedin.`);
+                    } else {
+                        alert('⚠️ Excel dosyasında veri bulunamadı!\\n\\nFormat: 1. sütun = Parça Kodu, 2. sütun = Adet');
+                    }
+
+                    // Input'u temizle
+                    input.value = '';
+
+                } catch (error) {
+                    alert('❌ Excel okuma hatası: ' + error.message);
+                    input.value = '';
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        async function savePackage() {
+            const packageName = document.getElementById('packageName').value.trim();
+            const packageDesc = document.getElementById('packageDesc').value.trim();
+            
+            if (!packageName) {
+                alert('Lütfen paket adı girin!');
+                return;
+            }
+            
+            const items = [];
+            document.querySelectorAll('#packageItemsTable tr').forEach(row => {
+                const partCode = row.querySelector('.part-code-input').value.trim();
+                const quantity = parseInt(row.querySelector('.qty-input').value);
+                
+                if (partCode && quantity > 0) {
+                    items.push({ part_code: partCode, quantity: quantity });
+                }
+            });
+            
+            if (items.length === 0) {
+                alert('Lütfen en az 1 parça ekleyin!');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/create_package', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        package_name: packageName,
+                        package_desc: packageDesc,
+                        items: items
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // QR kodunu göster
+                    const qrModalHtml = `
+                        <div class="modal fade" id="qrDisplayModal" tabindex="-1">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
+                                        <h5 class="modal-title">
+                                            <i class="bi bi-check-circle-fill"></i> ✅ Paket Oluşturuldu!
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <h4>${packageName}</h4>
+                                        <p class="text-muted">${packageDesc || 'Paket: ' + packageName}</p>
+                                        
+                                        <div class="alert alert-success">
+                                            <strong>📊 Paket Bilgileri:</strong><br>
+                                            ${items.length} farklı parça türü<br>
+                                            Toplam ${items.reduce((sum, i) => sum + i.quantity, 0)} adet parça
+                                        </div>
+
+                                        <div class="my-4 p-4 bg-light rounded">
+                                            <h5>📱 QR Kodu</h5>
+                                            <img src="data:image/png;base64,${data.qr_image}" 
+                                                 alt="QR Kod" 
+                                                 style="max-width: 300px; border: 2px solid #dee2e6; border-radius: 10px;">
+                                            <br><br>
+                                            <button class="btn btn-success" onclick="downloadPackageQR('${packageName}', '${data.qr_image}')">
+                                                <i class="bi bi-download"></i> QR Kodunu İndir
+                                            </button>
+                                            <button class="btn btn-primary" onclick="printPackageQR('${data.qr_image}', '${packageName}')">
+                                                <i class="bi bi-printer"></i> Yazdır
+                                            </button>
+                                        </div>
+
+                                        <div class="alert alert-info">
+                                            <i class="bi bi-info-circle"></i> 
+                                            <strong>Önemli:</strong> Bu QR kodu pakete yapıştırın. 
+                                            Scanner okuttuğunda içindeki tüm parçalar otomatik sayılacak!
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Önceki modalı kapat
+                    bootstrap.Modal.getInstance(document.getElementById('createPackageModal')).hide();
+                    
+                    // QR modal ekle ve göster
+                    document.body.insertAdjacentHTML('beforeend', qrModalHtml);
+                    const qrModal = new bootstrap.Modal(document.getElementById('qrDisplayModal'));
+                    qrModal.show();
+                    
+                    // Modal kapandığında DOM'dan kaldır
+                    document.getElementById('qrDisplayModal').addEventListener('hidden.bs.modal', function() {
+                        this.remove();
+                    });
+                } else {
+                    alert('❌ Hata: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Sistem Hatası: ' + error.message);
+            }
+        }
+
+        // QR Kodu İndirme
+        function downloadPackageQR(packageName, qrBase64) {
+            const link = document.createElement('a');
+            link.href = 'data:image/png;base64,' + qrBase64;
+            link.download = `PAKET_${packageName}_QR.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // QR Kodu Yazdırma
+        function printPackageQR(qrBase64, packageName) {
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Paket QR - ${packageName}</title>
+                    <style>
+                        body {
+                            text-align: center;
+                            font-family: Arial, sans-serif;
+                            padding: 20px;
+                        }
+                        img {
+                            max-width: 400px;
+                            border: 2px solid #000;
+                            margin: 20px 0;
+                        }
+                        h2 { margin-top: 0; }
+                    </style>
+                </head>
+                <body>
+                    <h2>📦 PAKET QR KODU</h2>
+                    <h1>${packageName}</h1>
+                    <img src="data:image/png;base64,${qrBase64}" alt="QR Kod">
+                    <p style="font-size: 18px; font-weight: bold;">Bu QR kodu pakete yapıştırın</p>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            setTimeout(() => {
+                printWindow.print();
+            }, 250);
+        }
+
+        async function showPackageListModal() {
+            try {
+                const response = await fetch('/api/get_packages');
+                const data = await response.json();
+                
+                let packagesHtml = '';
+                if (data.packages && data.packages.length > 0) {
+                    packagesHtml = data.packages.map(pkg => `
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h6 class="card-title">📦 ${pkg.part_name}</h6>
+                                        <p class="mb-1"><strong>QR Kodu:</strong> <code>${pkg.part_code}</code></p>
+                                        <p class="mb-1"><strong>İçindekiler:</strong> <span class="badge bg-info">${pkg.items_count || 0} parça</span> - <span class="badge bg-info">${pkg.total_quantity || 0} adet</span></p>
+                                        <ul class="small">
+                                            ${pkg.items.map(item => `<li>${item.part_code}: ${item.quantity} adet</li>`).join('')}
+                                        </ul>
+                                        <div class="mt-2">
+                                            <button class="btn btn-sm btn-success" onclick="downloadPackageQR('${pkg.part_code}', '${pkg.qr_image}')">
+                                                <i class="bi bi-download"></i> QR İndir
+                                            </button>
+                                            <button class="btn btn-sm btn-primary" onclick="printPackageQR('${pkg.qr_image}', '${pkg.part_code}')">
+                                                <i class="bi bi-printer"></i> Yazdır
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="deletePackage('${pkg.part_code}')">
+                                                <i class="bi bi-trash"></i> Sil
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <img src="data:image/png;base64,${pkg.qr_image}" 
+                                             alt="QR Kod" 
+                                             style="max-width: 150px; border: 1px solid #dee2e6; border-radius: 8px;"
+                                             class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    packagesHtml = '<p class="text-muted">Henüz paket oluşturulmamış.</p>';
+                }
+                
+                const modalHtml = `
+                    <div class="modal fade" id="packageListModal" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><i class="bi bi-box-seam"></i> Paket Listesi</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    ${packagesHtml}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                const modal = new bootstrap.Modal(document.getElementById('packageListModal'));
+                modal.show();
+                
+                document.getElementById('packageListModal').addEventListener('hidden.bs.modal', function() {
+                    this.remove();
+                });
+            } catch (error) {
+                alert('❌ Paket listesi alınamadı: ' + error.message);
+            }
+        }
+
+        async function deletePackage(partCode) {
+            if (!confirm('Bu paketi silmek istediğinizden emin misiniz?')) return;
+            
+            try {
+                const response = await fetch('/api/delete_package', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ part_code: partCode })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Paket silindi!');
+                    bootstrap.Modal.getInstance(document.getElementById('packageListModal')).hide();
+                    showPackageListModal();
+                } else {
+                    alert('❌ Hata: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Sistem Hatası: ' + error.message);
+            }
+        }
+
+        // Sayım başlatma
+        let expectedPartsData = null;
+        let activeCountSession = null;
+
+        // Sayfa yüklendiğinde aktif sayımı kontrol et
+        window.addEventListener('load', function() {
+            checkActiveCountSession();
+        });
+
+        async function checkActiveCountSession() {
+            try {
+                const response = await fetch('/api/get_active_count_session');
+                const data = await response.json();
+                
+                if (data.success && data.has_active) {
+                    activeCountSession = data.session;
+                    showActiveCountInfo();
+                } else {
+                    activeCountSession = null;
+                    showStartCountButton();
+                }
+            } catch (error) {
+                console.error('Aktif sayım kontrolü hatası:', error);
+            }
+        }
+
+        function showActiveCountInfo() {
+            const session = activeCountSession;
+            const durationHours = Math.floor(session.duration_seconds / 3600);
+            const durationMins = Math.floor((session.duration_seconds % 3600) / 60);
+            
+            document.getElementById('countDescription').innerHTML = `
+                <div class="alert alert-warning mb-0">
+                    <strong>📊 ${session.name}</strong><br>
+                    ⏱️ Süre: ${durationHours}s ${durationMins}dk<br>
+                    📈 İlerleme: ${session.percentage}% (${session.total_scanned}/${session.total_expected})
+                </div>
+            `;
+            
+            document.getElementById('countActions').innerHTML = `
+                <button class="btn-primary-custom" onclick="continueCount()">
+                    <i class="bi bi-play-circle"></i> Sayıma Devam Et
+                </button>
+                <button class="btn btn-sm btn-outline-danger mt-2" onclick="finishCountFromAdmin()">
+                    <i class="bi bi-stop-circle"></i> Bitir
+                </button>
+            `;
+        }
+
+        function showStartCountButton() {
+            document.getElementById('countDescription').innerHTML = 
+                'QR Scanner ile hızlı sayım yapın ve Excel karşılaştırması';
+            
+            document.getElementById('countActions').innerHTML = `
+                <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#startCountModal">
+                    <i class="bi bi-qr-code-scan"></i> Yeni Sayım Başlat
+                </button>
+            `;
+        }
+
+        function continueCount() {
+            if (activeCountSession) {
+                window.location.href = `/scanner?session_id=${activeCountSession.id}`;
+            }
+        }
+
+        async function finishCountFromAdmin() {
+            if (!confirm('Sayımı bitirmek istediğinize emin misiniz?')) return;
+            
+            try {
+                const response = await fetch('/api/finish_count', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({session_id: activeCountSession.id})
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(data.message);
+                    checkActiveCountSession();
+                } else {
+                    alert('Hata: ' + data.error);
+                }
+            } catch (error) {
+                alert('Sistem hatası: ' + error.message);
+            }
+        }
+
+        function uploadExpectedExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                    
+                    // Beklenen verileri sakla
+                    expectedPartsData = jsonData;
+                    
+                    // Önizleme göster
+                    let preview = `<div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i> ${jsonData.length} satır yüklendi
+                    </div>`;
+                    
+                    document.getElementById('expectedPreview').innerHTML = preview;
+                } catch (error) {
+                    alert('❌ Excel okuma hatası: ' + error.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        async function startCountWithExpected() {
+            // Aktif sayım var mı kontrol et
+            const checkResponse = await fetch('/api/get_active_count_session');
+            const checkData = await checkResponse.json();
+            
+            if (checkData.has_active) {
+                alert('⚠️ Zaten aktif bir sayım var! Önce onu bitirin.');
+                bootstrap.Modal.getInstance(document.getElementById('startCountModal')).hide();
+                checkActiveCountSession();
+                return;
+            }
+            
+            try {
+                // Sayım başlat
+                const response = await fetch('/api/start_count_session', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        expected_parts: expectedPartsData || []
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Modal'ı kapat
+                    bootstrap.Modal.getInstance(document.getElementById('startCountModal')).hide();
+                    
+                    // Scanner sayfasına git
+                    window.location.href = `/scanner?session_id=${data.session_id}`;
+                } else {
+                    alert('❌ Hata: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Sistem Hatası: ' + error.message);
+            }
+        }
+
+        // Parça Detayları Yöneticisi
+        async function showPartDetailsManager() {
+            // Tüm parçaları listele
+            try {
+                const response = await fetch('/api/parts');
+                const parts = await response.json();
+                
+                if (parts.length === 0) {
+                    alert('Henüz hiç parça eklenmemiş.');
+                    return;
+                }
+
+                // Modal oluştur
+                const modal = document.createElement('div');
+                modal.className = 'modal fade';
+                modal.id = 'partDetailsModal';
+                modal.innerHTML = `
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"><i class="bi bi-card-image"></i> Parça Detayları Yönetimi</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="searchPartDetails" placeholder="🔍 Parça Kodu Ara...">
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Parça Kodu</th>
+                                                <th>Fotoğraf</th>
+                                                <th>Açıklama</th>
+                                                <th>İşlem</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="partDetailsTableBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+                const modalInstance = new bootstrap.Modal(modal);
+
+                // Parça listesini doldur
+                const tbody = document.getElementById('partDetailsTableBody');
+                tbody.innerHTML = parts.map(part => `
+                    <tr>
+                        <td><strong>${part.part_code}</strong></td>
+                        <td>
+                            ${part.photo_path ? 
+                                `<img src="/static/${part.photo_path}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">` : 
+                                '<span class="text-muted">Yok</span>'}
+                        </td>
+                        <td>${part.description ? part.description.substring(0, 50) + '...' : '<span class="text-muted">Açıklama yok</span>'}</td>
+                        <td>
+                            <a href="/edit_part/${part.part_code}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-pencil"></i> Düzenle
+                            </a>
+                            <a href="/part_info/${part.part_code}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-eye"></i> Görüntüle
+                            </a>
+                        </td>
+                    </tr>
+                `).join('');
+
+                // Arama özelliği
+                document.getElementById('searchPartDetails').addEventListener('input', (e) => {
+                    const search = e.target.value.toLowerCase();
+                    const rows = tbody.querySelectorAll('tr');
+                    rows.forEach(row => {
+                        const partCode = row.querySelector('strong').textContent.toLowerCase();
+                        row.style.display = partCode.includes(search) ? '' : 'none';
+                    });
+                });
+
+                modalInstance.show();
+
+                // Modal kapandığında temizle
+                modal.addEventListener('hidden.bs.modal', () => {
+                    modal.remove();
+                });
+
+            } catch (error) {
+                console.error('Hata:', error);
+                alert('Parça listesi yüklenirken hata oluştu.');
+            }
+        }
+
+        // Lokasyon Excel Yükleme Modal
+        function showLocationUploadModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="bi bi-geo-alt"></i> Stok Lokasyonu Güncelle
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Beklenen Sütunlar:</strong> Parça Kodu, Stok Lokasyonu
+                            </div>
+                            <div class="upload-zone" onclick="document.getElementById('locationFileInput').click()" style="cursor: pointer; padding: 2rem; border: 3px dashed #ccc; border-radius: 12px; text-align: center; background: #f8f9fa;">
+                                <i class="bi bi-cloud-upload" style="font-size: 3rem; color: #94a3b8;"></i>
+                                <p class="mt-3 mb-1"><strong>Excel dosyasını buraya sürükleyin veya tıklayın</strong></p>
+                                <input type="file" id="locationFileInput" accept=".xlsx,.xls" style="display: none;">
+                            </div>
+                            <div id="locationUploadProgress" style="display: none; margin-top: 1rem;">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            const modalInstance = new bootstrap.Modal(modal);
+            
+            // File input event
+            const fileInput = document.getElementById('locationFileInput');
+            fileInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+                    alert('Lütfen Excel dosyası seçin (.xlsx veya .xls)');
+                    return;
+                }
+                
+                const progress = document.getElementById('locationUploadProgress');
+                progress.style.display = 'block';
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                try {
+                    const response = await fetch('/api/parts_info/upload_location', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        alert('Hata: ' + data.error);
+                    } else {
+                        alert('Başarılı!\n\nGüncellenen parça: ' + data.updated + '\nBulunamayan: ' + data.not_found);
+                        modalInstance.hide();
+                    }
+                } catch (error) {
+                    console.error('Lokasyon yükleme hatası:', error);
+                    alert('Lokasyon yüklenirken bir hata oluştu');
+                } finally {
+                    progress.style.display = 'none';
+                    fileInput.value = '';
+                }
+            });
+            
+            modalInstance.show();
+            
+            modal.addEventListener('hidden.bs.modal', () => {
+                modal.remove();
+            });
+        }
+    </script>
+
+    <!-- Sayım Başlatma Modal -->
+    <div class="modal fade" id="startCountModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-qr-code-scan"></i> Sayım Başlat</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <label class="form-label"><i class="bi bi-file-earmark-excel"></i> Beklenen Parça Listesi (Opsiyonel)</label>
+                        <p class="text-muted small">
+                            Excel formatında beklenen parça kodları ve adetlerini yükleyebilirsiniz. 
+                            Sayım sonunda karşılaştırma yapılacaktır.
+                        </p>
+                        <input type="file" class="form-control" accept=".xlsx,.xls" onchange="uploadExpectedExcel(event)">
+                        <div class="mt-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="downloadExpectedTemplate()">
+                                <i class="bi bi-download"></i> Excel Şablonunu İndir
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="expectedPreview"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="startCountWithExpected()" data-bs-dismiss="modal">
+                        <i class="bi bi-play-circle"></i> Sayımı Başlat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
